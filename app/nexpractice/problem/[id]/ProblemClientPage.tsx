@@ -92,7 +92,8 @@ import { LuCopy } from "react-icons/lu";
 
 import { useIsMobile } from "@/components/ui/use-mobile";
 import { useTheme } from "next-themes";
-import { FaCode } from "react-icons/fa6";
+import { FaCode, FaPlay} from "react-icons/fa6";
+import { FiUploadCloud } from "react-icons/fi";
 import { BsArrowRepeat } from "react-icons/bs";
 import {
   Popover,
@@ -3422,7 +3423,43 @@ export default function ProblemClientPage({
           />
         </div>
         <div className="m-3">
-          <div className="h-[50px] rounded-lg w-full bg-[#1f1f1f]"></div>
+          <div className="h-[50px] rounded-lg w-full bg-[#1f1f1f] flex items-center justify-center gap-4 px-4">
+            <button
+              className="bg-[#2C2C2C] hover:bg-[#333333] text-[#087bff] hover:text-[#087bff]/80 px-4 rounded-md flex items-center gap-2 transition-all duration-200 justify-center border border-[#3C3C3C] h-[34px] min-w-[100px]"
+              onClick={runCode}
+              disabled={isRunning}
+            >
+              {isRunning ? (
+                <>
+                  <div className="animate-spin rounded-full h-3 w-3 border border-[#087bff] border-t-transparent"></div>
+                  <span className="font-medium">Executing...</span>
+                </>
+              ) : (
+                <>
+                  <FaPlay className="h-3 w-3" />
+                  <span className="font-medium">Run</span>
+                </>
+              )}
+            </button>
+
+            <button
+              className="bg-[#2C2C2C] hover:bg-[#333333] text-[#27B940] hover:text-[#27B940]/80 px-4 rounded-md flex items-center gap-2 transition-all duration-200 justify-center border border-[#3C3C3C] h-[34px] min-w-[120px]"
+              onClick={submitCode}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <div className="animate-spin rounded-full h-3 w-3 border border-[#27B940] border-t-transparent"></div>
+                  <span className="font-medium">Submitting...</span>
+                </>
+              ) : (
+                <>
+                  <FiUploadCloud className="h-4 w-4" />
+                  <span className="font-medium">Submit</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </div>
 
