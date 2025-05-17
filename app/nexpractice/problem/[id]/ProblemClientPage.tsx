@@ -3298,7 +3298,7 @@ export default function ProblemClientPage({
       />
 
       {/* Main content with resizable panels */}
-      <div ref={containerRef} className="flex flex-1 overflow-hidden">
+      <div ref={containerRef} className="flex flex-1 overflow-hidden bg-black">
         {/* Left panel - Problem description */}
         <div
           className={`h-full overflow-hidden bg-white dark:bg-black ${
@@ -3306,13 +3306,13 @@ export default function ProblemClientPage({
               ? activePanel === "problem"
                 ? "block w-full"
                 : "hidden"
-              : "border-r border-indigo-100 dark:border-indigo-900/50"
+              : ""
           } ${hasMounted && isMobile ? "pb-24" : ""}`}
           style={{
             width: hasMounted && isMobile ? "100%" : `${leftPanelWidth}%`,
           }}
         >
-          <div className="m-4 mr-2 rounded-lg overflow-hidden bg-[#1f1f1f] flex flex-col h-[calc(100vh-5rem)]">
+          <div className="m-4 mr-[2px] rounded-lg overflow-hidden bg-[#1f1f1f] flex flex-col h-[calc(100vh-5rem)]">
             <Tabs
               defaultValue="description"
               className="mt-2 flex flex-col h-full"
@@ -3426,10 +3426,23 @@ export default function ProblemClientPage({
             </Tabs>
           </div>
         </div>
-
+        {/* Horizontal resizer - only visible on desktop */}
+        {!isMobile && (
+          <div
+            className="relative w-1 h-full flex-shrink-0 z-10 group cursor-ew-resize"
+            onMouseDown={startHorizontalResize}
+          >
+            <div className="absolute inset-0 w-[6px] my-4 h-[calc(100vh-5rem)]  transition-colors duration-300 rounded-full flex items-center justify-center">
+              <div className="absolute h-10 w-[6px] rounded-full bg-[#1f1f1f]"></div>
+            </div>
+            <div className="absolute inset-0 w-[6px] my-10 h-[calc(100vh-7rem)] bg-transparent hover:bg-[#404040] transition-colors duration-300 rounded-full flex items-center justify-center">
+             
+            </div>
+          </div>
+        )}
         {/* Right panel container */}
         <div
-          className={`flex flex-col h-full ${
+          className={`flex flex-col h-full m-4 ml-2 ${
             hasMounted && isMobile && activePanel === "problem" ? "hidden" : ""
           }`}
           style={{
@@ -4072,7 +4085,7 @@ export default function ProblemClientPage({
               transition: "all 0.3s ease-in-out", // Add smooth transition
             }}
           >
-            <div className="flex items-center justify-between p-2 md:p-3 bg-white dark:bg-black border-b border-indigo-100 dark:border-indigo-900/50">
+            <div className="flex items-center justify-between p-2 md:p-3 bg-white dark:bg-black ">
               <div className="flex items-center gap-2">
                 <Terminal className="h-4 w-4 text-indigo-500 dark:text-indigo-400" />
                 <span className="font-medium text-slate-700 dark:text-slate-300">
