@@ -3781,46 +3781,22 @@ export default function ProblemClientPage({
                       </PopoverTrigger>
                       <PopoverContent
                         align="end"
-                        className="w-80 p-0 border border-gray-700 shadow-xl rounded-xl overflow-hidden"
+                        className="w-80 p-0 border border-gray-200 dark:border-[#4c4c4c] shadow-xl rounded-xl overflow-hidden mt-4"
                       >
-                        {/* Dark header with subtle gradient */}
-                        <div className="bg-gradient-to-r from-[#1a1a1a] via-[#252525] to-[#1a1a1a] p-4 relative flex items-center justify-between">
-                          <div className="absolute top-0 left-0 right-0 h-px bg-white/10"></div>
-                          <div className="absolute inset-0 bg-grid-white/[0.03] bg-[length:16px_16px]"></div>
-                          <h3 className="text-sm font-medium text-gray-200 flex items-center">
-                            <Settings className="h-4 w-4 mr-2 text-gray-400" />
-                            <span className="font-semibold">
-                              Editor Settings
-                            </span>
-                          </h3>
-                          <div className="h-6 w-6 rounded-full bg-[#333] flex items-center justify-center shadow-inner">
-                            <Code className="h-3.5 w-3.5 text-gray-300" />
-                          </div>
-                        </div>
-
-                        <div className="p-5 bg-[#1f1f1f] border-t border-gray-800">
+                        <div className="p-5 bg-white dark:bg-[#2e2e2e] border-t border-gray-100 dark:border-gray-800">
                           {/* Theme selector */}
                           <div className="mb-5">
-                            <label className="text-xs font-medium mb-2.5 text-gray-300 flex items-center justify-between">
-                              <span className="flex items-center">
-                                <MonitorSmartphone className="h-3.5 w-3.5 mr-1.5 text-gray-400" />
-                                Theme
-                              </span>
-                              <span className="text-xs font-medium text-gray-400">
-                                {editorTheme === "vs-dark" ? "Dark" : "Light"}
-                              </span>
-                            </label>
                             <div className="flex gap-2 mt-1.5">
                               <button
                                 onClick={() => setEditorTheme("vs-dark")}
                                 className={`px-3 py-2 rounded-md text-xs font-medium transition-all duration-200 flex-1 ${
                                   editorTheme === "vs-dark"
-                                    ? "bg-gradient-to-r from-[#333] to-[#222] text-white shadow-md border border-gray-700"
-                                    : "bg-[#2a2a2a] text-gray-400 hover:bg-[#333] border border-gray-700/50"
+                                    ? "bg-[#0779FF] text-white shadow-md"
+                                    : "bg-gray-100 dark:bg-[#2a2a2a] text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#333]"
                                 }`}
                               >
                                 <span className="flex items-center justify-center">
-                                  <Moon className="h-3.5 w-3.5 mr-1.5" />
+                                  <Moon className={`h-3.5 w-3.5 mr-1.5`} />
                                   Dark
                                 </span>
                               </button>
@@ -3828,12 +3804,12 @@ export default function ProblemClientPage({
                                 onClick={() => setEditorTheme("light")}
                                 className={`px-3 py-2 rounded-md text-xs font-medium transition-all duration-200 flex-1 ${
                                   editorTheme === "light"
-                                    ? "bg-gradient-to-r from-[#333] to-[#222] text-white shadow-md border border-gray-700"
-                                    : "bg-[#2a2a2a] text-gray-400 hover:bg-[#333] border border-gray-700/50"
+                                    ? "bg-[#0779FF] text-white shadow-md"
+                                    : "bg-gray-100 dark:bg-[#2a2a2a] text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#333]"
                                 }`}
                               >
                                 <span className="flex items-center justify-center">
-                                  <Sun className="h-3.5 w-3.5 mr-1.5" />
+                                  <Sun className={`h-3.5 w-3.5 mr-1.5`} />
                                   Light
                                 </span>
                               </button>
@@ -3842,26 +3818,44 @@ export default function ProblemClientPage({
 
                           {/* Font size slider with improved UX */}
                           <div className="mb-5">
-                            <label className="text-xs font-medium mb-2.5 text-gray-300 flex items-center justify-between">
+                            <label className="text-xs font-medium mb-2.5 text-gray-700 dark:text-gray-300 flex items-center justify-between">
                               <span className="flex items-center">
-                                <Type className="h-3.5 w-3.5 mr-1.5 text-gray-400" />
+                                <Type className="h-3.5 w-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
                                 Font Size
                               </span>
-                              <span className="text-xs font-medium text-gray-400 bg-[#2a2a2a] px-2 py-0.5 rounded-md border border-gray-700/50">
-                                {fontSize}px
-                              </span>
+                              <div className="flex items-center">
+                                <button
+                                  onClick={() =>
+                                    setFontSize(Math.max(12, fontSize - 1))
+                                  }
+                                  className="h-5 w-5 flex items-center justify-center bg-gray-100 dark:bg-[#1a1a1a] rounded-l-md border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
+                                >
+                                  <span className="text-xs">-</span>
+                                </button>
+                                <span className="text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-[#2a2a2a] px-2 py-0.5 border-t border-b border-gray-200 dark:border-gray-700/50 min-w-[40px] text-center">
+                                  {fontSize}px
+                                </span>
+                                <button
+                                  onClick={() =>
+                                    setFontSize(Math.min(24, fontSize + 1))
+                                  }
+                                  className="h-5 w-5 flex items-center justify-center bg-gray-100 dark:bg-[#1a1a1a] rounded-r-md border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
+                                >
+                                  <span className="text-xs">+</span>
+                                </button>
+                              </div>
                             </label>
                             <div className="relative mt-3 px-1">
-                              <div className="h-1 bg-[#333] rounded-full w-full overflow-hidden">
+                              <div className="h-1 bg-gray-200 dark:bg-[#333] rounded-full w-full overflow-hidden">
                                 <div
-                                  className="h-full bg-gradient-to-r from-gray-500 to-gray-600"
+                                  className="h-full bg-[#0779FF]"
                                   style={{
                                     width: `${((fontSize - 12) / 12) * 100}%`,
                                   }}
                                 ></div>
                               </div>
                               <div
-                                className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white shadow-md border border-gray-400"
+                                className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-[#0779FF] shadow-md border border-[#0779FF]"
                                 style={{
                                   left: `calc(${
                                     ((fontSize - 12) / 12) * 100
@@ -3881,14 +3875,10 @@ export default function ProblemClientPage({
                               />
                             </div>
                             <div className="flex justify-between mt-2 px-1">
-                              <span className="text-[10px] text-gray-500">
+                              <span className="text-[10px] text-gray-400 dark:text-gray-500">
                                 12px
                               </span>
-                              <div className="flex space-x-4 text-[10px] text-gray-500">
-                                <span>16px</span>
-                                <span>20px</span>
-                              </div>
-                              <span className="text-[10px] text-gray-500">
+                              <span className="text-[10px] text-gray-400 dark:text-gray-500">
                                 24px
                               </span>
                             </div>
@@ -3896,26 +3886,44 @@ export default function ProblemClientPage({
 
                           {/* Tab size slider with improved UX */}
                           <div className="mb-5">
-                            <label className="text-xs font-medium mb-2.5 text-gray-300 flex items-center justify-between">
+                            <label className="text-xs font-medium mb-2.5 text-gray-700 dark:text-gray-300 flex items-center justify-between">
                               <span className="flex items-center">
-                                <Indent className="h-3.5 w-3.5 mr-1.5 text-gray-400" />
+                                <Indent className="h-3.5 w-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
                                 Tab Size
                               </span>
-                              <span className="text-xs font-medium text-gray-400 bg-[#2a2a2a] px-2 py-0.5 rounded-md border border-gray-700/50">
-                                {tabSize} spaces
-                              </span>
+                              <div className="flex items-center">
+                                <button
+                                  onClick={() =>
+                                    setTabSize(Math.max(2, tabSize - 2))
+                                  }
+                                  className="h-5 w-5 flex items-center justify-center bg-gray-100 dark:bg-[#1a1a1a] rounded-l-md border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
+                                >
+                                  <span className="text-xs">-</span>
+                                </button>
+                                <span className="text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-[#2a2a2a] px-2 py-0.5 border-t border-b border-gray-200 dark:border-gray-700/50 min-w-[70px] text-center">
+                                  {tabSize} spaces
+                                </span>
+                                <button
+                                  onClick={() =>
+                                    setTabSize(Math.min(8, tabSize + 2))
+                                  }
+                                  className="h-5 w-5 flex items-center justify-center bg-gray-100 dark:bg-[#1a1a1a] rounded-r-md border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
+                                >
+                                  <span className="text-xs">+</span>
+                                </button>
+                              </div>
                             </label>
                             <div className="relative mt-3 px-1">
-                              <div className="h-1 bg-[#333] rounded-full w-full overflow-hidden">
+                              <div className="h-1 bg-gray-200 dark:bg-[#333] rounded-full w-full overflow-hidden">
                                 <div
-                                  className="h-full bg-gradient-to-r from-gray-500 to-gray-600"
+                                  className="h-full bg-[#0779FF]"
                                   style={{
                                     width: `${((tabSize - 2) / 6) * 100}%`,
                                   }}
                                 ></div>
                               </div>
                               <div
-                                className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white shadow-md border border-gray-400"
+                                className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-[#0779FF] shadow-md border border-[#0779FF]"
                                 style={{
                                   left: `calc(${
                                     ((tabSize - 2) / 6) * 100
@@ -3936,57 +3944,19 @@ export default function ProblemClientPage({
                               />
                             </div>
                             <div className="flex justify-between mt-2 px-1">
-                              <span className="text-[10px] text-gray-500">
+                              <span className="text-[10px] text-gray-400 dark:text-gray-500">
                                 2
                               </span>
-                              <span className="text-[10px] text-gray-500">
+                              <span className="text-[10px] text-gray-400 dark:text-gray-500">
                                 4
                               </span>
-                              <span className="text-[10px] text-gray-500">
+                              <span className="text-[10px] text-gray-400 dark:text-gray-500">
                                 6
                               </span>
-                              <span className="text-[10px] text-gray-500">
+                              <span className="text-[10px] text-gray-400 dark:text-gray-500">
                                 8
                               </span>
                             </div>
-                          </div>
-
-                          {/* Additional settings */}
-                          <div className="mb-5">
-                            <label className="text-xs font-medium mb-2.5 text-gray-300 flex items-center">
-                              <Sliders className="h-3.5 w-3.5 mr-1.5 text-gray-400" />
-                              Additional Options
-                            </label>
-                            <div className="space-y-2 mt-2">
-                              <div className="flex items-center justify-between bg-[#2a2a2a] px-3 py-2 rounded-md border border-gray-700/50">
-                                <span className="text-xs text-gray-300 flex items-center">
-                                  <WrapText className="h-3.5 w-3.5 mr-1.5 text-gray-400" />
-                                  Word Wrap
-                                </span>
-                                <Switch className="h-4 w-7" />
-                              </div>
-                              <div className="flex items-center justify-between bg-[#2a2a2a] px-3 py-2 rounded-md border border-gray-700/50">
-                                <span className="text-xs text-gray-300 flex items-center">
-                                  <LineChart className="h-3.5 w-3.5 mr-1.5 text-gray-400" />
-                                  Line Numbers
-                                </span>
-                                <Switch className="h-4 w-7" checked />
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Footer with reset button */}
-                          <div className="pt-3 mt-4 border-t border-gray-800 flex space-x-3">
-                            
-                            <button
-                              onClick={() => formatCode()}
-                              className="flex-1 py-2.5 rounded-lg bg-[#2a2a2a] text-gray-300 font-medium text-xs hover:bg-[#333] transition-all duration-200 border border-gray-700/50 hover:border-gray-700 relative overflow-hidden group"
-                            >
-                              <span className="relative flex items-center justify-center">
-                                <AlignLeft className="h-3.5 w-3.5 mr-1.5" />
-                                Format Code
-                              </span>
-                            </button>
                           </div>
                         </div>
                       </PopoverContent>
