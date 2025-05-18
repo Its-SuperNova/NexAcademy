@@ -27,14 +27,16 @@ export function ModeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon" className="mode-toggle h-8 w-8 md:h-9 md:w-9 bg-background border border-border hover:bg-muted">
-          {resolvedTheme === 'dark' ? (
-            <Moon className="h-4 w-4" />
+        <button
+          className="bg-[#1f1f1f] p-2 rounded-[8px]"
+        >
+          {resolvedTheme === "dark" ? (
+            <Sun className="h-4 w-4 text-[#ff7c25]" />
           ) : (
-            <Sun className="h-4 w-4" />
+            <Moon className="h-4 w-4" />
           )}
           <span className="sr-only">Toggle theme</span>
-        </Button>
+        </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setTheme("light")}>
@@ -51,5 +53,5 @@ export function ModeToggle() {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 } 

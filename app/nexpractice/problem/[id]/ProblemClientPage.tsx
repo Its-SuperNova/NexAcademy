@@ -77,19 +77,16 @@ import {
   Indent,
   Compass,
   Shuffle,
+  Sliders,
+  WrapText,
+  LineChart,
 } from "lucide-react";
-import { Avatar } from "@/components/ui/avatar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardFooter,
-} from "@/components/ui/card";
+import { CgFormatLeft } from "react-icons/cg";
+import { LuMaximize } from "react-icons/lu";
+import { LuMinimize } from "react-icons/lu";
 import { NexEditor as CodeEditor } from "@/components/NexEditor";
 import { useIsMobile } from "@/components/ui/use-mobile";
 import { useTheme } from "next-themes";
@@ -142,6 +139,7 @@ import DescriptionTab from "./components/DescriptionTab";
 import SolutionTab from "./components/SolutionTab";
 import DiscussionTab from "./components/DiscussionTab";
 import SubmissionsTab from "./components/SubmissionsTab";
+import { Switch } from "@/components/ui/switch";
 
 // Judge0 API language mapping
 const JUDGE0_LANGUAGES = {
@@ -3435,9 +3433,7 @@ export default function ProblemClientPage({
             <div className="absolute inset-0 w-[6px] my-4 h-[calc(100vh-5rem)]  transition-colors duration-300 rounded-full flex items-center justify-center">
               <div className="absolute h-10 w-[6px] rounded-full bg-[#1f1f1f]"></div>
             </div>
-            <div className="absolute inset-0 w-[6px] my-10 h-[calc(100vh-7rem)] bg-transparent hover:bg-[#404040] transition-colors duration-300 rounded-full flex items-center justify-center">
-             
-            </div>
+            <div className="absolute inset-0 w-[6px] my-10 h-[calc(100vh-7rem)] bg-transparent hover:bg-[#404040] transition-colors duration-300 rounded-full flex items-center justify-center"></div>
           </div>
         )}
         {/* Right panel container */}
@@ -3449,1206 +3445,990 @@ export default function ProblemClientPage({
             width: hasMounted && isMobile ? "100%" : `${100 - leftPanelWidth}%`,
           }}
         >
-          {/* Code editor */}
-          <div
-            className={`flex flex-col overflow-hidden ${
-              hasMounted && isMobile
-                ? activePanel === "code"
-                  ? "block"
-                  : "hidden"
-                : ""
-            } ${hasMounted && isMobile ? "pb-24" : ""}`}
-            style={{
-              flexBasis: hasMounted && isMobile ? "100%" : `${editorHeight}%`,
-              flexGrow: 0,
-              flexShrink: 1,
-              minHeight: 0,
-              maxHeight: hasMounted && isMobile ? "100%" : `${editorHeight}%`,
-              height: hasMounted && isMobile ? "100%" : undefined,
-              transition: "all 0.3s ease-in-out", // Add smooth transition
-            }}
-          >
-            <div className="flex items-center justify-between p-2 md:p-3 bg-white dark:bg-black border-b border-indigo-100 dark:border-indigo-900/50 flex-shrink-0">
-              <div className="flex items-center">
-                <div className="flex items-center mr-3 md:mr-4">
-                  {/* Logo - "N" on mobile, "NexEditor" on desktop */}
-                  <div className="flex items-center justify-center w-7 h-7 md:w-auto md:h-auto">
-                    <span className="hidden md:block text-base font-semibold text-indigo-700 dark:text-indigo-300 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 dark:from-indigo-300 dark:via-purple-300 dark:to-indigo-300">
-                      NexEditor
-                    </span>
-                    <div className="md:hidden flex items-center justify-center w-7 h-7 rounded-md bg-gradient-to-br from-indigo-600 to-purple-600 text-white font-bold text-lg shadow-sm">
-                      N
+          <div className="flex flex-col h-[calc(100vh-5rem)]">
+            {/* Code editor */}
+            <div
+              className={`flex flex-col overflow-hidden rounded-lg ${
+                hasMounted && isMobile
+                  ? activePanel === "code"
+                    ? "block"
+                    : "hidden"
+                  : ""
+              } ${hasMounted && isMobile ? "pb-24" : ""}`}
+              style={{
+                flexBasis: hasMounted && isMobile ? "100%" : `${editorHeight}%`,
+                flexGrow: 0,
+                flexShrink: 1,
+                minHeight: 0,
+                maxHeight: hasMounted && isMobile ? "100%" : `${editorHeight}%`,
+                height: hasMounted && isMobile ? "100%" : undefined,
+                transition: "all 0.3s ease-in-out", // Add smooth transition
+              }}
+            >
+              <div className="flex items-center justify-between p-2 md:p-3 bg-white dark:bg-[#313131]">
+                <div className="flex items-center">
+                  <div className="flex items-center mr-3 md:mr-4">
+                    {/* Logo - "N" on mobile, "NexEditor" on desktop */}
+                    <div className="flex items-center justify-center w-7 h-7 md:w-auto md:h-auto">
+                      <span className="hidden md:block text-base font-semibold text-indigo-700 dark:text-indigo-300 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 dark:from-indigo-300 dark:via-purple-300 dark:to-indigo-300">
+                        NexEditor
+                      </span>
+                      <div className="md:hidden flex items-center justify-center w-7 h-7 rounded-md bg-gradient-to-br from-indigo-600 to-purple-600 text-white font-bold text-lg shadow-sm">
+                        N
+                      </div>
                     </div>
                   </div>
-                </div>
-                {/* Custom Language Dropdown */}
-                <Popover
-                  open={languageDropdownOpen}
-                  onOpenChange={setLanguageDropdownOpen}
-                >
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="mr-2 flex items-center gap-1 md:gap-2 border-indigo-200 dark:border-indigo-800/50 bg-gradient-to-r from-white to-slate-50 dark:from-slate-800 dark:to-slate-800/90 text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 min-w-[120px] md:min-w-[180px] h-8 md:h-9 pl-1 md:pl-2 pr-2 md:pr-3 overflow-hidden group relative"
-                    >
-                      <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-indigo-500 to-indigo-600 dark:from-indigo-400 dark:to-indigo-500"></div>
-                      <div className="flex items-center gap-1 md:gap-2 overflow-hidden">
-                        <div className="flex items-center justify-center w-5 h-5 md:w-6 md:h-6 bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900 dark:to-indigo-800/30 rounded-md border border-indigo-200 dark:border-indigo-700/30 shadow-sm flex-shrink-0">
-                          {LANGUAGE_ICONS[
-                            language as keyof typeof LANGUAGE_ICONS
-                          ] || (
-                            <Code className="h-3 w-3 md:h-3.5 md:w-3.5 text-indigo-500 dark:text-indigo-400" />
-                          )}
-                        </div>
-                        <div className="flex flex-col leading-none overflow-hidden">
-                          <span className="font-medium text-xs md:text-sm truncate">
-                            {
-                              parseLanguageName(
-                                JUDGE0_LANGUAGES[
-                                  language as keyof typeof JUDGE0_LANGUAGES
-                                ]
-                              ).name
-                            }
-                          </span>
-                          <span className="text-[10px] md:text-xs text-slate-500 dark:text-slate-400 truncate">
-                            {
-                              parseLanguageName(
-                                JUDGE0_LANGUAGES[
-                                  language as keyof typeof JUDGE0_LANGUAGES
-                                ]
-                              ).version
-                            }
-                          </span>
-                        </div>
-                      </div>
-                      <ChevronDown className="h-3 w-3 ml-auto opacity-60 group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent
-                    align="start"
-                    className="w-[680px] p-0 max-h-[600px] overflow-hidden flex flex-col border-indigo-100 dark:border-indigo-900/50 shadow-lg rounded-xl"
+                  {/* Custom Language Dropdown */}
+                  <Popover
+                    open={languageDropdownOpen}
+                    onOpenChange={setLanguageDropdownOpen}
                   >
-                    <div className="language-dropdown-header sticky top-0 z-30 bg-white dark:bg-black border-b border-indigo-100 dark:border-indigo-900/50 p-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-2">
-                          <div className="h-5 w-1 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-full"></div>
-                          <h3 className="font-semibold text-slate-800 dark:text-slate-200 text-base">
-                            Select Programming Language
-                          </h3>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="mr-2 flex items-center gap-1 md:gap-2 border-indigo-200 dark:border-indigo-800/50 bg-gradient-to-r from-white to-slate-50 dark:from-slate-800 dark:to-slate-800/90 text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 min-w-[120px] md:min-w-[180px] h-8 md:h-9 pl-1 md:pl-2 pr-2 md:pr-3 overflow-hidden group relative"
+                      >
+                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-indigo-500 to-indigo-600 dark:from-indigo-400 dark:to-indigo-500"></div>
+                        <div className="flex items-center gap-1 md:gap-2 overflow-hidden">
+                          <div className="flex items-center justify-center w-5 h-5 md:w-6 md:h-6 bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900 dark:to-indigo-800/30 rounded-md border border-indigo-200 dark:border-indigo-700/30 shadow-sm flex-shrink-0">
+                            {LANGUAGE_ICONS[
+                              language as keyof typeof LANGUAGE_ICONS
+                            ] || (
+                              <Code className="h-3 w-3 md:h-3.5 md:w-3.5 text-indigo-500 dark:text-indigo-400" />
+                            )}
+                          </div>
+                          <div className="flex flex-col leading-none overflow-hidden">
+                            <span className="font-medium text-xs md:text-sm truncate">
+                              {
+                                parseLanguageName(
+                                  JUDGE0_LANGUAGES[
+                                    language as keyof typeof JUDGE0_LANGUAGES
+                                  ]
+                                ).name
+                              }
+                            </span>
+                            <span className="text-[10px] md:text-xs text-slate-500 dark:text-slate-400 truncate">
+                              {
+                                parseLanguageName(
+                                  JUDGE0_LANGUAGES[
+                                    language as keyof typeof JUDGE0_LANGUAGES
+                                  ]
+                                ).version
+                              }
+                            </span>
+                          </div>
                         </div>
-                        <div className="text-xs bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-30 px-2 py-0.5 rounded-full font-medium">
-                          {Object.keys(JUDGE0_LANGUAGES).length} languages
-                          available
+                        <ChevronDown className="h-3 w-3 ml-auto opacity-60 group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      align="start"
+                      className="w-[680px] p-0 max-h-[600px] overflow-hidden flex flex-col border-indigo-100 dark:border-indigo-900/50 shadow-lg rounded-xl"
+                    >
+                      <div className="language-dropdown-header sticky top-0 z-30 bg-white dark:bg-black border-b border-indigo-100 dark:border-indigo-900/50 p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                            <div className="h-5 w-1 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-full"></div>
+                            <h3 className="font-semibold text-slate-800 dark:text-slate-200 text-base">
+                              Select Programming Language
+                            </h3>
+                          </div>
+                          <div className="text-xs bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-30 px-2 py-0.5 rounded-full font-medium">
+                            {Object.keys(JUDGE0_LANGUAGES).length} languages
+                            available
+                          </div>
+                        </div>
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                          <Input
+                            placeholder="Search languages..."
+                            className="pl-10 py-2 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg"
+                            value={searchLanguage}
+                            onChange={(
+                              e: React.ChangeEvent<HTMLInputElement>
+                            ) => setSearchLanguage(e.target.value)}
+                          />
                         </div>
                       </div>
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-                        <Input
-                          placeholder="Search languages..."
-                          className="pl-10 py-2 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg"
-                          value={searchLanguage}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setSearchLanguage(e.target.value)
-                          }
-                        />
-                      </div>
-                    </div>
 
-                    <div className="overflow-y-auto flex-1 p-4 custom-scrollbar bg-gradient-to-br from-slate-50/50 to-white dark:from-slate-900 dark:to-slate-800/90">
-                      <div className="language-grid grid grid-cols-3 gap-x-3 gap-y-2.5">
-                        {Object.entries(JUDGE0_LANGUAGES)
-                          .filter(
-                            ([id, name]) =>
-                              !searchLanguage ||
-                              name
-                                .toLowerCase()
-                                .includes(searchLanguage.toLowerCase())
-                          )
-                          .map(
-                            (
-                              [langId, langName]: [string, string],
-                              index: number,
-                              array: [string, string][]
-                            ) => {
-                              const { name, version } =
-                                parseLanguageName(langName);
-                              const isSelected: boolean = language === langId;
-                              const showDivider: boolean =
-                                index > 0 &&
-                                index % 6 === 0 &&
-                                index !== array.length - 1;
-                              return (
-                                <Fragment key={`lang-${langId}`}>
-                                  {showDivider && (
-                                    <div className="col-span-3 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-700 to-transparent my-2.5"></div>
-                                  )}
-                                  <div
-                                    className={`language-item group h-14 rounded-lg px-3 transition-all duration-200 hover:shadow-md border ${
-                                      isSelected
-                                        ? "border-indigo-200 dark:border-indigo-800/50 bg-indigo-50/70 dark:bg-indigo-900/20"
-                                        : "border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-white dark:hover:bg-slate-800/60"
-                                    } ${isSelected ? "active" : ""}`}
-                                    onClick={() => {
-                                      handleLanguageChange(langId);
-                                      setLanguageDropdownOpen(false);
-                                    }}
-                                  >
-                                    <div className="flex items-center gap-3 w-full h-full overflow-hidden">
-                                      <div className="language-icon-container flex-shrink-0 w-7 h-7 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-sm group-hover:from-indigo-50 group-hover:to-indigo-100 dark:group-hover:from-indigo-900/20 dark:group-hover:to-indigo-900/30 transition-all duration-200">
-                                        {LANGUAGE_ICONS[langId] || (
-                                          <div className="flex items-center justify-center w-full h-full">
-                                            <Code className="h-3.5 w-3.5 text-slate-400 group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors" />
+                      <div className="overflow-y-auto flex-1 p-4 custom-scrollbar bg-gradient-to-br from-slate-50/50 to-white dark:from-slate-900 dark:to-slate-800/90">
+                        <div className="language-grid grid grid-cols-3 gap-x-3 gap-y-2.5">
+                          {Object.entries(JUDGE0_LANGUAGES)
+                            .filter(
+                              ([id, name]) =>
+                                !searchLanguage ||
+                                name
+                                  .toLowerCase()
+                                  .includes(searchLanguage.toLowerCase())
+                            )
+                            .map(
+                              (
+                                [langId, langName]: [string, string],
+                                index: number,
+                                array: [string, string][]
+                              ) => {
+                                const { name, version } =
+                                  parseLanguageName(langName);
+                                const isSelected: boolean = language === langId;
+                                const showDivider: boolean =
+                                  index > 0 &&
+                                  index % 6 === 0 &&
+                                  index !== array.length - 1;
+                                return (
+                                  <Fragment key={`lang-${langId}`}>
+                                    {showDivider && (
+                                      <div className="col-span-3 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-700 to-transparent my-2.5"></div>
+                                    )}
+                                    <div
+                                      className={`language-item group h-14 rounded-lg px-3 transition-all duration-200 hover:shadow-md border ${
+                                        isSelected
+                                          ? "border-indigo-200 dark:border-indigo-800/50 bg-indigo-50/70 dark:bg-indigo-900/20"
+                                          : "border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-white dark:hover:bg-slate-800/60"
+                                      } ${isSelected ? "active" : ""}`}
+                                      onClick={() => {
+                                        handleLanguageChange(langId);
+                                        setLanguageDropdownOpen(false);
+                                      }}
+                                    >
+                                      <div className="flex items-center gap-3 w-full h-full overflow-hidden">
+                                        <div className="language-icon-container flex-shrink-0 w-7 h-7 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-sm group-hover:from-indigo-50 group-hover:to-indigo-100 dark:group-hover:from-indigo-900/20 dark:group-hover:to-indigo-900/30 transition-all duration-200">
+                                          {LANGUAGE_ICONS[langId] || (
+                                            <div className="flex items-center justify-center w-full h-full">
+                                              <Code className="h-3.5 w-3.5 text-slate-400 group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors" />
+                                            </div>
+                                          )}
+                                        </div>
+                                        <div className="flex flex-col leading-tight overflow-hidden flex-1">
+                                          <span className="font-medium truncate text-slate-700 dark:text-slate-300 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
+                                            {name}
+                                          </span>
+                                          {version && (
+                                            <span className="version truncate text-xs text-slate-500 dark:text-slate-400 group-hover:text-indigo-500/70 dark:group-hover:text-indigo-400/70 transition-colors">
+                                              {version}
+                                            </span>
+                                          )}
+                                        </div>
+                                        {isSelected && (
+                                          <div className="flex-shrink-0 h-5 w-5 bg-indigo-500 dark:bg-indigo-400 rounded-full flex items-center justify-center">
+                                            <Check className="h-3 w-3 text-white" />
                                           </div>
                                         )}
                                       </div>
-                                      <div className="flex flex-col leading-tight overflow-hidden flex-1">
-                                        <span className="font-medium truncate text-slate-700 dark:text-slate-300 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
-                                          {name}
-                                        </span>
-                                        {version && (
-                                          <span className="version truncate text-xs text-slate-500 dark:text-slate-400 group-hover:text-indigo-500/70 dark:group-hover:text-indigo-400/70 transition-colors">
-                                            {version}
-                                          </span>
-                                        )}
-                                      </div>
-                                      {isSelected && (
-                                        <div className="flex-shrink-0 h-5 w-5 bg-indigo-500 dark:bg-indigo-400 rounded-full flex items-center justify-center">
-                                          <Check className="h-3 w-3 text-white" />
-                                        </div>
-                                      )}
                                     </div>
-                                  </div>
-                                </Fragment>
-                              );
-                            }
+                                  </Fragment>
+                                );
+                              }
+                            )}
+                        </div>
+
+                        {searchLanguage &&
+                          Object.entries(JUDGE0_LANGUAGES).filter(
+                            ([id, name]) =>
+                              name
+                                .toLowerCase()
+                                .includes(searchLanguage.toLowerCase())
+                          ).length === 0 && (
+                            <div className="text-center py-12 px-4">
+                              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 mb-3">
+                                <Search className="h-6 w-6 text-slate-400" />
+                              </div>
+                              <h4 className="text-base font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                No Results Found
+                              </h4>
+                              <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
+                                We couldn't find any programming language
+                                matching "{searchLanguage}"
+                              </p>
+                            </div>
                           )}
                       </div>
 
-                      {searchLanguage &&
-                        Object.entries(JUDGE0_LANGUAGES).filter(([id, name]) =>
-                          name
-                            .toLowerCase()
-                            .includes(searchLanguage.toLowerCase())
-                        ).length === 0 && (
-                          <div className="text-center py-12 px-4">
-                            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 mb-3">
-                              <Search className="h-6 w-6 text-slate-400" />
-                            </div>
-                            <h4 className="text-base font-medium text-slate-700 dark:text-slate-300 mb-1">
-                              No Results Found
-                            </h4>
-                            <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
-                              We couldn't find any programming language matching
-                              "{searchLanguage}"
-                            </p>
-                          </div>
-                        )}
-                    </div>
-
-                    <div className="border-t border-slate-200 dark:border-slate-700 px-4 py-3 flex justify-between items-center bg-gradient-to-r from-slate-50 to-white dark:from-slate-900 dark:to-slate-800">
-                      <div className="flex items-center">
-                        <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
-                        <div className="text-sm text-slate-600 dark:text-slate-300">
-                          Currently using:{" "}
-                          <span className="font-semibold text-indigo-600 dark:text-indigo-400 ml-1">
-                            {
-                              parseLanguageName(
-                                JUDGE0_LANGUAGES[
-                                  language as keyof typeof JUDGE0_LANGUAGES
-                                ]
-                              ).name
-                            }
-                          </span>
-                        </div>
-                      </div>
-                      {searchLanguage && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setSearchLanguage("")}
-                          className="h-8 text-xs border-indigo-200 dark:border-indigo-800/50 bg-white dark:bg-slate-800"
-                        >
-                          <X className="h-3.5 w-3.5 mr-1.5" />
-                          Clear Search
-                        </Button>
-                      )}
-                    </div>
-                  </PopoverContent>
-                </Popover>
-                {/* Move Focus Mode button to the right, before Format */}
-              </div>
-              <div className="flex items-center gap-2">
-                {/* Mobile Run and Submit buttons */}
-                {hasMounted && isMobile && (
-                  <div className="flex items-center gap-1.5">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="h-8 px-2 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/50"
-                      onClick={runCode}
-                      disabled={isRunning}
-                    >
-                      {isRunning ? (
-                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                      ) : (
-                        <Play className="h-3.5 w-3.5" />
-                      )}
-                      {!isRunning && <span className="text-xs ml-1">Run</span>}
-                    </Button>
-                    <Button
-                      size="sm"
-                      className="h-8 px-2 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white"
-                      onClick={submitCode}
-                      disabled={isSubmitting}
-                    >
-                      {isSubmitting ? (
-                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                      ) : (
-                        <Send className="h-3.5 w-3.5" />
-                      )}
-                      {!isSubmitting && (
-                        <span className="text-xs ml-1">Submit</span>
-                      )}
-                    </Button>
-                  </div>
-                )}
-
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={toggleFocusMode}
-                  className="gap-1.5 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/50 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hidden md:flex"
-                >
-                  {focusMode ? (
-                    <>
-                      <Minimize2 className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
-                      <span className="hidden sm:inline">Exit Focus</span>
-                    </>
-                  ) : (
-                    <>
-                      <Maximize2 className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
-                      <span className="hidden sm:inline">Focus Mode</span>
-                    </>
-                  )}
-                </Button>
-                {/* Format button with spinner and tooltip */}
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="hidden md:flex text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/50 hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
-                      onClick={formatCode}
-                      disabled={isFormatting}
-                    >
-                      {isFormatting ? (
-                        <>
-                          <span className="relative h-3.5 w-3.5 mr-1.5">
-                            <RotateCw className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400 animate-spin" />
-                            <span className="absolute inset-0 h-3.5 w-3.5 bg-indigo-100 dark:bg-indigo-900/30 rounded-full animate-ping opacity-75"></span>
-                          </span>
-                          <span>Formatting...</span>
-                        </>
-                      ) : formatSuccess ? (
-                        <>
-                          <span className="relative h-3.5 w-3.5 mr-1.5">
-                            <Check className="h-3.5 w-3.5 text-green-500 dark:text-green-400" />
-                            <span className="absolute inset-0 h-3.5 w-3.5 bg-green-100 dark:bg-green-900/30 rounded-full animate-ping opacity-75"></span>
-                          </span>
-                          <span className="text-green-600 dark:text-green-400">
-                            Formatted!
-                          </span>
-                        </>
-                      ) : noChangesNeeded ? (
-                        <>
-                          <span className="relative h-3.5 w-3.5 mr-1.5">
-                            <Check className="h-3.5 w-3.5 text-blue-500 dark:text-blue-400" />
-                          </span>
-                          <span className="text-blue-600 dark:text-blue-400">
-                            Already formatted
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          <Code className="h-3.5 w-3.5 mr-1.5 text-indigo-500 dark:text-indigo-400" />
-                          <span>Format</span>
-                        </>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-72 p-3 text-xs" align="end">
-                    <div className="text-slate-700 dark:text-slate-300 space-y-2.5">
-                      <div>
-                        <p className="font-medium text-sm">Format your code</p>
-                        <p className="text-slate-500 dark:text-slate-400 mt-1">
-                          Formats the code according to language-specific rules.
-                        </p>
-                      </div>
-
-                      <div className="border-t border-slate-200 dark:border-slate-700 pt-2.5">
-                        <p className="font-medium">Supported Languages:</p>
-                        <ul className="mt-1 space-y-1 text-slate-500 dark:text-slate-400">
-                          <li className="flex items-center">
-                            <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                            Java, JavaScript, TypeScript, Python, C, C++
-                          </li>
-                          <li className="flex items-center">
-                            <span className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
-                            Other languages use basic indentation
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div className="border-t border-slate-200 dark:border-slate-700 pt-2.5">
-                        <p className="font-medium">Keyboard shortcuts:</p>
-                        <div className="flex items-center mt-1">
-                          <kbd className="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 font-mono text-[10px] mr-1.5">
-                            {appTheme === "dark"
-                              ? "Shift+Alt+F"
-                              : "Alt+Shift+F"}
-                          </kbd>
-                          <span className="text-slate-500 dark:text-slate-400">
-                            or
-                          </span>
-                          <kbd className="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 font-mono text-[10px] mx-1.5">
-                            Ctrl+K
-                          </kbd>
-                          <kbd className="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 font-mono text-[10px]">
-                            Ctrl+F
-                          </kbd>
-                        </div>
-                      </div>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-700 dark:hover:text-indigo-30"
-                  asChild
-                >
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <span>
-                        <Settings className="h-4 w-4 cursor-pointer" />
-                      </span>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      align="end"
-                      className="w-72 p-0 border border-indigo-200/80 dark:border-indigo-800/50 shadow-xl rounded-xl overflow-hidden"
-                    >
-                      {/* Gradient purple header */}
-                      <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-600 dark:from-indigo-600 dark:via-purple-600 dark:to-indigo-700 p-4 relative flex items-center justify-between">
-                        <div className="absolute top-0 left-0 right-0 h-px bg-white/20"></div>
-                        <div className="absolute inset-0 bg-grid-white/[0.05] bg-[length:16px_16px]"></div>
-                        <h3 className="text-sm font-medium text-purple-900 dark:text-purple-100 flex items-center justify-between">
-                          <Settings className="h-4 w-4 mr-2 text-white/80" />
-                          <span className="text-white font-semibold">
-                            Editor Settings
-                          </span>
-                        </h3>
-                        <div className="h-5 w-5 rounded-full bg-white/10 flex items-center justify-center">
-                          <Code className="h-3 w-3 text-white/70" />
-                        </div>
-                      </div>
-
-                      <div className="p-4 bg-gradient-to-b from-white to-indigo-50/50 dark:from-slate-900 dark:to-purple-900/20 border-t border-indigo-100 dark:border-indigo-900/30">
-                        <div className="mb-4">
-                          <label className="text-xs font-medium mb-2 text-indigo-900 dark:text-indigo-100 flex items-center justify-between">
-                            <span className="flex items-center">
-                              <MonitorSmartphone className="h-3.5 w-3.5 mr-1.5 text-indigo-500 dark:text-indigo-300" />
-                              Theme
-                            </span>
-                            <span className="text-xs font-medium text-indigo-700 dark:text-indigo-300">
-                              {editorTheme === "vs-dark" ? "Dark" : "Light"}
-                            </span>
-                          </label>
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => setEditorTheme("vs-dark")}
-                              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 flex-1 ${
-                                editorTheme === "vs-dark"
-                                  ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-sm"
-                                  : "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-800/40"
-                              }`}
-                            >
-                              <span className="flex items-center justify-center">
-                                <Moon className="h-3 w-3 mr-1.5" />
-                                Dark
-                              </span>
-                            </button>
-                            <button
-                              onClick={() => setEditorTheme("light")}
-                              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 flex-1 ${
-                                editorTheme === "light"
-                                  ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-sm"
-                                  : "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-800/40"
-                              }`}
-                            >
-                              <span className="flex items-center justify-center">
-                                <Sun className="h-3 w-3 mr-1.5" />
-                                Light
-                              </span>
-                            </button>
-                          </div>
-                        </div>
-                        <div className="mb-4">
-                          <label className="text-xs font-medium mb-2 text-indigo-900 dark:text-indigo-100 flex items-center justify-between">
-                            <span className="flex items-center">
-                              <Type className="h-3.5 w-3.5 mr-1.5 text-indigo-500 dark:text-indigo-300" />
-                              Font Size
-                            </span>
-                            <span className="text-xs font-medium text-indigo-700 dark:text-indigo-300">
-                              {fontSize}px
-                            </span>
-                          </label>
-                          <div className="relative mt-2">
-                            <div className="h-1.5 bg-indigo-100 dark:bg-indigo-900/30 rounded-full w-full overflow-hidden">
-                              <div
-                                className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 dark:from-indigo-400 dark:to-purple-400"
-                                style={{
-                                  width: `${((fontSize - 12) / 12) * 100}%`,
-                                }}
-                              ></div>
-                            </div>
-                            <input
-                              type="range"
-                              min="12"
-                              max="24"
-                              value={fontSize}
-                              onChange={(e) =>
-                                setFontSize(Number(e.target.value))
+                      <div className="border-t border-slate-200 dark:border-slate-700 px-4 py-3 flex justify-between items-center bg-gradient-to-r from-slate-50 to-white dark:from-slate-900 dark:to-slate-800">
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
+                          <div className="text-sm text-slate-600 dark:text-slate-300">
+                            Currently using:{" "}
+                            <span className="font-semibold text-indigo-600 dark:text-indigo-400 ml-1">
+                              {
+                                parseLanguageName(
+                                  JUDGE0_LANGUAGES[
+                                    language as keyof typeof JUDGE0_LANGUAGES
+                                  ]
+                                ).name
                               }
-                              className="absolute inset-0 w-full h-1.5 opacity-0 cursor-pointer"
-                            />
-                          </div>
-                          <div className="flex justify-between mt-1.5">
-                            <span className="text-[10px] text-indigo-500/70 dark:text-indigo-400/70">
-                              12px
-                            </span>
-                            <span className="text-[10px] text-indigo-500/70 dark:text-indigo-400/70">
-                              24px
                             </span>
                           </div>
                         </div>
-                        <div className="mb-4">
-                          <label className="text-xs font-medium mb-2 text-indigo-900 dark:text-indigo-100 flex items-center justify-between">
-                            <span className="flex items-center">
-                              <Indent className="h-3.5 w-3.5 mr-1.5 text-indigo-500 dark:text-indigo-300" />
-                              Tab Size
-                            </span>
-                            <span className="text-xs font-medium text-indigo-700 dark:text-indigo-300">
-                              {tabSize} spaces
-                            </span>
-                          </label>
-                          <div className="relative mt-2">
-                            <div className="h-1.5 bg-indigo-100 dark:bg-indigo-900/30 rounded-full w-full overflow-hidden">
-                              <div
-                                className="h-full bg-gradient-to-r from-purple-500 to-pink-500 dark:from-purple-400 dark:to-pink-400"
-                                style={{
-                                  width: `${((tabSize - 2) / 6) * 100}%`,
-                                }}
-                              ></div>
-                            </div>
-                            <input
-                              type="range"
-                              min="2"
-                              max="8"
-                              value={tabSize}
-                              onChange={(e) =>
-                                setTabSize(Number(e.target.value))
-                              }
-                              className="absolute inset-0 w-full h-1.5 opacity-0 cursor-pointer"
-                            />
-                          </div>
-                          <div className="flex justify-between mt-1.5">
-                            <span className="text-[10px] text-indigo-500/70 dark:text-indigo-400/70">
-                              2 spaces
-                            </span>
-                            <span className="text-[10px] text-indigo-500/70 dark:text-indigo-400/70">
-                              8 spaces
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Footer with reset button */}
-                        <div className="pt-3 mt-3 border-t border-indigo-200 dark:border-indigo-800/50">
-                          <button
-                            onClick={() => setCode(preloadCode)}
-                            className="w-full py-2.5 rounded-lg bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-600 text-white font-medium text-xs hover:from-indigo-600 hover:via-purple-600 hover:to-indigo-700 transition-all duration-200 shadow-sm hover:shadow-md shadow-indigo-500/10 hover:shadow-indigo-500/20 relative overflow-hidden group"
+                        {searchLanguage && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setSearchLanguage("")}
+                            className="h-8 text-xs border-indigo-200 dark:border-indigo-800/50 bg-white dark:bg-slate-800"
                           >
-                            <span className="absolute inset-0 w-full h-full bg-[linear-gradient(90deg,rgba(255,255,255,0.1)_0%,rgba(255,255,255,0.2)_20%,rgba(255,255,255,0)_60%)] translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></span>
-                            <span className="relative flex items-center justify-center">
-                              <RefreshCw className="h-3 w-3 mr-1.5" />
-                              Reset Code
-                            </span>
-                          </button>
-                        </div>
+                            <X className="h-3.5 w-3.5 mr-1.5" />
+                            Clear Search
+                          </Button>
+                        )}
                       </div>
                     </PopoverContent>
                   </Popover>
-                </Button>
-              </div>
-            </div>
-
-            <div className="flex-1 overflow-auto" style={{ minHeight: 0 }}>
-              {/* Editor wrapper with subtle background gradient */}
-              <div className="h-full w-full relative bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900">
-                {editorLoading || initialLoading ? (
-                  <div className="flex items-center justify-center h-full w-full overflow-hidden">
-                    <div className="w-full h-full flex flex-col">
-                      {/* Premium skeleton loader */}
-                      <div className="h-full w-full relative overflow-hidden rounded-md">
-                        {/* Background with subtle gradient */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/40 to-purple-50/40 dark:from-indigo-900/10 dark:to-purple-900/10"></div>
-                        {/* Animated gradient overlay */}
-                        <div className="absolute inset-0 bg-[linear-gradient(110deg,transparent_33%,rgba(79,70,229,0.05)_50%,transparent_66%)] dark:bg-[linear-gradient(110deg,transparent_33%,rgba(79,70,229,0.1)_50%,transparent_66%)] bg-size-200 animate-shimmer"></div>
-                        {/* Content placeholder */}
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="space-y-8 w-1/2 max-w-md">
-                            <div className="flex items-center space-x-3">
-                              <div className="h-10 w-10 rounded-full bg-indigo-100/60 dark:bg-indigo-900/20 flex items-center justify-center">
-                                <Code className="h-5 w-5 text-indigo-400/60 dark:text-indigo-400/40" />
-                              </div>
-                              <div className="h-3 bg-indigo-200/60 dark:bg-indigo-700/30 rounded-md w-36"></div>
-                            </div>
-                            <div className="space-y-3">
-                              <div className="h-3 bg-slate-200/60 dark:bg-slate-700/30 rounded-md w-full"></div>
-                              <div className="h-3 bg-slate-200/60 dark:bg-slate-700/30 rounded-md w-5/6"></div>
-                              <div className="h-3 bg-slate-200/60 dark:bg-slate-700/30 rounded-md w-4/6"></div>
-                            </div>
-                            <div className="space-y-3">
-                              <div className="h-3 bg-indigo-200/40 dark:bg-indigo-800/20 rounded-md w-full"></div>
-                              <div className="h-3 bg-indigo-200/40 dark:bg-indigo-800/20 rounded-md w-3/4"></div>
-                              <div className="h-3 bg-indigo-200/40 dark:bg-indigo-800/20 rounded-md w-5/6"></div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <CodeEditor
-                    code={code}
-                    onChange={setCode}
-                    language={language}
-                    theme={editorTheme}
-                    fontSize={fontSize}
-                    tabSize={tabSize}
-                    onEditorMount={(editor, monaco) => {
-                      // Keep the editor references
-                      editorRef.current = editor;
-                      monacoRef.current = monaco;
-
-                      // Call our new handler to load code correctly
-                      handleEditorDidMount(editor, monaco);
-                    }}
-                  />
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Vertical resizer - only visible on desktop */}
-          {!isMobile && (
-            <div
-              className="relative h-1 w-full flex-shrink-0 z-10 group cursor-ns-resize"
-              onMouseDown={startVerticalResize}
-            >
-              <div className="absolute inset-0 h-1 w-full bg-indigo-100 dark:bg-indigo-900/30 group-hover:bg-indigo-300 dark:group-hover:bg-indigo-700/50 transition-colors duration-300"></div>
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-6 w-12 bg-white dark:bg-slate-800 rounded-md border border-indigo-200 dark:border-indigo-800/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-sm">
-                <Grip className="h-4 w-4 text-indigo-500 dark:text-indigo-400 rotate-90" />
-              </div>
-            </div>
-          )}
-
-          {/* Results panel */}
-          <div
-            className={`flex flex-col overflow-hidden ${
-              hasMounted && isMobile
-                ? activePanel === "results"
-                  ? "block"
-                  : "hidden"
-                : ""
-            } ${hasMounted && isMobile ? "pb-24" : ""}`}
-            style={{
-              flexBasis:
-                hasMounted && isMobile ? "100%" : `${100 - editorHeight}%`,
-              flexGrow: 0,
-              flexShrink: 0,
-              minHeight: 0,
-              maxHeight:
-                hasMounted && isMobile ? "100%" : `${100 - editorHeight}%`,
-              height: hasMounted && isMobile ? "100%" : undefined,
-              transition: "all 0.3s ease-in-out", // Add smooth transition
-            }}
-          >
-            <div className="flex items-center justify-between p-2 md:p-3 bg-white dark:bg-black ">
-              <div className="flex items-center gap-2">
-                <Terminal className="h-4 w-4 text-indigo-500 dark:text-indigo-400" />
-                <span className="font-medium text-slate-700 dark:text-slate-300">
-                  Results
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900/30 text-slate-500 dark:text-slate-400 hover:text-indigo-700 dark:hover:text-indigo-300"
-                  onClick={toggleResultsPanelFullscreen}
-                  aria-label={
-                    isResultsPanelFullscreen ? "Exit fullscreen" : "Fullscreen"
-                  }
-                >
-                  {isResultsPanelFullscreen ? (
-                    <Minimize2 className="h-4 w-4" />
-                  ) : (
-                    <Maximize2 className="h-4 w-4" />
-                  )}
-                </Button>
-              </div>
-            </div>
-
-            {/* Results Content */}
-            <div className="flex-1 relative bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-800/80 overflow-auto pb-20">
-              {/* Background decorative elements */}
-              <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-indigo-50/50 dark:bg-indigo-900/20 rounded-full blur-3xl -z-0"></div>
-              <div className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-purple-50/30 dark:bg-purple-900/10 rounded-full blur-3xl -z-0"></div>
-
-              {/* Tabs for Results Panel */}
-              <Tabs
-                value={activeTab}
-                onValueChange={setActiveTab}
-                className="w-full p-4 relative z-10"
-              >
-                <TabsList className="flex flex-nowrap justify-start overflow-x-auto overflow-y-hidden px-3 scroll-pl-2 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-indigo-200 dark:scrollbar-thumb-indigo-900/40 bg-slate-100 dark:bg-slate-800/70 rounded-lg backdrop-blur-sm border border-slate-200/80 dark:border-slate-700/30 shadow-sm mb-3 gap-1.5 p-2">
-                  <TabsTrigger
-                    value="sample"
-                    className="flex-shrink-0 min-w-[140px] px-3 rounded-md py-1.5 data-[state=active]:bg-white data-[state=active]:dark:bg-black/95 data-[state=active]:text-indigo-700 data-[state=active]:dark:text-indigo-30 data-[state=active]:shadow-sm relative overflow-hidden group"
-                  >
-                    <div className="absolute inset-0 opacity-0 group-data-[state=active]:opacity-100 transition-opacity">
-                      <div className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
-                    </div>
-                    <FileText className="h-3.5 w-3.5 mr-1.5 text-indigo-500/70 dark:text-indigo-400/70 group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400" />
-                    Sample Testcases
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="hidden"
-                    className="flex-shrink-0 min-w-[140px] px-3 rounded-md py-1.5 data-[state=active]:bg-white data-[state=active]:dark:bg-black/95 data-[state=active]:text-indigo-700 data-[state=active]:dark:text-indigo-30 data-[state=active]:shadow-sm relative overflow-hidden group"
-                  >
-                    <div className="absolute inset-0 opacity-0 group-data-[state=active]:opacity-100 transition-opacity">
-                      <div className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
-                    </div>
-                    <BarChart2 className="h-3.5 w-3.5 mr-1.5 text-indigo-500/70 dark:text-indigo-400/70 group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400" />
-                    Hidden Testcases
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="custom"
-                    className="flex-shrink-0 min-w-[140px] px-3 rounded-md py-1.5 data-[state=active]:bg-white data-[state=active]:dark:bg-black/95 data-[state=active]:text-indigo-700 data-[state=active]:dark:text-indigo-30 data-[state=active]:shadow-sm relative overflow-hidden group"
-                  >
-                    <div className="absolute inset-0 opacity-0 group-data-[state=active]:opacity-100 transition-opacity">
-                      <div className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
-                    </div>
-                    <Sparkles className="h-3.5 w-3.5 mr-1.5 text-indigo-500/70 dark:text-indigo-400/70 group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400" />
-                    Custom Testcase
-                  </TabsTrigger>
-                </TabsList>
-
-                {/* Sample Testcases Tab */}
-                <TabsContent
-                  value="sample"
-                  className="focus-visible:outline-none focus-visible:ring-0"
-                >
-                  {showEvaluatingSkeletons && skeletonTab === "sample" ? (
-                    <div className="space-y-4 animate-in fade-in-50 slide-in-from-bottom-3 duration-300">
-                      {/* Summary skeleton */}
-                      <div className="flex items-center justify-between mb-2">
-                        <Skeleton className="h-5 w-40 bg-slate-200/70 dark:bg-slate-700/50" />
-                        <Skeleton className="h-6 w-28 rounded-full bg-slate-200/70 dark:bg-slate-700/50" />
-                      </div>
-
-                      {/* Test cases skeletons */}
-                      <div className="bg-white dark:bg-black rounded-lg shadow-sm overflow-hidden border border-slate-200 dark:border-slate-700/50">
-                        {/* Header skeleton */}
-                        <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700/50 bg-gradient-to-r from-slate-50 to-slate-100/50 dark:from-slate-800/70 dark:to-slate-800/50 flex justify-between">
-                          <div className="flex items-center gap-2">
-                            <Skeleton className="h-6 w-6 rounded-full bg-slate-200/70 dark:bg-slate-700/50" />
-                            <Skeleton className="h-5 w-24 bg-slate-200/70 dark:bg-slate-700/50" />
-                          </div>
-                          <Skeleton className="h-6 w-20 rounded-full bg-slate-200/70 dark:bg-slate-700/50" />
-                        </div>
-
-                        {/* Content skeleton */}
-                        <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {/* Input skeleton */}
-                          <div className="rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700/50">
-                            <div className="bg-slate-50 dark:bg-slate-800/60 px-3 py-1.5 border-b border-slate-200 dark:border-slate-700/50">
-                              <Skeleton className="h-4 w-16 bg-slate-200/70 dark:bg-slate-700/50" />
-                            </div>
-                            <div className="p-3 space-y-2">
-                              <Skeleton className="h-4 w-full bg-slate-200/70 dark:bg-slate-700/50" />
-                              <Skeleton className="h-4 w-3/4 bg-slate-200/70 dark:bg-slate-700/50" />
-                              <Skeleton className="h-4 w-1/2 bg-slate-200/70 dark:bg-slate-700/50" />
-                            </div>
-                          </div>
-
-                          {/* Expected Output skeleton */}
-                          <div className="rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700/50">
-                            <div className="bg-slate-50 dark:bg-slate-800/60 px-3 py-1.5 border-b border-slate-200 dark:border-slate-700/50">
-                              <Skeleton className="h-4 w-36 bg-slate-200/70 dark:bg-slate-700/50" />
-                            </div>
-                            <div className="p-3 space-y-2">
-                              <Skeleton className="h-4 w-full bg-slate-200/70 dark:bg-slate-700/50" />
-                              <Skeleton className="h-4 w-2/3 bg-slate-200/70 dark:bg-slate-700/50" />
-                              <Skeleton className="h-4 w-1/4 bg-slate-200/70 dark:bg-slate-700/50" />
-                            </div>
-                          </div>
-
-                          {/* Your Output skeleton - professional loading style */}
-                          <div className="rounded-lg overflow-hidden md:col-span-2 border border-indigo-200 dark:border-indigo-900/30 relative">
-                            <div className="absolute inset-0 bg-gradient-to-r from-indigo-50/50 via-purple-50/50 to-indigo-50/50 dark:from-indigo-900/20 dark:via-purple-900/20 dark:to-indigo-900/20 animate-gradient-x"></div>
-                            <div className="px-3 py-1.5 border-b border-indigo-200 dark:border-indigo-900/30 bg-slate-50 dark:bg-slate-800/60 relative z-10 flex justify-between items-center">
-                              <div className="flex items-center space-x-2">
-                                <div className="h-2.5 w-2.5 rounded-full bg-indigo-500 animate-pulse-opacity"></div>
-                                <span className="text-xs font-medium text-indigo-700 dark:text-indigo-300">
-                                  Executing the code...
-                                </span>
-                              </div>
-                            </div>
-                            <div className="relative z-10">
-                              <div className="p-3 space-y-2">
-                                <Skeleton className="h-5 w-full bg-indigo-100/70 dark:bg-indigo-900/30" />
-                                <Skeleton className="h-5 w-4/5 bg-indigo-100/70 dark:bg-indigo-900/30" />
-                                <Skeleton className="h-5 w-2/3 bg-indigo-100/70 dark:bg-indigo-900/30" />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Footer skeleton */}
-                        <div className="bg-slate-50 dark:bg-slate-800/50 px-4 py-2 border-t border-slate-200 dark:border-slate-700/50 flex justify-between items-center">
-                          <Skeleton className="h-4 w-32 bg-slate-200/70 dark:bg-slate-700/50" />
-                          <Skeleton className="h-4 w-32 bg-slate-200/70 dark:bg-slate-700/50" />
-                        </div>
-                      </div>
-                    </div>
-                  ) : sampleTestResults.length > 0 && activeTab === "sample" ? (
-                    <div className="space-y-4 animate-in fade-in-50 slide-in-from-bottom-3 duration-500">
-                      {/* Summary badge */}
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="text-sm text-slate-700 dark:text-slate-300">
-                          <span className="font-medium">
-                            {sampleTestResults.length}
-                          </span>{" "}
-                          sample test cases evaluated
-                        </div>
-                        {sampleExecutionStatus && (
-                          <div
-                            className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium shadow-sm
-                            ${
-                              sampleExecutionStatus === "success"
-                                ? "bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200/70 dark:border-green-900/30 text-green-700 dark:text-green-400"
-                                : sampleExecutionStatus === "warning"
-                                ? "bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border border-amber-200/70 dark:border-amber-900/30 text-amber-700 dark:text-amber-400"
-                                : "bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 border border-red-200/70 dark:border-red-900/30 text-red-700 dark:text-red-400"
-                            }`}
-                          >
-                            {sampleExecutionStatus === "success" ? (
-                              <>
-                                <Check className="h-3 w-3 mr-1.5" />
-                                All Sample Testcases Passed
-                              </>
-                            ) : sampleExecutionStatus === "warning" ? (
-                              <>
-                                <AlertTriangle className="h-3 w-3 mr-1.5" />
-                                Partially Passed
-                              </>
-                            ) : (
-                              <>
-                                <XCircle className="h-3 w-3 mr-1.5" />
-                                No Sample Testcases Passed
-                              </>
-                            )}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Nested tabs for multiple test cases */}
-                      <Tabs
-                        defaultValue={`sample-testcase-0`}
-                        className="w-full"
+                  {/* Move Focus Mode button to the right, before Format */}
+                </div>
+                <div className="flex items-center gap-2">
+                  {/* Mobile Run and Submit buttons */}
+                  {hasMounted && isMobile && (
+                    <div className="flex items-center gap-1.5">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-8 px-2 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/50"
+                        onClick={runCode}
+                        disabled={isRunning}
                       >
-                        <TabsList className="flex flex-nowrap overflow-x-auto px-3 scrollbar-thin scrollbar-thumb-indigo-200 dark:scrollbar-thumb-indigo-900/40 bg-gradient-to-r from-slate-100/90 to-indigo-50/80 dark:from-slate-800/70 dark:to-indigo-900/30 rounded-lg backdrop-blur-sm border border-slate-200/80 dark:border-slate-700/30 shadow-sm mb-3 gap-1.5 p-2">
-                          {sampleTestResults.map((result, idx) => (
-                            <TabsTrigger
-                              key={`sample-trigger-${result.id || idx}`}
-                              value={`sample-testcase-${idx}`}
-                              className="flex-shrink-0 min-w-[85px] rounded-md py-2 data-[state=active]:bg-white data-[state=active]:dark:bg-black/95 data-[state=active]:text-indigo-700 data-[state=active]:dark:text-indigo-30 data-[state=active]:shadow-sm relative overflow-hidden group transition-all duration-150"
-                            >
-                              <div className="absolute inset-0 opacity-0 group-data-[state=active]:opacity-100 transition-opacity duration-300">
-                                <div className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
-                                <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-purple-50/30 dark:from-indigo-900/30 dark:to-purple-900/20 opacity-0 group-data-[state=active]:opacity-100 transition-opacity"></div>
-                              </div>
-                              <div className="flex items-center justify-center gap-1.5">
-                                <div
-                                  className={`w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-medium
-                                  ${
-                                    result.isCorrect
-                                      ? "bg-gradient-to-br from-green-500 to-emerald-600"
-                                      : "bg-gradient-to-br from-red-500 to-rose-600"
-                                  }`}
-                                >
-                                  {result.isCorrect ? (
-                                    <Check className="h-3 w-3" />
-                                  ) : (
-                                    <X className="h-3 w-3" />
-                                  )}
-                                </div>
-                                <span className="font-medium text-sm group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400">
-                                  Test {idx + 1}
-                                </span>
-                              </div>
-                              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent opacity-0 group-hover:opacity-100 group-data-[state=active]:opacity-0 transition-opacity"></div>
-                            </TabsTrigger>
-                          ))}
-                        </TabsList>
+                        {isRunning ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          <Play className="h-3.5 w-3.5" />
+                        )}
+                        {!isRunning && (
+                          <span className="text-xs ml-1">Run</span>
+                        )}
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="h-8 px-2 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white"
+                        onClick={submitCode}
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          <Send className="h-3.5 w-3.5" />
+                        )}
+                        {!isSubmitting && (
+                          <span className="text-xs ml-1">Submit</span>
+                        )}
+                      </Button>
+                    </div>
+                  )}
 
-                        {sampleTestResults.map((result, idx) => (
-                          <TabsContent
-                            key={`sample-content-${result.id || idx}`}
-                            value={`sample-testcase-${idx}`}
-                            className="focus-visible:outline-none focus-visible:ring-0"
-                          >
-                            <div className="bg-white dark:bg-black rounded-lg shadow-sm overflow-hidden border border-slate-200 dark:border-slate-700/50">
-                              <div
-                                className={`px-4 py-2 border-b border-slate-200 dark:border-slate-700/50 flex items-center justify-between
-                                ${
-                                  result.isCorrect
-                                    ? "bg-gradient-to-r from-green-50 to-green-100/50 dark:from-green-900/20 dark:to-green-900/10"
-                                    : result.verdict ===
-                                        "Time Limit Exceeded" ||
-                                      (result.status &&
-                                        result.status.id === 5) ||
-                                      result.verdict
-                                        ?.toLowerCase()
-                                        ?.includes("time limit")
-                                    ? "bg-gradient-to-r from-amber-50 to-amber-100/50 dark:from-amber-900/20 dark:to-amber-900/10"
-                                    : result.verdict === "Compilation Error" ||
-                                      result.compileOutput
-                                    ? "bg-gradient-to-r from-amber-50 to-amber-100/50 dark:from-amber-900/20 dark:to-amber-900/10"
-                                    : "bg-gradient-to-r from-red-50 to-red-100/50 dark:from-red-900/20 dark:to-red-900/10"
+                  <TooltipProvider delayDuration={0}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          onClick={toggleFocusMode}
+                          className="bg-transparent hover:bg-[#484848] rounded-[8px] p-2 transition-colors duration-300"
+                        >
+                          {focusMode ? <LuMinimize /> : <LuMaximize />}
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side="top"
+                        align="center"
+                        className="w-fit p-2 px-3 rounded-sm bg-[#1f1f1f] text-xs border border-[#444444]"
+                      >
+                        {focusMode ? "Exit Focus Mode" : "Focus Mode"}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  {/* Format button with spinner and tooltip */}
+                  <TooltipProvider delayDuration={0}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          className="bg-transparent hover:bg-[#484848] rounded-[8px] p-2 transition-colors duration-300"
+                          onClick={async () => {
+                            await formatCode();
+                            setFormatSuccess(true);
+                            setTimeout(() => setFormatSuccess(false), 1500);
+                          }}
+                          disabled={isFormatting}
+                        >
+                          {isFormatting ? (
+                            <CgFormatLeft className="animate-pulse" />
+                          ) : formatSuccess ? (
+                            <Check className="h-3.5 w-3.5 text-green-500 dark:text-green-400" />
+                          ) : (
+                            <CgFormatLeft />
+                          )}
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side="top"
+                        align="center"
+                        className="w-fit p-2  px-3 rounded-sm bg-[#1f1f1f] text-xs border border-[#444444]"
+                      >
+                        Format
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-700 dark:hover:text-indigo-30"
+                    asChild
+                  >
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <div className="bg-transparent hover:bg-[#484848] rounded-[8px] p-2 transition-colors duration-300">
+                          <span>
+                            <Settings className="h-4 w-4 cursor-pointer" />
+                          </span>
+                        </div>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        align="end"
+                        className="w-80 p-0 border border-gray-700 shadow-xl rounded-xl overflow-hidden"
+                      >
+                        {/* Dark header with subtle gradient */}
+                        <div className="bg-gradient-to-r from-[#1a1a1a] via-[#252525] to-[#1a1a1a] p-4 relative flex items-center justify-between">
+                          <div className="absolute top-0 left-0 right-0 h-px bg-white/10"></div>
+                          <div className="absolute inset-0 bg-grid-white/[0.03] bg-[length:16px_16px]"></div>
+                          <h3 className="text-sm font-medium text-gray-200 flex items-center">
+                            <Settings className="h-4 w-4 mr-2 text-gray-400" />
+                            <span className="font-semibold">
+                              Editor Settings
+                            </span>
+                          </h3>
+                          <div className="h-6 w-6 rounded-full bg-[#333] flex items-center justify-center shadow-inner">
+                            <Code className="h-3.5 w-3.5 text-gray-300" />
+                          </div>
+                        </div>
+
+                        <div className="p-5 bg-[#1f1f1f] border-t border-gray-800">
+                          {/* Theme selector */}
+                          <div className="mb-5">
+                            <label className="text-xs font-medium mb-2.5 text-gray-300 flex items-center justify-between">
+                              <span className="flex items-center">
+                                <MonitorSmartphone className="h-3.5 w-3.5 mr-1.5 text-gray-400" />
+                                Theme
+                              </span>
+                              <span className="text-xs font-medium text-gray-400">
+                                {editorTheme === "vs-dark" ? "Dark" : "Light"}
+                              </span>
+                            </label>
+                            <div className="flex gap-2 mt-1.5">
+                              <button
+                                onClick={() => setEditorTheme("vs-dark")}
+                                className={`px-3 py-2 rounded-md text-xs font-medium transition-all duration-200 flex-1 ${
+                                  editorTheme === "vs-dark"
+                                    ? "bg-gradient-to-r from-[#333] to-[#222] text-white shadow-md border border-gray-700"
+                                    : "bg-[#2a2a2a] text-gray-400 hover:bg-[#333] border border-gray-700/50"
                                 }`}
                               >
-                                <div className="flex items-center gap-2">
-                                  <div
-                                    className={`w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-medium
-                                    ${
-                                      result.isCorrect
-                                        ? "bg-green-500"
-                                        : result.verdict ===
-                                            "Time Limit Exceeded" ||
-                                          (result.status &&
-                                            result.status.id === 5) ||
-                                          result.verdict
-                                            ?.toLowerCase()
-                                            ?.includes("time limit")
-                                        ? "bg-amber-500"
-                                        : result.verdict ===
-                                            "Compilation Error" ||
-                                          result.compileOutput
-                                        ? "bg-amber-500"
-                                        : "bg-red-500"
-                                    }`}
-                                  >
-                                    {idx + 1}
-                                  </div>
-                                  <span className="font-medium text-slate-700 dark:text-slate-300">
-                                    {result.isCorrect
-                                      ? "Passed"
-                                      : result.verdict ===
-                                          "Time Limit Exceeded" ||
-                                        (result.status &&
-                                          result.status.id === 5) ||
-                                        result.verdict
-                                          ?.toLowerCase()
-                                          ?.includes("time limit")
-                                      ? "Time Limit Exceeded"
-                                      : result.verdict ===
-                                          "Compilation Error" ||
-                                        result.compileOutput
-                                      ? "Compilation Error"
-                                      : "Failed"}
-                                  </span>
-                                </div>
+                                <span className="flex items-center justify-center">
+                                  <Moon className="h-3.5 w-3.5 mr-1.5" />
+                                  Dark
+                                </span>
+                              </button>
+                              <button
+                                onClick={() => setEditorTheme("light")}
+                                className={`px-3 py-2 rounded-md text-xs font-medium transition-all duration-200 flex-1 ${
+                                  editorTheme === "light"
+                                    ? "bg-gradient-to-r from-[#333] to-[#222] text-white shadow-md border border-gray-700"
+                                    : "bg-[#2a2a2a] text-gray-400 hover:bg-[#333] border border-gray-700/50"
+                                }`}
+                              >
+                                <span className="flex items-center justify-center">
+                                  <Sun className="h-3.5 w-3.5 mr-1.5" />
+                                  Light
+                                </span>
+                              </button>
+                            </div>
+                          </div>
 
-                                <div className="flex items-center">
-                                  <span
-                                    className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium
-                                    ${
-                                      result.isCorrect
-                                        ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                                        : result.verdict ===
-                                            "Time Limit Exceeded" ||
-                                          (result.status &&
-                                            result.status.id === 5) ||
-                                          result.verdict
-                                            ?.toLowerCase()
-                                            ?.includes("time limit")
-                                        ? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400"
-                                        : result.verdict ===
-                                            "Compilation Error" ||
-                                          result.compileOutput
-                                        ? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400"
-                                        : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
-                                    }`}
-                                  >
-                                    {result.isCorrect ? (
-                                      <>
-                                        <Check className="h-3 w-3 mr-1" />
-                                        Correct
-                                      </>
-                                    ) : result.verdict ===
-                                        "Time Limit Exceeded" ||
-                                      (result.status &&
-                                        result.status.id === 5) ||
-                                      result.verdict
-                                        ?.toLowerCase()
-                                        ?.includes("time limit") ? (
-                                      <>
-                                        <Clock className="h-3 w-3 mr-1" />
-                                        Time Limit
-                                      </>
-                                    ) : result.verdict ===
-                                        "Compilation Error" ||
-                                      result.compileOutput ? (
-                                      <>
-                                        <AlertTriangle className="h-3 w-3 mr-1" />
-                                        Compile Error
-                                      </>
-                                    ) : (
-                                      <>
-                                        <X className="h-3 w-3 mr-1" />
-                                        Incorrect
-                                      </>
-                                    )}
+                          {/* Font size slider with improved UX */}
+                          <div className="mb-5">
+                            <label className="text-xs font-medium mb-2.5 text-gray-300 flex items-center justify-between">
+                              <span className="flex items-center">
+                                <Type className="h-3.5 w-3.5 mr-1.5 text-gray-400" />
+                                Font Size
+                              </span>
+                              <span className="text-xs font-medium text-gray-400 bg-[#2a2a2a] px-2 py-0.5 rounded-md border border-gray-700/50">
+                                {fontSize}px
+                              </span>
+                            </label>
+                            <div className="relative mt-3 px-1">
+                              <div className="h-1 bg-[#333] rounded-full w-full overflow-hidden">
+                                <div
+                                  className="h-full bg-gradient-to-r from-gray-500 to-gray-600"
+                                  style={{
+                                    width: `${((fontSize - 12) / 12) * 100}%`,
+                                  }}
+                                ></div>
+                              </div>
+                              <div
+                                className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white shadow-md border border-gray-400"
+                                style={{
+                                  left: `calc(${
+                                    ((fontSize - 12) / 12) * 100
+                                  }% - 6px)`,
+                                }}
+                              ></div>
+                              <input
+                                type="range"
+                                min="12"
+                                max="24"
+                                value={fontSize}
+                                onChange={(e) =>
+                                  setFontSize(Number(e.target.value))
+                                }
+                                className="absolute inset-0 w-full h-6 opacity-0 cursor-pointer"
+                                style={{ marginTop: "-10px" }}
+                              />
+                            </div>
+                            <div className="flex justify-between mt-2 px-1">
+                              <span className="text-[10px] text-gray-500">
+                                12px
+                              </span>
+                              <div className="flex space-x-4 text-[10px] text-gray-500">
+                                <span>16px</span>
+                                <span>20px</span>
+                              </div>
+                              <span className="text-[10px] text-gray-500">
+                                24px
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Tab size slider with improved UX */}
+                          <div className="mb-5">
+                            <label className="text-xs font-medium mb-2.5 text-gray-300 flex items-center justify-between">
+                              <span className="flex items-center">
+                                <Indent className="h-3.5 w-3.5 mr-1.5 text-gray-400" />
+                                Tab Size
+                              </span>
+                              <span className="text-xs font-medium text-gray-400 bg-[#2a2a2a] px-2 py-0.5 rounded-md border border-gray-700/50">
+                                {tabSize} spaces
+                              </span>
+                            </label>
+                            <div className="relative mt-3 px-1">
+                              <div className="h-1 bg-[#333] rounded-full w-full overflow-hidden">
+                                <div
+                                  className="h-full bg-gradient-to-r from-gray-500 to-gray-600"
+                                  style={{
+                                    width: `${((tabSize - 2) / 6) * 100}%`,
+                                  }}
+                                ></div>
+                              </div>
+                              <div
+                                className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white shadow-md border border-gray-400"
+                                style={{
+                                  left: `calc(${
+                                    ((tabSize - 2) / 6) * 100
+                                  }% - 6px)`,
+                                }}
+                              ></div>
+                              <input
+                                type="range"
+                                min="2"
+                                max="8"
+                                step="2"
+                                value={tabSize}
+                                onChange={(e) =>
+                                  setTabSize(Number(e.target.value))
+                                }
+                                className="absolute inset-0 w-full h-6 opacity-0 cursor-pointer"
+                                style={{ marginTop: "-10px" }}
+                              />
+                            </div>
+                            <div className="flex justify-between mt-2 px-1">
+                              <span className="text-[10px] text-gray-500">
+                                2
+                              </span>
+                              <span className="text-[10px] text-gray-500">
+                                4
+                              </span>
+                              <span className="text-[10px] text-gray-500">
+                                6
+                              </span>
+                              <span className="text-[10px] text-gray-500">
+                                8
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Additional settings */}
+                          <div className="mb-5">
+                            <label className="text-xs font-medium mb-2.5 text-gray-300 flex items-center">
+                              <Sliders className="h-3.5 w-3.5 mr-1.5 text-gray-400" />
+                              Additional Options
+                            </label>
+                            <div className="space-y-2 mt-2">
+                              <div className="flex items-center justify-between bg-[#2a2a2a] px-3 py-2 rounded-md border border-gray-700/50">
+                                <span className="text-xs text-gray-300 flex items-center">
+                                  <WrapText className="h-3.5 w-3.5 mr-1.5 text-gray-400" />
+                                  Word Wrap
+                                </span>
+                                <Switch className="h-4 w-7" />
+                              </div>
+                              <div className="flex items-center justify-between bg-[#2a2a2a] px-3 py-2 rounded-md border border-gray-700/50">
+                                <span className="text-xs text-gray-300 flex items-center">
+                                  <LineChart className="h-3.5 w-3.5 mr-1.5 text-gray-400" />
+                                  Line Numbers
+                                </span>
+                                <Switch className="h-4 w-7" checked />
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Footer with reset button */}
+                          <div className="pt-3 mt-4 border-t border-gray-800 flex space-x-3">
+                            
+                            <button
+                              onClick={() => formatCode()}
+                              className="flex-1 py-2.5 rounded-lg bg-[#2a2a2a] text-gray-300 font-medium text-xs hover:bg-[#333] transition-all duration-200 border border-gray-700/50 hover:border-gray-700 relative overflow-hidden group"
+                            >
+                              <span className="relative flex items-center justify-center">
+                                <AlignLeft className="h-3.5 w-3.5 mr-1.5" />
+                                Format Code
+                              </span>
+                            </button>
+                          </div>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                  </Button>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-auto" style={{ minHeight: 0 }}>
+                {/* Editor wrapper with subtle background gradient */}
+                <div className="h-full w-full relative bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900">
+                  {editorLoading || initialLoading ? (
+                    <div className="flex items-center justify-center h-full w-full overflow-hidden">
+                      <div className="w-full h-full flex flex-col">
+                        {/* Premium skeleton loader */}
+                        <div className="h-full w-full relative overflow-hidden rounded-md">
+                          {/* Background with subtle gradient */}
+                          <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/40 to-purple-50/40 dark:from-indigo-900/10 dark:to-purple-900/10"></div>
+                          {/* Animated gradient overlay */}
+                          <div className="absolute inset-0 bg-[linear-gradient(110deg,transparent_33%,rgba(79,70,229,0.05)_50%,transparent_66%)] dark:bg-[linear-gradient(110deg,transparent_33%,rgba(79,70,229,0.1)_50%,transparent_66%)] bg-size-200 animate-shimmer"></div>
+                          {/* Content placeholder */}
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="space-y-8 w-1/2 max-w-md">
+                              <div className="flex items-center space-x-3">
+                                <div className="h-10 w-10 rounded-full bg-indigo-100/60 dark:bg-indigo-900/20 flex items-center justify-center">
+                                  <Code className="h-5 w-5 text-indigo-400/60 dark:text-indigo-400/40" />
+                                </div>
+                                <div className="h-3 bg-indigo-200/60 dark:bg-indigo-700/30 rounded-md w-36"></div>
+                              </div>
+                              <div className="space-y-3">
+                                <div className="h-3 bg-slate-200/60 dark:bg-slate-700/30 rounded-md w-full"></div>
+                                <div className="h-3 bg-slate-200/60 dark:bg-slate-700/30 rounded-md w-5/6"></div>
+                                <div className="h-3 bg-slate-200/60 dark:bg-slate-700/30 rounded-md w-4/6"></div>
+                              </div>
+                              <div className="space-y-3">
+                                <div className="h-3 bg-indigo-200/40 dark:bg-indigo-800/20 rounded-md w-full"></div>
+                                <div className="h-3 bg-indigo-200/40 dark:bg-indigo-800/20 rounded-md w-3/4"></div>
+                                <div className="h-3 bg-indigo-200/40 dark:bg-indigo-800/20 rounded-md w-5/6"></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <CodeEditor
+                      code={code}
+                      onChange={setCode}
+                      language={language}
+                      theme={editorTheme}
+                      fontSize={fontSize}
+                      tabSize={tabSize}
+                      onEditorMount={(editor, monaco) => {
+                        // Keep the editor references
+                        editorRef.current = editor;
+                        monacoRef.current = monaco;
+
+                        // Call our new handler to load code correctly
+                        handleEditorDidMount(editor, monaco);
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Vertical resizer - only visible on desktop */}
+            {!isMobile && (
+              <div
+                className="relative h-1 w-full flex-shrink-0 z-10 group cursor-ns-resize"
+                onMouseDown={startVerticalResize}
+              >
+                <div className="absolute inset-0 h-1 w-full bg-indigo-100 dark:bg-indigo-900/30 group-hover:bg-indigo-300 dark:group-hover:bg-indigo-700/50 transition-colors duration-300"></div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-6 w-12 bg-white dark:bg-slate-800 rounded-md border border-indigo-200 dark:border-indigo-800/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-sm">
+                  <Grip className="h-4 w-4 text-indigo-500 dark:text-indigo-400 rotate-90" />
+                </div>
+              </div>
+            )}
+
+            {/* Results panel */}
+            <div
+              className={`flex flex-col overflow-hidden ${
+                hasMounted && isMobile
+                  ? activePanel === "results"
+                    ? "block"
+                    : "hidden"
+                  : ""
+              } ${hasMounted && isMobile ? "pb-24" : ""}`}
+              style={{
+                flexBasis:
+                  hasMounted && isMobile ? "100%" : `${100 - editorHeight}%`,
+                flexGrow: 0,
+                flexShrink: 0,
+                minHeight: 0,
+                maxHeight:
+                  hasMounted && isMobile ? "100%" : `${100 - editorHeight}%`,
+                height: hasMounted && isMobile ? "100%" : undefined,
+                transition: "all 0.3s ease-in-out", // Add smooth transition
+              }}
+            >
+              <div className="flex items-center justify-between p-2 md:p-3 bg-white dark:bg-black ">
+                <div className="flex items-center gap-2">
+                  <Terminal className="h-4 w-4 text-indigo-500 dark:text-indigo-400" />
+                  <span className="font-medium text-slate-700 dark:text-slate-300">
+                    Results
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900/30 text-slate-500 dark:text-slate-400 hover:text-indigo-700 dark:hover:text-indigo-300"
+                    onClick={toggleResultsPanelFullscreen}
+                    aria-label={
+                      isResultsPanelFullscreen
+                        ? "Exit fullscreen"
+                        : "Fullscreen"
+                    }
+                  >
+                    {isResultsPanelFullscreen ? (
+                      <Minimize2 className="h-4 w-4" />
+                    ) : (
+                      <Maximize2 className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Results Content */}
+              <div className="flex-1 relative bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-800/80 overflow-auto pb-20">
+                {/* Background decorative elements */}
+                <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-indigo-50/50 dark:bg-indigo-900/20 rounded-full blur-3xl -z-0"></div>
+                <div className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-purple-50/30 dark:bg-purple-900/10 rounded-full blur-3xl -z-0"></div>
+
+                {/* Tabs for Results Panel */}
+                <Tabs
+                  value={activeTab}
+                  onValueChange={setActiveTab}
+                  className="w-full p-4 relative z-10"
+                >
+                  <TabsList className="flex flex-nowrap justify-start overflow-x-auto overflow-y-hidden px-3 scroll-pl-2 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-indigo-200 dark:scrollbar-thumb-indigo-900/40 bg-slate-100 dark:bg-slate-800/70 rounded-lg backdrop-blur-sm border border-slate-200/80 dark:border-slate-700/30 shadow-sm mb-3 gap-1.5 p-2">
+                    <TabsTrigger
+                      value="sample"
+                      className="flex-shrink-0 min-w-[140px] px-3 rounded-md py-1.5 data-[state=active]:bg-white data-[state=active]:dark:bg-black/95 data-[state=active]:text-indigo-700 data-[state=active]:dark:text-indigo-30 data-[state=active]:shadow-sm relative overflow-hidden group"
+                    >
+                      <div className="absolute inset-0 opacity-0 group-data-[state=active]:opacity-100 transition-opacity">
+                        <div className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+                      </div>
+                      <FileText className="h-3.5 w-3.5 mr-1.5 text-indigo-500/70 dark:text-indigo-400/70 group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400" />
+                      Sample Testcases
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="hidden"
+                      className="flex-shrink-0 min-w-[140px] px-3 rounded-md py-1.5 data-[state=active]:bg-white data-[state=active]:dark:bg-black/95 data-[state=active]:text-indigo-700 data-[state=active]:dark:text-indigo-30 data-[state=active]:shadow-sm relative overflow-hidden group"
+                    >
+                      <div className="absolute inset-0 opacity-0 group-data-[state=active]:opacity-100 transition-opacity">
+                        <div className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+                      </div>
+                      <BarChart2 className="h-3.5 w-3.5 mr-1.5 text-indigo-500/70 dark:text-indigo-400/70 group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400" />
+                      Hidden Testcases
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="custom"
+                      className="flex-shrink-0 min-w-[140px] px-3 rounded-md py-1.5 data-[state=active]:bg-white data-[state=active]:dark:bg-black/95 data-[state=active]:text-indigo-700 data-[state=active]:dark:text-indigo-30 data-[state=active]:shadow-sm relative overflow-hidden group"
+                    >
+                      <div className="absolute inset-0 opacity-0 group-data-[state=active]:opacity-100 transition-opacity">
+                        <div className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+                      </div>
+                      <Sparkles className="h-3.5 w-3.5 mr-1.5 text-indigo-500/70 dark:text-indigo-400/70 group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400" />
+                      Custom Testcase
+                    </TabsTrigger>
+                  </TabsList>
+
+                  {/* Sample Testcases Tab */}
+                  <TabsContent
+                    value="sample"
+                    className="focus-visible:outline-none focus-visible:ring-0"
+                  >
+                    {showEvaluatingSkeletons && skeletonTab === "sample" ? (
+                      <div className="space-y-4 animate-in fade-in-50 slide-in-from-bottom-3 duration-300">
+                        {/* Summary skeleton */}
+                        <div className="flex items-center justify-between mb-2">
+                          <Skeleton className="h-5 w-40 bg-slate-200/70 dark:bg-slate-700/50" />
+                          <Skeleton className="h-6 w-28 rounded-full bg-slate-200/70 dark:bg-slate-700/50" />
+                        </div>
+
+                        {/* Test cases skeletons */}
+                        <div className="bg-white dark:bg-black rounded-lg shadow-sm overflow-hidden border border-slate-200 dark:border-slate-700/50">
+                          {/* Header skeleton */}
+                          <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700/50 bg-gradient-to-r from-slate-50 to-slate-100/50 dark:from-slate-800/70 dark:to-slate-800/50 flex justify-between">
+                            <div className="flex items-center gap-2">
+                              <Skeleton className="h-6 w-6 rounded-full bg-slate-200/70 dark:bg-slate-700/50" />
+                              <Skeleton className="h-5 w-24 bg-slate-200/70 dark:bg-slate-700/50" />
+                            </div>
+                            <Skeleton className="h-6 w-20 rounded-full bg-slate-200/70 dark:bg-slate-700/50" />
+                          </div>
+
+                          {/* Content skeleton */}
+                          <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {/* Input skeleton */}
+                            <div className="rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700/50">
+                              <div className="bg-slate-50 dark:bg-slate-800/60 px-3 py-1.5 border-b border-slate-200 dark:border-slate-700/50">
+                                <Skeleton className="h-4 w-16 bg-slate-200/70 dark:bg-slate-700/50" />
+                              </div>
+                              <div className="p-3 space-y-2">
+                                <Skeleton className="h-4 w-full bg-slate-200/70 dark:bg-slate-700/50" />
+                                <Skeleton className="h-4 w-3/4 bg-slate-200/70 dark:bg-slate-700/50" />
+                                <Skeleton className="h-4 w-1/2 bg-slate-200/70 dark:bg-slate-700/50" />
+                              </div>
+                            </div>
+
+                            {/* Expected Output skeleton */}
+                            <div className="rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700/50">
+                              <div className="bg-slate-50 dark:bg-slate-800/60 px-3 py-1.5 border-b border-slate-200 dark:border-slate-700/50">
+                                <Skeleton className="h-4 w-36 bg-slate-200/70 dark:bg-slate-700/50" />
+                              </div>
+                              <div className="p-3 space-y-2">
+                                <Skeleton className="h-4 w-full bg-slate-200/70 dark:bg-slate-700/50" />
+                                <Skeleton className="h-4 w-2/3 bg-slate-200/70 dark:bg-slate-700/50" />
+                                <Skeleton className="h-4 w-1/4 bg-slate-200/70 dark:bg-slate-700/50" />
+                              </div>
+                            </div>
+
+                            {/* Your Output skeleton - professional loading style */}
+                            <div className="rounded-lg overflow-hidden md:col-span-2 border border-indigo-200 dark:border-indigo-900/30 relative">
+                              <div className="absolute inset-0 bg-gradient-to-r from-indigo-50/50 via-purple-50/50 to-indigo-50/50 dark:from-indigo-900/20 dark:via-purple-900/20 dark:to-indigo-900/20 animate-gradient-x"></div>
+                              <div className="px-3 py-1.5 border-b border-indigo-200 dark:border-indigo-900/30 bg-slate-50 dark:bg-slate-800/60 relative z-10 flex justify-between items-center">
+                                <div className="flex items-center space-x-2">
+                                  <div className="h-2.5 w-2.5 rounded-full bg-indigo-500 animate-pulse-opacity"></div>
+                                  <span className="text-xs font-medium text-indigo-700 dark:text-indigo-300">
+                                    Executing the code...
                                   </span>
                                 </div>
                               </div>
-
-                              <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700/50">
-                                  <div className="bg-slate-50 dark:bg-slate-800/60 px-3 py-1.5 border-b border-slate-200 dark:border-slate-700/50 text-xs font-medium text-slate-700 dark:text-slate-300">
-                                    Input
-                                  </div>
-                                  <div className="p-3 font-mono text-sm bg-white dark:bg-slate-800/30 text-slate-700 dark:text-slate-300">
-                                    {formatTestCase(result.input)}
-                                  </div>
-                                </div>
-
-                                <div className="rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700/50">
-                                  <div className="bg-slate-50 dark:bg-slate-800/60 px-3 py-1.5 border-b border-slate-200 dark:border-slate-700/50 text-xs font-medium text-slate-700 dark:text-slate-300">
-                                    Expected Output
-                                  </div>
-                                  <div className="p-3 font-mono text-sm bg-white dark:bg-slate-800/30 text-slate-700 dark:text-slate-300">
-                                    {formatTestCase(result.expectedOutput)}
-                                  </div>
-                                </div>
-
-                                {/* Only show the Your Output section if there are no errors/warnings/time limit exceeded */}
-                                {!(
-                                  result.stderr ||
-                                  result.compileOutput ||
-                                  result.verdict === "Time Limit Exceeded" ||
-                                  (result.status && result.status.id === 5) ||
-                                  result.verdict
-                                    ?.toLowerCase()
-                                    ?.includes("time limit") ||
-                                  result.verdict === "Compilation Error"
-                                ) && (
-                                  <div
-                                    className={`rounded-lg overflow-hidden md:col-span-2 
-                                    ${
-                                      result.isCorrect
-                                        ? "border border-green-200 dark:border-green-900/30"
-                                        : "border border-red-200 dark:border-red-900/30"
-                                    }`}
-                                  >
-                                    <div
-                                      className={`px-3 py-1.5 border-b flex items-center
-                                      ${
-                                        result.isCorrect
-                                          ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-900/30 text-green-800 dark:text-green-400"
-                                          : "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-900/30 text-red-800 dark:text-red-400"
-                                      }`}
-                                    >
-                                      {result.isCorrect ? (
-                                        <Check className="h-3 w-3 mr-1.5" />
-                                      ) : (
-                                        <X className="h-3 w-3 mr-1.5" />
-                                      )}
-                                      Your Output
-                                    </div>
-                                    <div className="p-3 font-mono text-sm bg-white dark:bg-slate-800/30 text-slate-700 dark:text-slate-30">
-                                      {formatTestCase(result.actualOutput)}
-                                    </div>
-                                  </div>
-                                )}
-
-                                {/* Show Time Limit Exceeded message instead of output */}
-                                {(result.verdict === "Time Limit Exceeded" ||
-                                  (result.status && result.status.id === 5) ||
-                                  result.verdict
-                                    ?.toLowerCase()
-                                    ?.includes("time limit")) && (
-                                  <div className="rounded-lg overflow-hidden border border-amber-200 dark:border-amber-900/30 md:col-span-2">
-                                    <div className="bg-amber-50 dark:bg-amber-900/20 px-3 py-1.5 border-b border-amber-200 dark:border-amber-900/30 text-xs font-medium text-amber-800 dark:text-amber-400 flex items-center">
-                                      <Clock className="h-3 w-3 mr-1.5" />
-                                      Time Limit Exceeded
-                                    </div>
-                                    <div className="p-3 bg-white dark:bg-slate-800/30">
-                                      <p className="text-sm text-amber-700 dark:text-amber-400">
-                                        Your solution took too long to execute.
-                                        Try optimizing your algorithm to run
-                                        within the time limit.
-                                      </p>
-                                    </div>
-                                  </div>
-                                )}
-
-                                {/* Show Compilation Error message */}
-                                {(result.verdict === "Compilation Error" ||
-                                  result.compileOutput) && (
-                                  <div className="rounded-lg overflow-hidden border border-amber-200 dark:border-amber-900/30 md:col-span-2">
-                                    <div className="bg-amber-50 dark:bg-amber-900/20 px-3 py-1.5 border-b border-amber-200 dark:border-amber-900/30 text-xs font-medium text-amber-800 dark:text-amber-400 flex items-center">
-                                      <AlertTriangle className="h-3 w-3 mr-1.5" />
-                                      Compilation Error
-                                    </div>
-                                    <div className="p-3 bg-white dark:bg-slate-800/30">
-                                      <div className="text-sm text-amber-700 dark:text-amber-400 font-mono whitespace-pre-wrap">
-                                        {result.compileOutput ||
-                                          "Your code has syntax errors and could not be compiled."}
-                                      </div>
-                                    </div>
-                                  </div>
-                                )}
-
-                                {/* Show Runtime Error message */}
-                                {result.stderr &&
-                                  !(
-                                    result.verdict === "Compilation Error" ||
-                                    result.compileOutput
-                                  ) && (
-                                    <div className="rounded-lg overflow-hidden border border-red-200 dark:border-red-900/30 md:col-span-2">
-                                      <div className="bg-red-50 dark:bg-red-900/20 px-3 py-1.5 border-b border-red-200 dark:border-red-900/30 text-xs font-medium text-red-800 dark:text-red-400 flex items-center">
-                                        <AlertCircle className="h-3 w-3 mr-1.5" />
-                                        Runtime Error
-                                      </div>
-                                      <div className="p-3 bg-white dark:bg-slate-800/30">
-                                        <div className="text-sm text-red-700 dark:text-red-400 font-mono whitespace-pre-wrap">
-                                          {result.stderr}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  )}
-                              </div>
-
-                              <div className="bg-slate-50 dark:bg-slate-800/50 px-4 py-2 border-t border-slate-200 dark:border-slate-700/50 flex justify-between items-center">
-                                <div className="flex items-center">
-                                  <Clock className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500 mr-1.5" />
-                                  <span className="text-xs text-slate-500 dark:text-slate-400">
-                                    Execution Time:{" "}
-                                    {result.executionTime || "N/A"}
-                                  </span>
-                                </div>
-                                <div className="flex items-center">
-                                  <Cpu className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500 mr-1.5" />
-                                  <span className="text-xs text-slate-500 dark:text-slate-400">
-                                    Memory Used: {result.memoryUsed || "N/A"}
-                                  </span>
+                              <div className="relative z-10">
+                                <div className="p-3 space-y-2">
+                                  <Skeleton className="h-5 w-full bg-indigo-100/70 dark:bg-indigo-900/30" />
+                                  <Skeleton className="h-5 w-4/5 bg-indigo-100/70 dark:bg-indigo-900/30" />
+                                  <Skeleton className="h-5 w-2/3 bg-indigo-100/70 dark:bg-indigo-900/30" />
                                 </div>
                               </div>
                             </div>
-                          </TabsContent>
-                        ))}
-                      </Tabs>
-                    </div>
-                  ) : (
-                    // Display sample test cases when no code has been run
-                    <div className="space-y-4">
-                      {/* Summary banner for sample test cases */}
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="text-sm text-slate-700 dark:text-slate-300">
-                          <span className="font-medium">{examples.length}</span>{" "}
-                          sample test cases available
-                        </div>
-                        <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200/70 dark:border-indigo-800/50 text-indigo-700 dark:text-indigo-300 shadow-sm">
-                          <Play className="h-3 w-3 mr-1.5" />
-                          Run Code to Test
+                          </div>
+
+                          {/* Footer skeleton */}
+                          <div className="bg-slate-50 dark:bg-slate-800/50 px-4 py-2 border-t border-slate-200 dark:border-slate-700/50 flex justify-between items-center">
+                            <Skeleton className="h-4 w-32 bg-slate-200/70 dark:bg-slate-700/50" />
+                            <Skeleton className="h-4 w-32 bg-slate-200/70 dark:bg-slate-700/50" />
+                          </div>
                         </div>
                       </div>
+                    ) : sampleTestResults.length > 0 &&
+                      activeTab === "sample" ? (
+                      <div className="space-y-4 animate-in fade-in-50 slide-in-from-bottom-3 duration-500">
+                        {/* Summary badge */}
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="text-sm text-slate-700 dark:text-slate-300">
+                            <span className="font-medium">
+                              {sampleTestResults.length}
+                            </span>{" "}
+                            sample test cases evaluated
+                          </div>
+                          {sampleExecutionStatus && (
+                            <div
+                              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium shadow-sm
+                ${
+                  sampleExecutionStatus === "success"
+                    ? "bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200/70 dark:border-green-900/30 text-green-700 dark:text-green-400"
+                    : sampleExecutionStatus === "warning"
+                    ? "bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border border-amber-200/70 dark:border-amber-900/30 text-amber-700 dark:text-amber-400"
+                    : "bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 border border-red-200/70 dark:border-red-900/30 text-red-700 dark:text-red-400"
+                }`}
+                            >
+                              {sampleExecutionStatus === "success" ? (
+                                <>
+                                  <Check className="h-3 w-3 mr-1.5" />
+                                  All Sample Testcases Passed
+                                </>
+                              ) : sampleExecutionStatus === "warning" ? (
+                                <>
+                                  <AlertTriangle className="h-3 w-3 mr-1.5" />
+                                  Partially Passed
+                                </>
+                              ) : (
+                                <>
+                                  <XCircle className="h-3 w-3 mr-1.5" />
+                                  No Sample Testcases Passed
+                                </>
+                              )}
+                            </div>
+                          )}
+                        </div>
 
-                      {/* Tabs for each sample testcase */}
-                      <Tabs defaultValue={`example-0`} className="w-full">
-                        <TabsList className="bg-gradient-to-r from-slate-100/90 to-indigo-50/80 dark:from-slate-800/70 dark:to-indigo-900/30 p-1 rounded-lg overflow-hidden backdrop-blur-sm border border-slate-200/80 dark:border-slate-700/30 shadow-sm mb-3 w-full flex flex-wrap">
-                          {examples.map(
-                            (
-                              example: {
-                                id: string;
-                                input: string;
-                                output: string;
-                                explanation?: string;
-                              },
-                              idx: number
-                            ) => (
+                        {/* Nested tabs for multiple test cases */}
+                        <Tabs
+                          defaultValue={`sample-testcase-0`}
+                          className="w-full"
+                        >
+                          <TabsList className="flex flex-nowrap overflow-x-auto px-3 scrollbar-thin scrollbar-thumb-indigo-200 dark:scrollbar-thumb-indigo-900/40 bg-gradient-to-r from-slate-100/90 to-indigo-50/80 dark:from-slate-800/70 dark:to-indigo-900/30 rounded-lg backdrop-blur-sm border border-slate-200/80 dark:border-slate-700/30 shadow-sm mb-3 gap-1.5 p-2">
+                            {sampleTestResults.map((result, idx) => (
                               <TabsTrigger
-                                key={`example-trigger-${example.id || idx}`}
-                                value={`example-${idx}`}
-                                className="flex-1 min-w-[100px] rounded-md py-2 data-[state=active]:bg-white data-[state=active]:dark:bg-black/95 data-[state=active]:text-indigo-700 data-[state=active]:dark:text-indigo-30 data-[state=active]:shadow-sm relative overflow-hidden group transition-all duration-150"
+                                key={`sample-trigger-${result.id || idx}`}
+                                value={`sample-testcase-${idx}`}
+                                className="flex-shrink-0 min-w-[85px] rounded-md py-2 data-[state=active]:bg-white data-[state=active]:dark:bg-black/95 data-[state=active]:text-indigo-700 data-[state=active]:dark:text-indigo-30 data-[state=active]:shadow-sm relative overflow-hidden group transition-all duration-150"
                               >
                                 <div className="absolute inset-0 opacity-0 group-data-[state=active]:opacity-100 transition-opacity duration-300">
                                   <div className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
                                   <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-purple-50/30 dark:from-indigo-900/30 dark:to-purple-900/20 opacity-0 group-data-[state=active]:opacity-100 transition-opacity"></div>
                                 </div>
                                 <div className="flex items-center justify-center gap-1.5">
-                                  <div className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-medium bg-gradient-to-br from-indigo-500 to-purple-600">
-                                    {idx + 1}
+                                  <div
+                                    className={`w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-medium
+                      ${
+                        result.isCorrect
+                          ? "bg-gradient-to-br from-green-500 to-emerald-600"
+                          : "bg-gradient-to-br from-red-500 to-rose-600"
+                      }`}
+                                  >
+                                    {result.isCorrect ? (
+                                      <Check className="h-3 w-3" />
+                                    ) : (
+                                      <X className="h-3 w-3" />
+                                    )}
                                   </div>
-                                  <span className="hidden sm:inline font-medium text-sm group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400">
+                                  <span className="font-medium text-sm group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400">
                                     Test {idx + 1}
                                   </span>
                                 </div>
                                 <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent opacity-0 group-hover:opacity-100 group-data-[state=active]:opacity-0 transition-opacity"></div>
                               </TabsTrigger>
-                            )
-                          )}
-                        </TabsList>
+                            ))}
+                          </TabsList>
 
-                        {examples.map(
-                          (
-                            example: {
-                              id: string;
-                              input: string;
-                              output: string;
-                              explanation?: string;
-                            },
-                            idx: number
-                          ) => (
+                          {sampleTestResults.map((result, idx) => (
                             <TabsContent
-                              key={`example-content-${example.id || idx}`}
-                              value={`example-${idx}`}
+                              key={`sample-content-${result.id || idx}`}
+                              value={`sample-testcase-${idx}`}
                               className="focus-visible:outline-none focus-visible:ring-0"
                             >
                               <div className="bg-white dark:bg-black rounded-lg shadow-sm overflow-hidden border border-slate-200 dark:border-slate-700/50">
-                                <div className="px-4 py-2 border-b border-slate-200 dark:border-slate-700/50 flex items-center justify-between bg-gradient-to-r from-indigo-50 to-indigo-100/50 dark:from-indigo-900/20 dark:to-indigo-900/10">
+                                <div
+                                  className={`px-4 py-2 border-b border-slate-200 dark:border-slate-700/50 flex items-center justify-between
+                    ${
+                      result.isCorrect
+                        ? "bg-gradient-to-r from-green-50 to-green-100/50 dark:from-green-900/20 dark:to-green-900/10"
+                        : result.verdict === "Time Limit Exceeded" ||
+                          (result.status && result.status.id === 5) ||
+                          result.verdict?.toLowerCase()?.includes("time limit")
+                        ? "bg-gradient-to-r from-amber-50 to-amber-100/50 dark:from-amber-900/20 dark:to-amber-900/10"
+                        : result.verdict === "Compilation Error" ||
+                          result.compileOutput
+                        ? "bg-gradient-to-r from-amber-50 to-amber-100/50 dark:from-amber-900/20 dark:to-amber-900/10"
+                        : "bg-gradient-to-r from-red-50 to-red-100/50 dark:from-red-900/20 dark:to-red-900/10"
+                    }`}
+                                >
                                   <div className="flex items-center gap-2">
-                                    <div className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-medium bg-indigo-500">
+                                    <div
+                                      className={`w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-medium
+                        ${
+                          result.isCorrect
+                            ? "bg-green-500"
+                            : result.verdict === "Time Limit Exceeded" ||
+                              (result.status && result.status.id === 5) ||
+                              result.verdict
+                                ?.toLowerCase()
+                                ?.includes("time limit")
+                            ? "bg-amber-500"
+                            : result.verdict === "Compilation Error" ||
+                              result.compileOutput
+                            ? "bg-amber-500"
+                            : "bg-red-500"
+                        }`}
+                                    >
                                       {idx + 1}
                                     </div>
                                     <span className="font-medium text-slate-700 dark:text-slate-300">
-                                      Sample Test Case
+                                      {result.isCorrect
+                                        ? "Passed"
+                                        : result.verdict ===
+                                            "Time Limit Exceeded" ||
+                                          (result.status &&
+                                            result.status.id === 5) ||
+                                          result.verdict
+                                            ?.toLowerCase()
+                                            ?.includes("time limit")
+                                        ? "Time Limit Exceeded"
+                                        : result.verdict ===
+                                            "Compilation Error" ||
+                                          result.compileOutput
+                                        ? "Compilation Error"
+                                        : "Failed"}
+                                    </span>
+                                  </div>
+
+                                  <div className="flex items-center">
+                                    <span
+                                      className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium
+                        ${
+                          result.isCorrect
+                            ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                            : result.verdict === "Time Limit Exceeded" ||
+                              (result.status && result.status.id === 5) ||
+                              result.verdict
+                                ?.toLowerCase()
+                                ?.includes("time limit")
+                            ? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400"
+                            : result.verdict === "Compilation Error" ||
+                              result.compileOutput
+                            ? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400"
+                            : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
+                        }`}
+                                    >
+                                      {result.isCorrect ? (
+                                        <>
+                                          <Check className="h-3 w-3 mr-1" />
+                                          Correct
+                                        </>
+                                      ) : result.verdict ===
+                                          "Time Limit Exceeded" ||
+                                        (result.status &&
+                                          result.status.id === 5) ||
+                                        result.verdict
+                                          ?.toLowerCase()
+                                          ?.includes("time limit") ? (
+                                        <>
+                                          <Clock className="h-3 w-3 mr-1" />
+                                          Time Limit
+                                        </>
+                                      ) : result.verdict ===
+                                          "Compilation Error" ||
+                                        result.compileOutput ? (
+                                        <>
+                                          <AlertTriangle className="h-3 w-3 mr-1" />
+                                          Compile Error
+                                        </>
+                                      ) : (
+                                        <>
+                                          <X className="h-3 w-3 mr-1" />
+                                          Incorrect
+                                        </>
+                                      )}
                                     </span>
                                   </div>
                                 </div>
@@ -4659,7 +4439,7 @@ export default function ProblemClientPage({
                                       Input
                                     </div>
                                     <div className="p-3 font-mono text-sm bg-white dark:bg-slate-800/30 text-slate-700 dark:text-slate-300">
-                                      {formatTestCase(example.input)}
+                                      {formatTestCase(result.input)}
                                     </div>
                                   </div>
 
@@ -4668,65 +4448,283 @@ export default function ProblemClientPage({
                                       Expected Output
                                     </div>
                                     <div className="p-3 font-mono text-sm bg-white dark:bg-slate-800/30 text-slate-700 dark:text-slate-300">
-                                      {formatTestCase(example.output)}
+                                      {formatTestCase(result.expectedOutput)}
                                     </div>
                                   </div>
 
-                                  {/* Explanation if available */}
-                                  {example.explanation && (
-                                    <div className="rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700/50 md:col-span-2">
-                                      <div className="bg-slate-50 dark:bg-slate-800/60 px-3 py-1.5 border-b border-slate-200 dark:border-slate-700/50 text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center">
-                                        <Info className="h-3 w-3 mr-1.5 text-indigo-500 dark:text-indigo-400" />
-                                        Explanation
+                                  {/* Only show the Your Output section if there are no errors/warnings/time limit exceeded */}
+                                  {!(
+                                    result.stderr ||
+                                    result.compileOutput ||
+                                    result.verdict === "Time Limit Exceeded" ||
+                                    (result.status && result.status.id === 5) ||
+                                    result.verdict
+                                      ?.toLowerCase()
+                                      ?.includes("time limit") ||
+                                    result.verdict === "Compilation Error"
+                                  ) && (
+                                    <div
+                                      className={`rounded-lg overflow-hidden md:col-span-2 
+                        ${
+                          result.isCorrect
+                            ? "border border-green-200 dark:border-green-900/30"
+                            : "border border-red-200 dark:border-red-900/30"
+                        }`}
+                                    >
+                                      <div
+                                        className={`px-3 py-1.5 border-b flex items-center
+                          ${
+                            result.isCorrect
+                              ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-900/30 text-green-800 dark:text-green-400"
+                              : "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-900/30 text-red-800 dark:text-red-400"
+                          }`}
+                                      >
+                                        {result.isCorrect ? (
+                                          <Check className="h-3 w-3 mr-1.5" />
+                                        ) : (
+                                          <X className="h-3 w-3 mr-1.5" />
+                                        )}
+                                        Your Output
                                       </div>
-                                      <div className="p-3 font-mono text-sm bg-white dark:bg-slate-800/30 text-slate-700 dark:text-slate-300">
-                                        {formatTestCase(example.explanation)}
+                                      <div className="p-3 font-mono text-sm bg-white dark:bg-slate-800/30 text-slate-700 dark:text-slate-30">
+                                        {formatTestCase(result.actualOutput)}
                                       </div>
                                     </div>
                                   )}
+
+                                  {/* Show Time Limit Exceeded message instead of output */}
+                                  {(result.verdict === "Time Limit Exceeded" ||
+                                    (result.status && result.status.id === 5) ||
+                                    result.verdict
+                                      ?.toLowerCase()
+                                      ?.includes("time limit")) && (
+                                    <div className="rounded-lg overflow-hidden border border-amber-200 dark:border-amber-900/30 md:col-span-2">
+                                      <div className="bg-amber-50 dark:bg-amber-900/20 px-3 py-1.5 border-b border-amber-200 dark:border-amber-900/30 text-xs font-medium text-amber-800 dark:text-amber-400 flex items-center">
+                                        <Clock className="h-3 w-3 mr-1.5" />
+                                        Time Limit Exceeded
+                                      </div>
+                                      <div className="p-3 bg-white dark:bg-slate-800/30">
+                                        <p className="text-sm text-amber-700 dark:text-amber-400">
+                                          Your solution took too long to
+                                          execute. Try optimizing your algorithm
+                                          to run within the time limit.
+                                        </p>
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {/* Show Compilation Error message */}
+                                  {(result.verdict === "Compilation Error" ||
+                                    result.compileOutput) && (
+                                    <div className="rounded-lg overflow-hidden border border-amber-200 dark:border-amber-900/30 md:col-span-2">
+                                      <div className="bg-amber-50 dark:bg-amber-900/20 px-3 py-1.5 border-b border-amber-200 dark:border-amber-900/30 text-xs font-medium text-amber-800 dark:text-amber-400 flex items-center">
+                                        <AlertTriangle className="h-3 w-3 mr-1.5" />
+                                        Compilation Error
+                                      </div>
+                                      <div className="p-3 bg-white dark:bg-slate-800/30">
+                                        <div className="text-sm text-amber-700 dark:text-amber-400 font-mono whitespace-pre-wrap">
+                                          {result.compileOutput ||
+                                            "Your code has syntax errors and could not be compiled."}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {/* Show Runtime Error message */}
+                                  {result.stderr &&
+                                    !(
+                                      result.verdict === "Compilation Error" ||
+                                      result.compileOutput
+                                    ) && (
+                                      <div className="rounded-lg overflow-hidden border border-red-200 dark:border-red-900/30 md:col-span-2">
+                                        <div className="bg-red-50 dark:bg-red-900/20 px-3 py-1.5 border-b border-red-200 dark:border-red-900/30 text-xs font-medium text-red-800 dark:text-red-400 flex items-center">
+                                          <AlertCircle className="h-3 w-3 mr-1.5" />
+                                          Runtime Error
+                                        </div>
+                                        <div className="p-3 bg-white dark:bg-slate-800/30">
+                                          <div className="text-sm text-red-700 dark:text-red-400 font-mono whitespace-pre-wrap">
+                                            {result.stderr}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )}
                                 </div>
 
                                 <div className="bg-slate-50 dark:bg-slate-800/50 px-4 py-2 border-t border-slate-200 dark:border-slate-700/50 flex justify-between items-center">
-                                  <div className="text-xs text-slate-500 dark:text-slate-400">
-                                    Run code to test your solution against this
-                                    example
+                                  <div className="flex items-center">
+                                    <Clock className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500 mr-1.5" />
+                                    <span className="text-xs text-slate-500 dark:text-slate-400">
+                                      Execution Time:{" "}
+                                      {result.executionTime || "N/A"}
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center">
+                                    <Cpu className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500 mr-1.5" />
+                                    <span className="text-xs text-slate-500 dark:text-slate-400">
+                                      Memory Used: {result.memoryUsed || "N/A"}
+                                    </span>
                                   </div>
                                 </div>
                               </div>
                             </TabsContent>
-                          )
-                        )}
-                      </Tabs>
+                          ))}
+                        </Tabs>
+                      </div>
+                    ) : (
+                      // Display sample test cases when no code has been run
+                      <div className="space-y-4">
+                        {/* Summary banner for sample test cases */}
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="text-sm text-slate-700 dark:text-slate-300">
+                            <span className="font-medium">
+                              {examples.length}
+                            </span>{" "}
+                            sample test cases available
+                          </div>
+                          <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200/70 dark:border-indigo-800/50 text-indigo-700 dark:text-indigo-300 shadow-sm">
+                            <Play className="h-3 w-3 mr-1.5" />
+                            Run Code to Test
+                          </div>
+                        </div>
+
+                        {/* Tabs for each sample testcase */}
+                        <Tabs defaultValue={`example-0`} className="w-full">
+                          <TabsList className="bg-gradient-to-r from-slate-100/90 to-indigo-50/80 dark:from-slate-800/70 dark:to-indigo-900/30 p-1 rounded-lg overflow-hidden backdrop-blur-sm border border-slate-200/80 dark:border-slate-700/30 shadow-sm mb-3 w-full flex flex-wrap">
+                            {examples.map(
+                              (
+                                example: {
+                                  id: string;
+                                  input: string;
+                                  output: string;
+                                  explanation?: string;
+                                },
+                                idx: number
+                              ) => (
+                                <TabsTrigger
+                                  key={`example-trigger-${example.id || idx}`}
+                                  value={`example-${idx}`}
+                                  className="flex-1 min-w-[100px] rounded-md py-2 data-[state=active]:bg-white data-[state=active]:dark:bg-black/95 data-[state=active]:text-indigo-700 data-[state=active]:dark:text-indigo-30 data-[state=active]:shadow-sm relative overflow-hidden group transition-all duration-150"
+                                >
+                                  <div className="absolute inset-0 opacity-0 group-data-[state=active]:opacity-100 transition-opacity duration-300">
+                                    <div className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+                                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-purple-50/30 dark:from-indigo-900/30 dark:to-purple-900/20 opacity-0 group-data-[state=active]:opacity-100 transition-opacity"></div>
+                                  </div>
+                                  <div className="flex items-center justify-center gap-1.5">
+                                    <div className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-medium bg-gradient-to-br from-indigo-500 to-purple-600">
+                                      {idx + 1}
+                                    </div>
+                                    <span className="hidden sm:inline font-medium text-sm group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400">
+                                      Test {idx + 1}
+                                    </span>
+                                  </div>
+                                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent opacity-0 group-hover:opacity-100 group-data-[state=active]:opacity-0 transition-opacity"></div>
+                                </TabsTrigger>
+                              )
+                            )}
+                          </TabsList>
+
+                          {examples.map(
+                            (
+                              example: {
+                                id: string;
+                                input: string;
+                                output: string;
+                                explanation?: string;
+                              },
+                              idx: number
+                            ) => (
+                              <TabsContent
+                                key={`example-content-${example.id || idx}`}
+                                value={`example-${idx}`}
+                                className="focus-visible:outline-none focus-visible:ring-0"
+                              >
+                                <div className="bg-white dark:bg-black rounded-lg shadow-sm overflow-hidden border border-slate-200 dark:border-slate-700/50">
+                                  <div className="px-4 py-2 border-b border-slate-200 dark:border-slate-700/50 flex items-center justify-between bg-gradient-to-r from-indigo-50 to-indigo-100/50 dark:from-indigo-900/20 dark:to-indigo-900/10">
+                                    <div className="flex items-center gap-2">
+                                      <div className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-medium bg-indigo-500">
+                                        {idx + 1}
+                                      </div>
+                                      <span className="font-medium text-slate-700 dark:text-slate-300">
+                                        Sample Test Case
+                                      </span>
+                                    </div>
+                                  </div>
+
+                                  <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700/50">
+                                      <div className="bg-slate-50 dark:bg-slate-800/60 px-3 py-1.5 border-b border-slate-200 dark:border-slate-700/50 text-xs font-medium text-slate-700 dark:text-slate-300">
+                                        Input
+                                      </div>
+                                      <div className="p-3 font-mono text-sm bg-white dark:bg-slate-800/30 text-slate-700 dark:text-slate-300">
+                                        {formatTestCase(example.input)}
+                                      </div>
+                                    </div>
+
+                                    <div className="rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700/50">
+                                      <div className="bg-slate-50 dark:bg-slate-800/60 px-3 py-1.5 border-b border-slate-200 dark:border-slate-700/50 text-xs font-medium text-slate-700 dark:text-slate-300">
+                                        Expected Output
+                                      </div>
+                                      <div className="p-3 font-mono text-sm bg-white dark:bg-slate-800/30 text-slate-700 dark:text-slate-300">
+                                        {formatTestCase(example.output)}
+                                      </div>
+                                    </div>
+
+                                    {/* Explanation if available */}
+                                    {example.explanation && (
+                                      <div className="rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700/50 md:col-span-2">
+                                        <div className="bg-slate-50 dark:bg-slate-800/60 px-3 py-1.5 border-b border-slate-200 dark:border-slate-700/50 text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center">
+                                          <Info className="h-3 w-3 mr-1.5 text-indigo-500 dark:text-indigo-400" />
+                                          Explanation
+                                        </div>
+                                        <div className="p-3 font-mono text-sm bg-white dark:bg-slate-800/30 text-slate-700 dark:text-slate-300">
+                                          {formatTestCase(example.explanation)}
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  <div className="bg-slate-50 dark:bg-slate-800/50 px-4 py-2 border-t border-slate-200 dark:border-slate-700/50 flex justify-between items-center">
+                                    <div className="text-xs text-slate-500 dark:text-slate-400">
+                                      Run code to test your solution against
+                                      this example
+                                    </div>
+                                  </div>
+                                </div>
+                              </TabsContent>
+                            )
+                          )}
+                        </Tabs>
+                      </div>
+                    )}
+                  </TabsContent>
+
+                  {/* Hidden Testcases Tab */}
+                  <TabsContent
+                    value="hidden"
+                    className="focus-visible:outline-none focus-visible:ring-0"
+                  >
+                    <HiddenTestcasesTab
+                      executingHiddenTestcases={executingHiddenTestcases}
+                      hiddenTestResults={hiddenTestResults}
+                      totalHiddenTestcases={totalHiddenTestcases}
+                      completedHiddenTestcases={completedHiddenTestcases}
+                      passedHiddenTestcases={passedHiddenTestcases}
+                      skippedHiddenTestcases={skippedHiddenTestcases}
+                      hiddenExecutionStatus={hiddenExecutionStatus}
+                      isRunning={isRunning}
+                      isSubmitting={isSubmitting}
+                      submitCode={submitCode}
+                    />
+                  </TabsContent>
+
+                  {/* Confetti celebration overlay */}
+                  {showCelebration && (
+                    <div className="fixed inset-0 pointer-events-none z-50">
+                      {/* This div is just a container for the confetti effect */}
                     </div>
                   )}
-                </TabsContent>
-
-                {/* Hidden Testcases Tab */}
-                <TabsContent
-                  value="hidden"
-                  className="focus-visible:outline-none focus-visible:ring-0"
-                >
-                  <HiddenTestcasesTab
-                    executingHiddenTestcases={executingHiddenTestcases}
-                    hiddenTestResults={hiddenTestResults}
-                    totalHiddenTestcases={totalHiddenTestcases}
-                    completedHiddenTestcases={completedHiddenTestcases}
-                    passedHiddenTestcases={passedHiddenTestcases}
-                    skippedHiddenTestcases={skippedHiddenTestcases}
-                    hiddenExecutionStatus={hiddenExecutionStatus}
-                    isRunning={isRunning}
-                    isSubmitting={isSubmitting}
-                    submitCode={submitCode}
-                  />
-                </TabsContent>
-
-                {/* Confetti celebration overlay */}
-                {showCelebration && (
-                  <div className="fixed inset-0 pointer-events-none z-50">
-                    {/* This div is just a container for the confetti effect */}
-                  </div>
-                )}
-              </Tabs>
+                </Tabs>
+              </div>
             </div>
           </div>
         </div>

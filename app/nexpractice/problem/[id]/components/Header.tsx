@@ -15,19 +15,23 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Avatar } from "@/components/ui/avatar";
+import { LuShuffle } from "react-icons/lu";
+import { LuMaximize } from "react-icons/lu";
+import { LuMinimize } from "react-icons/lu";
 import {
   Popover,
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
 import { ModeToggle } from "@/components/nexpractice/mode-toggle";
+import { IoChevronBackOutline } from "react-icons/io5";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
+import { HiMenuAlt1 } from "react-icons/hi";
 interface HeaderProps {
   profilePic: string | null;
   session: any;
@@ -56,52 +60,69 @@ const Header: React.FC<HeaderProps> = ({
   loadingPhrase,
 }) => {
   return (
-    <header className="flex items-center justify-between px-3 py-2 border-b border-indigo-100 dark:border-indigo-900/50 bg-gradient-to-r from-white via-slate-50 to-white dark:from-black dark:via-neutral-900 dark:to-black shadow-sm relative overflow-hidden backdrop-blur-sm z-30 min-h-[44px]">
+    <header className="flex items-center justify-between px-4 pt-2 bg-white dark:bg-black  overflow-hidden  min-h-[44px]">
       {/* Left section: Logo, Explore Nex, and sidebar toggle */}
-      <div className="flex items-center gap-3 min-w-0 relative z-10">
+      <div className="flex items-center gap-2 min-w-0 relative z-10">
+        <a href="/nexpractice">
+          <button
+            className="bg-[#1f1f1f] p-2 rounded-[8px]"
+            onClick={() => setSidebarOpen(true)}
+            aria-label="Open questions sidebar"
+          >
+            <IoChevronBackOutline />
+          </button>
+        </a>
         <button
-          className="mr-1 flex items-center justify-center rounded-lg h-8 w-8 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-neutral-900 dark:to-black border border-indigo-100 dark:border-indigo-900/50 hover:bg-indigo-100 dark:hover:bg-neutral-800 text-indigo-700 dark:text-gray-200 shadow-sm transition-all duration-200 hover:scale-105"
+          className="bg-[#1f1f1f] p-2 rounded-[8px]"
           onClick={() => setSidebarOpen(true)}
           aria-label="Open questions sidebar"
         >
-          <div className="flex flex-col justify-center items-center w-4 h-4 gap-[2px]">
-            <div className="w-full h-[1.5px] bg-current rounded-full"></div>
-            <div className="w-full h-[1.5px] bg-current rounded-full"></div>
-            <div className="w-full h-[1.5px] bg-current rounded-full"></div>
-          </div>
+          <HiMenuAlt1 className="" />
         </button>
         <div className="flex items-center gap-1 min-w-0">
-          <div className="relative flex items-center justify-center w-7 h-7 transition-transform hover:scale-105 group">
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 to-purple-600 dark:from-neutral-800 dark:to-neutral-900 rounded-lg transform rotate-3 opacity-80 group-hover:opacity-90 transition-all duration-300"></div>
-            <div className="absolute inset-0 bg-gradient-to-tl from-blue-500 to-indigo-600 dark:from-neutral-700 dark:to-neutral-800 rounded-lg transform -rotate-3 opacity-80 group-hover:opacity-90 transition-all duration-300"></div>
-            <div className="relative z-10 flex items-center justify-center w-6 h-6 bg-white dark:bg-neutral-900 rounded-lg shadow-inner overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-slate-100 to-white dark:from-neutral-900 dark:to-black opacity-40"></div>
-              <div className="relative">
-                <Code className="w-3.5 h-3.5 text-indigo-600 dark:text-gray-200" />
-                <div className="absolute inset-0 bg-indigo-500/10 dark:bg-gray-200/10 animate-pulse-slow rounded-sm opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              </div>
-            </div>
-          </div>
           <div className="group min-w-0">
-            <h1 className="text-base font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-600 dark:from-blue-200 dark:via-gray-400 dark:to-blue-200 truncate">
-              NexPractice
-            </h1>
-            <div className="h-0.5 w-8 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 dark:from-blue-900 dark:via-gray-700 dark:to-blue-900 rounded-full group-hover:animate-gradient-x"></div>
+            <h1 className="font-extrabold">NexPractice</h1>
           </div>
-          {/* Explore Nex button with modern explore icon */}
-          <a
-            href="/explore-nex"
-            className="ml-2 flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/80 dark:bg-neutral-800/80 border border-slate-200 dark:border-slate-700/50 text-slate-600 dark:text-slate-300 font-normal hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors text-sm"
-            style={{ fontSize: "0.92rem" }}
-          >
-            <Compass className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400 mr-1" />
-            Explore Nex
-          </a>
         </div>
+        {/* Random Challenge button with tooltip and animations */}
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href="/nexpractice/problem/random"
+                className="bg-[#1f1f1f] p-2 rounded-[8px]"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const icon = e.currentTarget;
+                  const mainContent = document.querySelector("main");
+
+                  // Add loading animation to icon
+                  icon.classList.add("loading");
+
+                  // Add blur animation to background
+                  if (mainContent) {
+                    mainContent.classList.add("background-blur");
+                  }
+
+                  // Navigate after animation
+                  setTimeout(() => {
+                    window.location.href = "/nexpractice/problem/random";
+                  }, 800);
+                }}
+              >
+                <LuShuffle />
+              </Link>
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p className="text-xs">Random Challenge</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       {/* Center section: Run/Submit and Mobile Navigation Tabs */}
-      <div className="hidden md:flex flex-1 items-center justify-center gap-3 mx-4 px-4 border-x border-indigo-100 dark:border-indigo-900/40 min-w-0">
+      <div className="hidden md:flex flex-1 items-center justify-center gap-3 mx-4 px-4  border-indigo-100 dark:border-indigo-900/40 min-w-0">
         <Button
           size="sm"
           className="bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white shadow-sm gap-1 min-w-28 relative overflow-hidden group transition-all duration-200 hover:shadow-md"
@@ -172,62 +193,21 @@ const Header: React.FC<HeaderProps> = ({
       {/* Right section: Actions/Profile */}
       <div className="flex items-center gap-2 min-w-0">
         <div className="hidden md:flex items-center gap-2 mr-2">
-          {/* Random Challenge button with tooltip and animations */}
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  href="/nexpractice/problem/random"
-                  className="random-challenge-icon flex items-center justify-center rounded-lg h-7 w-7 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-neutral-900 dark:to-black border border-indigo-100 dark:border-indigo-900/50 hover:border-indigo-200 dark:hover:border-indigo-700 transition-colors group"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    const icon = e.currentTarget;
-                    const mainContent = document.querySelector("main");
-
-                    // Add loading animation to icon
-                    icon.classList.add("loading");
-
-                    // Add blur animation to background
-                    if (mainContent) {
-                      mainContent.classList.add("background-blur");
-                    }
-
-                    // Navigate after animation
-                    setTimeout(() => {
-                      window.location.href = "/nexpractice/problem/random";
-                    }, 800);
-                  }}
-                >
-                  <Shuffle className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400 transition-transform group-hover:rotate-12" />
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="text-xs">Random Challenge</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          {/* Back to Practice button */}
           <a
-            href="/nexpractice"
-            className="ml-2 flex items-center gap-1 px-3 py-1.5 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold shadow hover:scale-105 transition-all border border-indigo-200 dark:border-indigo-700/40"
-            style={{ fontSize: "0.95rem" }}
+            href="/explore-nex"
+            className="ml-2 flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/80 dark:bg-neutral-800/80 border border-slate-200 dark:border-slate-700/50 text-slate-600 dark:text-slate-300 font-normal hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors text-sm"
+            style={{ fontSize: "0.92rem" }}
           >
-            <ArrowLeft className="h-4 w-4 mr-1" />
-            Back to NexPractice
+            <Compass className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400 mr-1" />
+            Explore Nex
           </a>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="ml-2 rounded-full hover:bg-indigo-100 dark:hover:bg-slate-800/60 focus:bg-indigo-200 dark:focus:bg-slate-700/80 border border-transparent focus:border-indigo-400 dark:focus:border-indigo-500 transition-colors"
+          <button
+            className="bg-[#1f1f1f] p-2 rounded-[8px]"
             onClick={handleFullscreenToggle}
             aria-label={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
           >
-            {isFullscreen ? (
-              <Minimize2 className="h-5 w-5 text-indigo-700 dark:text-indigo-200" />
-            ) : (
-              <Maximize2 className="h-5 w-5 text-indigo-700 dark:text-indigo-200" />
-            )}
-          </Button>
+            {isFullscreen ? <LuMinimize /> : <LuMaximize />}
+          </button>
           {/* Theme Switcher */}
           <ModeToggle />
         </div>

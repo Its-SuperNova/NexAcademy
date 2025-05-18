@@ -53,7 +53,7 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({
 }) => {
   return (
     <>
-      <div className="flex items-center justify-between p-2 md:p-3 bg-white dark:bg-black border-b border-indigo-100 dark:border-indigo-900/50">
+      <div className="flex  items-center justify-between p-2 md:p-3 bg-white dark:bg-black border-b border-indigo-100 dark:border-indigo-900/50">
         <div className="flex items-center gap-2">
           <Terminal className="h-4 w-4 text-indigo-500 dark:text-indigo-400" />
           <span className="font-medium text-slate-700 dark:text-slate-300">
@@ -81,7 +81,7 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({
       </div>
 
       {/* Results Content */}
-      <div className="flex-1 relative bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-800/80 overflow-auto pb-20">
+      <div className="flex-1 h-full relative bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-800/80 overflow-auto pb-20">
         {/* Background decorative elements */}
         <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-indigo-50/50 dark:bg-indigo-900/20 rounded-full blur-3xl -z-0"></div>
         <div className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-purple-50/30 dark:bg-purple-900/10 rounded-full blur-3xl -z-0"></div>
@@ -220,7 +220,7 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({
                     </div>
 
                     {/* Your Output skeleton - professional loading style */}
-                    <div className="rounded-lg overflow-hidden md:col-span-2 border border-indigo-200 dark:border-indigo-900/30 relative overflow-hidden">
+                    <div className="rounded-lg md:col-span-2 border border-indigo-200 dark:border-indigo-900/30 relative overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-r from-indigo-50/50 via-purple-50/50 to-indigo-50/50 dark:from-indigo-900/20 dark:via-purple-900/20 dark:to-indigo-900/20 animate-gradient-x"></div>
                       <div className="px-3 py-1.5 border-b border-indigo-200 dark:border-indigo-900/30 bg-slate-50 dark:bg-slate-800/60 relative z-10 flex justify-between items-center">
                         <div className="flex items-center space-x-2">
