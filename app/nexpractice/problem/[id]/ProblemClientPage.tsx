@@ -90,6 +90,8 @@ import { LuMinimize } from "react-icons/lu";
 import { NexEditor as CodeEditor } from "@/components/NexEditor";
 import { useIsMobile } from "@/components/ui/use-mobile";
 import { useTheme } from "next-themes";
+import { FaCode } from "react-icons/fa6";
+import { BsArrowRepeat } from "react-icons/bs";
 import {
   Popover,
   PopoverTrigger,
@@ -3445,7 +3447,7 @@ export default function ProblemClientPage({
             width: hasMounted && isMobile ? "100%" : `${100 - leftPanelWidth}%`,
           }}
         >
-          <div className="flex flex-col h-[calc(100vh-5rem)]">
+          <div className="flex flex-col gap-2 h-[calc(100vh-5rem)]">
             {/* Code editor */}
             <div
               className={`flex flex-col overflow-hidden rounded-lg ${
@@ -3466,17 +3468,10 @@ export default function ProblemClientPage({
               }}
             >
               <div className="flex items-center justify-between p-2 pl-3 bg-white dark:bg-[#292929]">
-                <div className="flex items-center">
-                  <div className="flex items-center mr-3 md:mr-4">
-                    {/* Logo - "N" on mobile, "NexEditor" on desktop */}
-                    <div className="flex items-center justify-center w-7 h-7 md:w-auto md:h-auto">
-                      <span className="hidden md:block text-base font-semibold text-indigo-700 dark:text-indigo-300 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 dark:from-indigo-300 dark:via-purple-300 dark:to-indigo-300">
-                        NexEditor
-                      </span>
-                      <div className="md:hidden flex items-center justify-center w-7 h-7 rounded-md bg-gradient-to-br from-indigo-600 to-purple-600 text-white font-bold text-lg shadow-sm">
-                        N
-                      </div>
-                    </div>
+                <div className="flex items-center gap-2">
+                  <FaCode className="h-5 w-5 text-[#087bff]" />
+                  <div className="flex text-[14px] items-center mr-3 md:mr-4">
+                    NexEditor
                   </div>
 
                   {/* Move Focus Mode button to the right, before Format */}
@@ -3569,7 +3564,31 @@ export default function ProblemClientPage({
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-
+                  <TooltipProvider delayDuration={0}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          className="bg-transparent hover:bg-[#484848] rounded-[8px] p-2 transition-colors duration-300"
+                          onClick={() => setCode(preloadCode)}
+                        >
+                          {isFormatting ? (
+                            <CgFormatLeft className="animate-pulse" />
+                          ) : formatSuccess ? (
+                            <Check className="h-3.5 w-3.5 text-green-500 dark:text-green-400" />
+                          ) : (
+                            <BsArrowRepeat />
+                          )}
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side="top"
+                        align="center"
+                        className="w-fit p-2  px-3 rounded-sm bg-[#1f1f1f] text-xs border border-[#444444]"
+                      >
+                        Reset Code
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -3577,13 +3596,26 @@ export default function ProblemClientPage({
                     asChild
                   >
                     <Popover>
-                      <PopoverTrigger asChild>
-                        <div className="bg-transparent hover:bg-[#484848] rounded-[8px] p-2 transition-colors duration-300">
-                          <span>
-                            <Settings className="h-4 w-4 cursor-pointer" />
-                          </span>
-                        </div>
-                      </PopoverTrigger>
+                      <TooltipProvider delayDuration={0}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <PopoverTrigger asChild>
+                              <div className="bg-transparent hover:bg-[#484848] rounded-[8px] p-2 transition-colors duration-300">
+                                <span>
+                                  <Settings className="h-4 w-4 cursor-pointer" />
+                                </span>
+                              </div>
+                            </PopoverTrigger>
+                          </TooltipTrigger>
+                          <TooltipContent
+                            side="top"
+                            align="center"
+                            className="w-fit p-2  px-3 rounded-sm bg-[#1f1f1f] text-xs border border-[#444444]"
+                          >
+                            Editor Settings
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                       <PopoverContent
                         align="end"
                         className="w-80 p-0 border border-gray-200 dark:border-[#4c4c4c] shadow-xl rounded-xl overflow-hidden mt-4"
@@ -4112,7 +4144,7 @@ export default function ProblemClientPage({
 
             {/* Results panel */}
             <div
-              className={`flex flex-col overflow-hidden ${
+              className={`flex flex-col overflow-hidden rounded-lg ${
                 hasMounted && isMobile
                   ? activePanel === "results"
                     ? "block"
@@ -4131,48 +4163,17 @@ export default function ProblemClientPage({
                 transition: "all 0.3s ease-in-out", // Add smooth transition
               }}
             >
-              <div className="flex items-center justify-between p-2 md:p-3 bg-white dark:bg-black ">
-                <div className="flex items-center gap-2">
-                  <Terminal className="h-4 w-4 text-indigo-500 dark:text-indigo-400" />
-                  <span className="font-medium text-slate-700 dark:text-slate-300">
-                    Results
-                  </span>
-                </div>
 
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-7 w-7 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900/30 text-slate-500 dark:text-slate-400 hover:text-indigo-700 dark:hover:text-indigo-300"
-                    onClick={toggleResultsPanelFullscreen}
-                    aria-label={
-                      isResultsPanelFullscreen
-                        ? "Exit fullscreen"
-                        : "Fullscreen"
-                    }
-                  >
-                    {isResultsPanelFullscreen ? (
-                      <Minimize2 className="h-4 w-4" />
-                    ) : (
-                      <Maximize2 className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-              </div>
 
               {/* Results Content */}
-              <div className="flex-1 relative bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-800/80 overflow-auto pb-20">
-                {/* Background decorative elements */}
-                <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-indigo-50/50 dark:bg-indigo-900/20 rounded-full blur-3xl -z-0"></div>
-                <div className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-purple-50/30 dark:bg-purple-900/10 rounded-full blur-3xl -z-0"></div>
-
+              <div className="flex-1 bg-white dark:bg-[#1f1f1f] pb-20">
                 {/* Tabs for Results Panel */}
                 <Tabs
                   value={activeTab}
                   onValueChange={setActiveTab}
-                  className="w-full p-4 relative z-10"
+                  className="w-full  relative z-10"
                 >
-                  <TabsList className="flex flex-nowrap justify-start overflow-x-auto overflow-y-hidden px-3 scroll-pl-2 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-indigo-200 dark:scrollbar-thumb-indigo-900/40 bg-slate-100 dark:bg-slate-800/70 rounded-lg backdrop-blur-sm border border-slate-200/80 dark:border-slate-700/30 shadow-sm mb-3 gap-1.5 p-2">
+                  <TabsList className="flex flex-nowrap justify-start ">
                     <TabsTrigger
                       value="sample"
                       className="flex-shrink-0 min-w-[140px] px-3 rounded-md py-1.5 data-[state=active]:bg-white data-[state=active]:dark:bg-black/95 data-[state=active]:text-indigo-700 data-[state=active]:dark:text-indigo-30 data-[state=active]:shadow-sm relative overflow-hidden group"
@@ -4208,7 +4209,7 @@ export default function ProblemClientPage({
                   {/* Sample Testcases Tab */}
                   <TabsContent
                     value="sample"
-                    className="focus-visible:outline-none focus-visible:ring-0"
+                    className="focus-visible:outline-none focus-visible:ring-0 p-4"
                   >
                     {showEvaluatingSkeletons && skeletonTab === "sample" ? (
                       <div className="space-y-4 animate-in fade-in-50 slide-in-from-bottom-3 duration-300">
