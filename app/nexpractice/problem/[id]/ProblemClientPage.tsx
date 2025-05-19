@@ -3776,7 +3776,7 @@ export default function ProblemClientPage({
                       <Button
                         variant="outline"
                         size="sm"
-                        className="flex items-center gap-1 bg-[#393939] hover:bg-[#494949] text-white min-w-[120px] h-8 md:h-9 px-3 overflow-hidden group relative"
+                        className="flex items-center gap-1 dark:bg-[#393939] dark:hover:bg-[#494949] bg-gray-100 hover:bg-gray-200 dark:text-white text-gray-800 min-w-[120px] h-8 md:h-9 px-3 overflow-hidden group relative"
                       >
                         <div className="flex items-center justify-between w-full overflow-hidden">
                           <div className="flex items-center justify-center gap-3 overflow-hidden">
@@ -3789,7 +3789,7 @@ export default function ProblemClientPage({
                                 ).name
                               }
                             </span>
-                            <span className="text-[10px] md:text-xs text-[#8c8c8c] truncate group-hover:text-[#acacac]">
+                            <span className="text-[10px] md:text-xs dark:text-[#8c8c8c] text-gray-500 truncate group-hover:dark:text-[#acacac] group-hover:text-gray-700">
                               {
                                 parseLanguageName(
                                   JUDGE0_LANGUAGES[
@@ -3799,20 +3799,20 @@ export default function ProblemClientPage({
                               }
                             </span>
                           </div>
-                          <ChevronDown className="h-3 w-3 ml-2 flex-shrink-0 opacity-60  transition-colors" />
+                          <ChevronDown className="h-3 w-3 ml-2 flex-shrink-0 opacity-60 transition-colors" />
                         </div>
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent
                       align="start"
-                      className="w-[600px] mt-3 mr-6 p-0 max-h-[400px] overflow-hidden flex flex-col border-gray-800 shadow-lg rounded-xl"
+                      className="w-[600px] mt-3 mr-6 p-0 max-h-[400px] overflow-hidden flex flex-col dark:border-gray-800 border-gray-200 shadow-lg rounded-xl"
                     >
-                      <div className="sticky top-0 z-30 bg-[#292929] border-b border-gray-800 p-3">
+                      <div className="sticky top-0 z-30 dark:bg-[#292929] bg-gray-50 dark:border-b-gray-800 border-b-gray-200 border-b p-3">
                         <div className="relative">
-                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 dark:text-gray-400 text-gray-500" />
                           <Input
                             placeholder="Search languages..."
-                            className="pl-10 py-1.5 bg-[#1a1a1a] border-gray-700 rounded-lg text-sm text-white"
+                            className="pl-10 py-1.5 dark:bg-[#1a1a1a] bg-white dark:border-gray-700 border-gray-300 rounded-lg text-sm dark:text-white text-gray-800"
                             value={searchLanguage}
                             onChange={(
                               e: React.ChangeEvent<HTMLInputElement>
@@ -3821,8 +3821,8 @@ export default function ProblemClientPage({
                         </div>
                       </div>
 
-                      <div className="overflow-y-auto flex-1 p-0 custom-scrollbar bg-[#292929]">
-                        <div className="grid grid-cols-3 divide-x divide-[#393939]">
+                      <div className="overflow-y-auto flex-1 p-0 custom-scrollbar dark:bg-[#292929] bg-white">
+                        <div className="grid grid-cols-3 dark:divide-x-[#393939] divide-x-gray-200 divide-x">
                           <div className="py-2 space-y-1">
                             {Object.entries(JUDGE0_LANGUAGES)
                               .filter(
@@ -3847,8 +3847,8 @@ export default function ProblemClientPage({
                                     key={`lang-${langId}`}
                                     className={`group px-4 py-2.5 transition-all duration-150 cursor-pointer rounded-md mx-1 ${
                                       isSelected
-                                        ? "bg-[#333333]"
-                                        : "hover:bg-[#2a2a2a]"
+                                        ? "dark:bg-[#333333] bg-blue-50"
+                                        : "dark:hover:bg-[#2a2a2a] hover:bg-gray-100"
                                     }`}
                                     onClick={() => {
                                       handleLanguageChange(langId);
@@ -3861,13 +3861,13 @@ export default function ProblemClientPage({
                                           className={`font-medium text-sm ${
                                             isSelected
                                               ? "text-[#0779FF]"
-                                              : "text-gray-300"
+                                              : "dark:text-gray-300 text-gray-800"
                                           }`}
                                         >
                                           {name}
                                         </span>
                                         {version && (
-                                          <span className="text-xs text-gray-500">
+                                          <span className="text-xs dark:text-gray-500 text-gray-500">
                                             {version}
                                           </span>
                                         )}
@@ -3909,8 +3909,8 @@ export default function ProblemClientPage({
                                     key={`lang-${langId}`}
                                     className={`group px-4 py-2.5 transition-all duration-150 cursor-pointer rounded-md mx-1 ${
                                       isSelected
-                                        ? "bg-[#333333]"
-                                        : "hover:bg-[#2a2a2a]"
+                                        ? "dark:bg-[#333333] bg-blue-50"
+                                        : "dark:hover:bg-[#2a2a2a] hover:bg-gray-100"
                                     }`}
                                     onClick={() => {
                                       handleLanguageChange(langId);
@@ -3923,13 +3923,13 @@ export default function ProblemClientPage({
                                           className={`font-medium text-sm ${
                                             isSelected
                                               ? "text-[#0779FF]"
-                                              : "text-gray-300"
+                                              : "dark:text-gray-300 text-gray-800"
                                           }`}
                                         >
                                           {name}
                                         </span>
                                         {version && (
-                                          <span className="text-xs text-gray-500">
+                                          <span className="text-xs dark:text-gray-500 text-gray-500">
                                             {version}
                                           </span>
                                         )}
@@ -3968,8 +3968,8 @@ export default function ProblemClientPage({
                                     key={`lang-${langId}`}
                                     className={`group px-4 py-2.5 transition-all duration-150 cursor-pointer rounded-md mx-1 ${
                                       isSelected
-                                        ? "bg-[#333333]"
-                                        : "hover:bg-[#2a2a2a]"
+                                        ? "dark:bg-[#333333] bg-blue-50"
+                                        : "dark:hover:bg-[#2a2a2a] hover:bg-gray-100"
                                     }`}
                                     onClick={() => {
                                       handleLanguageChange(langId);
@@ -3982,13 +3982,13 @@ export default function ProblemClientPage({
                                           className={`font-medium text-sm ${
                                             isSelected
                                               ? "text-[#0779FF]"
-                                              : "text-gray-300"
+                                              : "dark:text-gray-300 text-gray-800"
                                           }`}
                                         >
                                           {name}
                                         </span>
                                         {version && (
-                                          <span className="text-xs text-gray-500">
+                                          <span className="text-xs dark:text-gray-500 text-gray-500">
                                             {version}
                                           </span>
                                         )}
@@ -4013,8 +4013,8 @@ export default function ProblemClientPage({
                                 .includes(searchLanguage.toLowerCase())
                           ).length === 0 && (
                             <div className="text-center py-8 px-4">
-                              <Search className="h-5 w-5 text-gray-500 mx-auto mb-2" />
-                              <p className="text-sm text-gray-500">
+                              <Search className="h-5 w-5 dark:text-gray-500 text-gray-400 mx-auto mb-2" />
+                              <p className="text-sm dark:text-gray-500 text-gray-500">
                                 No languages matching "{searchLanguage}"
                               </p>
                             </div>
@@ -4022,12 +4022,12 @@ export default function ProblemClientPage({
                       </div>
 
                       {searchLanguage && (
-                        <div className="border-t border-gray-800 px-3 py-2 bg-[#1a1a1a]">
+                        <div className="border-t dark:border-gray-800 border-gray-200 px-3 py-2 dark:bg-[#1a1a1a] bg-gray-50">
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => setSearchLanguage("")}
-                            className="h-7 text-xs w-full border-gray-700 bg-[#2a2a2a] hover:bg-[#333333] text-gray-300"
+                            className="h-7 text-xs w-full dark:border-gray-700 border-gray-300 dark:bg-[#2a2a2a] bg-white dark:hover:bg-[#333333] hover:bg-gray-100 dark:text-gray-300 text-gray-700"
                           >
                             <X className="h-3 w-3 mr-1.5" />
                             Clear Search
