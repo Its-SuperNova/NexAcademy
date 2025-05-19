@@ -3465,7 +3465,7 @@ export default function ProblemClientPage({
                 transition: "all 0.3s ease-in-out", // Add smooth transition
               }}
             >
-              <div className="flex items-center justify-between p-2 md:p-3 bg-white dark:bg-[#313131]">
+              <div className="flex items-center justify-between p-2 pl-3 bg-white dark:bg-[#292929]">
                 <div className="flex items-center">
                   <div className="flex items-center mr-3 md:mr-4">
                     {/* Logo - "N" on mobile, "NexEditor" on desktop */}
@@ -3478,202 +3478,7 @@ export default function ProblemClientPage({
                       </div>
                     </div>
                   </div>
-                  {/* Custom Language Dropdown */}
-                  <Popover
-                    open={languageDropdownOpen}
-                    onOpenChange={setLanguageDropdownOpen}
-                  >
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="mr-2 flex items-center gap-1 md:gap-2 border-indigo-200 dark:border-indigo-800/50 bg-gradient-to-r from-white to-slate-50 dark:from-slate-800 dark:to-slate-800/90 text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 min-w-[120px] md:min-w-[180px] h-8 md:h-9 pl-1 md:pl-2 pr-2 md:pr-3 overflow-hidden group relative"
-                      >
-                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-indigo-500 to-indigo-600 dark:from-indigo-400 dark:to-indigo-500"></div>
-                        <div className="flex items-center gap-1 md:gap-2 overflow-hidden">
-                          <div className="flex items-center justify-center w-5 h-5 md:w-6 md:h-6 bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900 dark:to-indigo-800/30 rounded-md border border-indigo-200 dark:border-indigo-700/30 shadow-sm flex-shrink-0">
-                            {LANGUAGE_ICONS[
-                              language as keyof typeof LANGUAGE_ICONS
-                            ] || (
-                              <Code className="h-3 w-3 md:h-3.5 md:w-3.5 text-indigo-500 dark:text-indigo-400" />
-                            )}
-                          </div>
-                          <div className="flex flex-col leading-none overflow-hidden">
-                            <span className="font-medium text-xs md:text-sm truncate">
-                              {
-                                parseLanguageName(
-                                  JUDGE0_LANGUAGES[
-                                    language as keyof typeof JUDGE0_LANGUAGES
-                                  ]
-                                ).name
-                              }
-                            </span>
-                            <span className="text-[10px] md:text-xs text-slate-500 dark:text-slate-400 truncate">
-                              {
-                                parseLanguageName(
-                                  JUDGE0_LANGUAGES[
-                                    language as keyof typeof JUDGE0_LANGUAGES
-                                  ]
-                                ).version
-                              }
-                            </span>
-                          </div>
-                        </div>
-                        <ChevronDown className="h-3 w-3 ml-auto opacity-60 group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      align="start"
-                      className="w-[680px] p-0 max-h-[600px] overflow-hidden flex flex-col border-indigo-100 dark:border-indigo-900/50 shadow-lg rounded-xl"
-                    >
-                      <div className="language-dropdown-header sticky top-0 z-30 bg-white dark:bg-black border-b border-indigo-100 dark:border-indigo-900/50 p-4">
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-2">
-                            <div className="h-5 w-1 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-full"></div>
-                            <h3 className="font-semibold text-slate-800 dark:text-slate-200 text-base">
-                              Select Programming Language
-                            </h3>
-                          </div>
-                          <div className="text-xs bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-30 px-2 py-0.5 rounded-full font-medium">
-                            {Object.keys(JUDGE0_LANGUAGES).length} languages
-                            available
-                          </div>
-                        </div>
-                        <div className="relative">
-                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-                          <Input
-                            placeholder="Search languages..."
-                            className="pl-10 py-2 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg"
-                            value={searchLanguage}
-                            onChange={(
-                              e: React.ChangeEvent<HTMLInputElement>
-                            ) => setSearchLanguage(e.target.value)}
-                          />
-                        </div>
-                      </div>
 
-                      <div className="overflow-y-auto flex-1 p-4 custom-scrollbar bg-gradient-to-br from-slate-50/50 to-white dark:from-slate-900 dark:to-slate-800/90">
-                        <div className="language-grid grid grid-cols-3 gap-x-3 gap-y-2.5">
-                          {Object.entries(JUDGE0_LANGUAGES)
-                            .filter(
-                              ([id, name]) =>
-                                !searchLanguage ||
-                                name
-                                  .toLowerCase()
-                                  .includes(searchLanguage.toLowerCase())
-                            )
-                            .map(
-                              (
-                                [langId, langName]: [string, string],
-                                index: number,
-                                array: [string, string][]
-                              ) => {
-                                const { name, version } =
-                                  parseLanguageName(langName);
-                                const isSelected: boolean = language === langId;
-                                const showDivider: boolean =
-                                  index > 0 &&
-                                  index % 6 === 0 &&
-                                  index !== array.length - 1;
-                                return (
-                                  <Fragment key={`lang-${langId}`}>
-                                    {showDivider && (
-                                      <div className="col-span-3 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-700 to-transparent my-2.5"></div>
-                                    )}
-                                    <div
-                                      className={`language-item group h-14 rounded-lg px-3 transition-all duration-200 hover:shadow-md border ${
-                                        isSelected
-                                          ? "border-indigo-200 dark:border-indigo-800/50 bg-indigo-50/70 dark:bg-indigo-900/20"
-                                          : "border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-white dark:hover:bg-slate-800/60"
-                                      } ${isSelected ? "active" : ""}`}
-                                      onClick={() => {
-                                        handleLanguageChange(langId);
-                                        setLanguageDropdownOpen(false);
-                                      }}
-                                    >
-                                      <div className="flex items-center gap-3 w-full h-full overflow-hidden">
-                                        <div className="language-icon-container flex-shrink-0 w-7 h-7 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-sm group-hover:from-indigo-50 group-hover:to-indigo-100 dark:group-hover:from-indigo-900/20 dark:group-hover:to-indigo-900/30 transition-all duration-200">
-                                          {LANGUAGE_ICONS[langId] || (
-                                            <div className="flex items-center justify-center w-full h-full">
-                                              <Code className="h-3.5 w-3.5 text-slate-400 group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors" />
-                                            </div>
-                                          )}
-                                        </div>
-                                        <div className="flex flex-col leading-tight overflow-hidden flex-1">
-                                          <span className="font-medium truncate text-slate-700 dark:text-slate-300 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
-                                            {name}
-                                          </span>
-                                          {version && (
-                                            <span className="version truncate text-xs text-slate-500 dark:text-slate-400 group-hover:text-indigo-500/70 dark:group-hover:text-indigo-400/70 transition-colors">
-                                              {version}
-                                            </span>
-                                          )}
-                                        </div>
-                                        {isSelected && (
-                                          <div className="flex-shrink-0 h-5 w-5 bg-indigo-500 dark:bg-indigo-400 rounded-full flex items-center justify-center">
-                                            <Check className="h-3 w-3 text-white" />
-                                          </div>
-                                        )}
-                                      </div>
-                                    </div>
-                                  </Fragment>
-                                );
-                              }
-                            )}
-                        </div>
-
-                        {searchLanguage &&
-                          Object.entries(JUDGE0_LANGUAGES).filter(
-                            ([id, name]) =>
-                              name
-                                .toLowerCase()
-                                .includes(searchLanguage.toLowerCase())
-                          ).length === 0 && (
-                            <div className="text-center py-12 px-4">
-                              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 mb-3">
-                                <Search className="h-6 w-6 text-slate-400" />
-                              </div>
-                              <h4 className="text-base font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                No Results Found
-                              </h4>
-                              <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
-                                We couldn't find any programming language
-                                matching "{searchLanguage}"
-                              </p>
-                            </div>
-                          )}
-                      </div>
-
-                      <div className="border-t border-slate-200 dark:border-slate-700 px-4 py-3 flex justify-between items-center bg-gradient-to-r from-slate-50 to-white dark:from-slate-900 dark:to-slate-800">
-                        <div className="flex items-center">
-                          <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
-                          <div className="text-sm text-slate-600 dark:text-slate-300">
-                            Currently using:{" "}
-                            <span className="font-semibold text-indigo-600 dark:text-indigo-400 ml-1">
-                              {
-                                parseLanguageName(
-                                  JUDGE0_LANGUAGES[
-                                    language as keyof typeof JUDGE0_LANGUAGES
-                                  ]
-                                ).name
-                              }
-                            </span>
-                          </div>
-                        </div>
-                        {searchLanguage && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setSearchLanguage("")}
-                            className="h-8 text-xs border-indigo-200 dark:border-indigo-800/50 bg-white dark:bg-slate-800"
-                          >
-                            <X className="h-3.5 w-3.5 mr-1.5" />
-                            Clear Search
-                          </Button>
-                        )}
-                      </div>
-                    </PopoverContent>
-                  </Popover>
                   {/* Move Focus Mode button to the right, before Format */}
                 </div>
                 <div className="flex items-center gap-2">
@@ -3962,6 +3767,275 @@ export default function ProblemClientPage({
                       </PopoverContent>
                     </Popover>
                   </Button>
+                  {/* Custom Language Dropdown */}
+                  <Popover
+                    open={languageDropdownOpen}
+                    onOpenChange={setLanguageDropdownOpen}
+                  >
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex items-center gap-1 bg-[#393939] hover:bg-[#494949] text-white min-w-[120px] h-8 md:h-9 px-3 overflow-hidden group relative"
+                      >
+                        <div className="flex items-center justify-between w-full overflow-hidden">
+                          <div className="flex items-center justify-center gap-3 overflow-hidden">
+                            <span className="font-medium text-xs md:text-sm truncate">
+                              {
+                                parseLanguageName(
+                                  JUDGE0_LANGUAGES[
+                                    language as keyof typeof JUDGE0_LANGUAGES
+                                  ]
+                                ).name
+                              }
+                            </span>
+                            <span className="text-[10px] md:text-xs text-[#8c8c8c] truncate group-hover:text-[#acacac]">
+                              {
+                                parseLanguageName(
+                                  JUDGE0_LANGUAGES[
+                                    language as keyof typeof JUDGE0_LANGUAGES
+                                  ]
+                                ).version
+                              }
+                            </span>
+                          </div>
+                          <ChevronDown className="h-3 w-3 ml-2 flex-shrink-0 opacity-60  transition-colors" />
+                        </div>
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      align="start"
+                      className="w-[600px] mt-3 mr-6 p-0 max-h-[400px] overflow-hidden flex flex-col border-gray-800 shadow-lg rounded-xl"
+                    >
+                      <div className="sticky top-0 z-30 bg-[#292929] border-b border-gray-800 p-3">
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                          <Input
+                            placeholder="Search languages..."
+                            className="pl-10 py-1.5 bg-[#1a1a1a] border-gray-700 rounded-lg text-sm text-white"
+                            value={searchLanguage}
+                            onChange={(
+                              e: React.ChangeEvent<HTMLInputElement>
+                            ) => setSearchLanguage(e.target.value)}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="overflow-y-auto flex-1 p-0 custom-scrollbar bg-[#292929]">
+                        <div className="grid grid-cols-3 divide-x divide-[#393939]">
+                          <div className="py-2 space-y-1">
+                            {Object.entries(JUDGE0_LANGUAGES)
+                              .filter(
+                                ([id, name]) =>
+                                  !searchLanguage ||
+                                  name
+                                    .toLowerCase()
+                                    .includes(searchLanguage.toLowerCase())
+                              )
+                              .slice(
+                                0,
+                                Math.ceil(
+                                  Object.keys(JUDGE0_LANGUAGES).length / 3
+                                )
+                              )
+                              .map(([langId, langName]: [string, string]) => {
+                                const { name, version } =
+                                  parseLanguageName(langName);
+                                const isSelected = language === langId;
+                                return (
+                                  <div
+                                    key={`lang-${langId}`}
+                                    className={`group px-4 py-2.5 transition-all duration-150 cursor-pointer rounded-md mx-1 ${
+                                      isSelected
+                                        ? "bg-[#333333]"
+                                        : "hover:bg-[#2a2a2a]"
+                                    }`}
+                                    onClick={() => {
+                                      handleLanguageChange(langId);
+                                      setLanguageDropdownOpen(false);
+                                    }}
+                                  >
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex flex-col">
+                                        <span
+                                          className={`font-medium text-sm ${
+                                            isSelected
+                                              ? "text-[#0779FF]"
+                                              : "text-gray-300"
+                                          }`}
+                                        >
+                                          {name}
+                                        </span>
+                                        {version && (
+                                          <span className="text-xs text-gray-500">
+                                            {version}
+                                          </span>
+                                        )}
+                                      </div>
+                                      {isSelected && (
+                                        <div className="text-[#0779FF]">
+                                          <Check className="h-3.5 w-3.5" />
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                          </div>
+
+                          <div className="py-2 space-y-1">
+                            {Object.entries(JUDGE0_LANGUAGES)
+                              .filter(
+                                ([id, name]) =>
+                                  !searchLanguage ||
+                                  name
+                                    .toLowerCase()
+                                    .includes(searchLanguage.toLowerCase())
+                              )
+                              .slice(
+                                Math.ceil(
+                                  Object.keys(JUDGE0_LANGUAGES).length / 3
+                                ),
+                                Math.ceil(
+                                  Object.keys(JUDGE0_LANGUAGES).length / 3
+                                ) * 2
+                              )
+                              .map(([langId, langName]: [string, string]) => {
+                                const { name, version } =
+                                  parseLanguageName(langName);
+                                const isSelected = language === langId;
+                                return (
+                                  <div
+                                    key={`lang-${langId}`}
+                                    className={`group px-4 py-2.5 transition-all duration-150 cursor-pointer rounded-md mx-1 ${
+                                      isSelected
+                                        ? "bg-[#333333]"
+                                        : "hover:bg-[#2a2a2a]"
+                                    }`}
+                                    onClick={() => {
+                                      handleLanguageChange(langId);
+                                      setLanguageDropdownOpen(false);
+                                    }}
+                                  >
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex flex-col">
+                                        <span
+                                          className={`font-medium text-sm ${
+                                            isSelected
+                                              ? "text-[#0779FF]"
+                                              : "text-gray-300"
+                                          }`}
+                                        >
+                                          {name}
+                                        </span>
+                                        {version && (
+                                          <span className="text-xs text-gray-500">
+                                            {version}
+                                          </span>
+                                        )}
+                                      </div>
+                                      {isSelected && (
+                                        <div className="text-[#0779FF]">
+                                          <Check className="h-3.5 w-3.5" />
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                          </div>
+
+                          <div className="py-2 space-y-1">
+                            {Object.entries(JUDGE0_LANGUAGES)
+                              .filter(
+                                ([id, name]) =>
+                                  !searchLanguage ||
+                                  name
+                                    .toLowerCase()
+                                    .includes(searchLanguage.toLowerCase())
+                              )
+                              .slice(
+                                Math.ceil(
+                                  Object.keys(JUDGE0_LANGUAGES).length / 3
+                                ) * 2
+                              )
+                              .map(([langId, langName]: [string, string]) => {
+                                const { name, version } =
+                                  parseLanguageName(langName);
+                                const isSelected = language === langId;
+                                return (
+                                  <div
+                                    key={`lang-${langId}`}
+                                    className={`group px-4 py-2.5 transition-all duration-150 cursor-pointer rounded-md mx-1 ${
+                                      isSelected
+                                        ? "bg-[#333333]"
+                                        : "hover:bg-[#2a2a2a]"
+                                    }`}
+                                    onClick={() => {
+                                      handleLanguageChange(langId);
+                                      setLanguageDropdownOpen(false);
+                                    }}
+                                  >
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex flex-col">
+                                        <span
+                                          className={`font-medium text-sm ${
+                                            isSelected
+                                              ? "text-[#0779FF]"
+                                              : "text-gray-300"
+                                          }`}
+                                        >
+                                          {name}
+                                        </span>
+                                        {version && (
+                                          <span className="text-xs text-gray-500">
+                                            {version}
+                                          </span>
+                                        )}
+                                      </div>
+                                      {isSelected && (
+                                        <div className="text-[#0779FF]">
+                                          <Check className="h-3.5 w-3.5" />
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                          </div>
+                        </div>
+
+                        {searchLanguage &&
+                          Object.entries(JUDGE0_LANGUAGES).filter(
+                            ([id, name]) =>
+                              name
+                                .toLowerCase()
+                                .includes(searchLanguage.toLowerCase())
+                          ).length === 0 && (
+                            <div className="text-center py-8 px-4">
+                              <Search className="h-5 w-5 text-gray-500 mx-auto mb-2" />
+                              <p className="text-sm text-gray-500">
+                                No languages matching "{searchLanguage}"
+                              </p>
+                            </div>
+                          )}
+                      </div>
+
+                      {searchLanguage && (
+                        <div className="border-t border-gray-800 px-3 py-2 bg-[#1a1a1a]">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setSearchLanguage("")}
+                            className="h-7 text-xs w-full border-gray-700 bg-[#2a2a2a] hover:bg-[#333333] text-gray-300"
+                          >
+                            <X className="h-3 w-3 mr-1.5" />
+                            Clear Search
+                          </Button>
+                        </div>
+                      )}
+                    </PopoverContent>
+                  </Popover>
                 </div>
               </div>
 
