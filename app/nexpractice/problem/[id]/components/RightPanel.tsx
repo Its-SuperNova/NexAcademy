@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import ResultsSection from "./ResultsSection";
 import { LuMaximize } from "react-icons/lu";
 import { LuMinimize } from "react-icons/lu";
@@ -176,6 +176,101 @@ export default function RightPanel({
     100 - editorHeight
   );
 
+  // Store the current editor height when it's not folded
+  useEffect(() => {
+    if (!isEditorFolded && editorHeightState > 7) {
+      setPrevEditorHeight(editorHeightState);
+    }
+  }, [isEditorFolded, editorHeightState]);
+
+  // Wrapper functions for runCode and submitCode
+  const handleRunCode = useCallback(() => {
+    // Save current editor height if not already folded
+    if (!isEditorFolded && editorHeightState > 7) {
+      setPrevEditorHeight(editorHeightState);
+    }
+
+    // Fold editor
+    setIsEditorFolded(true);
+
+    // Unfold results if they're folded
+    if (isResultsFolded) {
+      setIsResultsFolded(false);
+    }
+
+    // Set active tab to "sample" for run operations
+    setActiveTab("sample");
+
+    // Run the code
+    runCode();
+  }, [
+    isEditorFolded,
+    isResultsFolded,
+    editorHeightState,
+    runCode,
+    setActiveTab,
+  ]);
+
+  const handleSubmitCode = useCallback(() => {
+    // Save current editor height if not already folded
+    if (!isEditorFolded && editorHeightState > 7) {
+      setPrevEditorHeight(editorHeightState);
+    }
+
+    // Fold editor
+    setIsEditorFolded(true);
+
+    // Unfold results if they're folded
+    if (isResultsFolded) {
+      setIsResultsFolded(false);
+    }
+
+    // Set active tab to "hidden" for submit operations
+    setActiveTab("hidden");
+
+    // Submit the code
+    submitCode();
+  }, [
+    isEditorFolded,
+    isResultsFolded,
+    editorHeightState,
+    submitCode,
+    setActiveTab,
+  ]);
+
+  // Wrapper for runCustomTestcase
+  const handleRunCustomTestcase = useCallback(
+    (input: string) => {
+      // Save current editor height if not already folded
+      if (!isEditorFolded && editorHeightState > 7) {
+        setPrevEditorHeight(editorHeightState);
+      }
+
+      // Fold editor
+      setIsEditorFolded(true);
+
+      // Unfold results if they're folded
+      if (isResultsFolded) {
+        setIsResultsFolded(false);
+      }
+
+      // Set active tab to "custom" for custom testcase operations
+      setActiveTab("custom");
+
+      // Run the custom testcase
+      if (runCustomTestcase) {
+        runCustomTestcase(input);
+      }
+    },
+    [
+      isEditorFolded,
+      isResultsFolded,
+      editorHeightState,
+      runCustomTestcase,
+      setActiveTab,
+    ]
+  );
+
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
       if (isEditorFolded) {
@@ -333,7 +428,7 @@ export default function RightPanel({
                     size="sm"
                     variant="outline"
                     className="h-8 px-2 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/50"
-                    onClick={runCode}
+                    onClick={handleRunCode}
                     disabled={isRunning}
                   >
                     {isRunning ? (
@@ -346,7 +441,7 @@ export default function RightPanel({
                   <Button
                     size="sm"
                     className="h-8 px-2 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white"
-                    onClick={submitCode}
+                    onClick={handleSubmitCode}
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? (
@@ -963,7 +1058,7 @@ export default function RightPanel({
                     hiddenExecutionStatus={hiddenExecutionStatus}
                     isRunning={isRunning}
                     isSubmitting={isSubmitting}
-                    submitCode={submitCode}
+                    submitCode={handleSubmitCode}
                   />
                 </TabsContent>
 
@@ -973,7 +1068,7 @@ export default function RightPanel({
                 >
                   <CustomTestcaseTab
                     isRunning={isRunning}
-                    runCustomTestcase={runCustomTestcase}
+                    runCustomTestcase={handleRunCustomTestcase}
                     customTestResult={customTestResult}
                   />
                 </TabsContent>

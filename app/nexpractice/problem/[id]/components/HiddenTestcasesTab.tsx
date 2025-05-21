@@ -443,8 +443,8 @@ export function HiddenTestcasesTab({
           </div>
 
           {/* Statistics Dashboard */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
-            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-[#2a2a2a] rounded-xl border border-gray-200 dark:border-[#4c4c4c] overflow-hidden shadow-sm">
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-[#4c4c4c]">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   Test Results Overview
@@ -464,7 +464,7 @@ export function HiddenTestcasesTab({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-gray-200 dark:divide-gray-700">
+            <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-gray-200 dark:divide-[#4c4c4c]">
               <div className="p-6 text-center">
                 <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
                   {passedHiddenTestcases}
@@ -561,8 +561,8 @@ export function HiddenTestcasesTab({
           })()}
 
           {/* All Test Cases Grid */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
-            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-[#2a2a2a] rounded-xl border border-gray-200 dark:border-[#4c4c4c] overflow-hidden shadow-sm">
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-[#4c4c4c]">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 All Test Cases
               </h3>
