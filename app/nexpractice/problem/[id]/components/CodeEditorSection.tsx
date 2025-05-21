@@ -32,6 +32,8 @@ import { BsArrowRepeat } from "react-icons/bs";
 import { CgFormatLeft } from "react-icons/cg";
 import { LuMaximize, LuMinimize } from "react-icons/lu";
 import { NexEditor as CodeEditor } from "@/components/NexEditor";
+import { GoChevronUp } from "react-icons/go";
+import { GoChevronDown } from "react-icons/go";
 
 interface CodeEditorSectionProps {
   hasMounted: boolean;
@@ -117,13 +119,7 @@ export default function CodeEditorSection({
 }: CodeEditorSectionProps) {
   return (
     <div
-      className={`flex flex-col overflow-hidden rounded-lg ${
-        hasMounted && isMobile
-          ? activePanel === "code"
-            ? "block"
-            : "hidden"
-          : ""
-      } ${hasMounted && isMobile ? "pb-24" : ""}`}
+      className="flex flex-col overflow-hidden rounded-lg"
       style={{
         flexBasis: hasMounted && isMobile ? "100%" : `${editorHeight}%`,
         flexGrow: 0,
@@ -180,9 +176,13 @@ export default function CodeEditorSection({
               <TooltipTrigger asChild>
                 <button
                   onClick={toggleFocusMode}
-                  className="bg-transparent hover:bg-[#484848] rounded-[8px] p-2 transition-colors duration-300"
+                  className="bg-transparent hover:bg-[#484848] rounded-[8px] p-1.5 transition-colors duration-300"
                 >
-                  {focusMode ? <LuMinimize /> : <LuMaximize />}
+                  {focusMode ? (
+                    <LuMinimize className="h-3.5 w-3.5" />
+                  ) : (
+                    <LuMaximize className="h-3.5 w-3.5" />
+                  )}
                 </button>
               </TooltipTrigger>
               <TooltipContent
@@ -194,25 +194,17 @@ export default function CodeEditorSection({
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-
           <TooltipProvider delayDuration={0}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
-                  className="bg-transparent hover:bg-[#484848] rounded-[8px] p-2 transition-colors duration-300"
-                  onClick={async () => {
-                    await formatCode();
-                    setFormatSuccess(true);
-                    setTimeout(() => setFormatSuccess(false), 1500);
-                  }}
-                  disabled={isFormatting}
+                  onClick={toggleFocusMode}
+                  className="bg-transparent hover:bg-[#484848] rounded-[6px] p-1 transition-colors duration-300"
                 >
-                  {isFormatting ? (
-                    <CgFormatLeft className="animate-pulse" />
-                  ) : formatSuccess ? (
-                    <Check className="h-3.5 w-3.5 text-green-500 dark:text-green-400" />
+                  {focusMode ? (
+                    <GoChevronDown className="h-4 w-4" />
                   ) : (
-                    <CgFormatLeft />
+                    <GoChevronUp className="h-4 w-4" />
                   )}
                 </button>
               </TooltipTrigger>
@@ -221,37 +213,163 @@ export default function CodeEditorSection({
                 align="center"
                 className="w-fit p-2 px-3 rounded-sm bg-[#1f1f1f] text-xs border border-[#444444]"
               >
-                Format
+                {focusMode ? "Unfold" : "Fold"}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
+          <Popover
+            open={languageDropdownOpen}
+            onOpenChange={setLanguageDropdownOpen}
+          >
+            <PopoverTrigger asChild>
+              <button className="flex items-center gap-1 dark:bg-[#393939] dark:hover:bg-[#494949] bg-gray-100 hover:bg-gray-200 dark:text-white text-gray-800 min-w-[120px]  h-7  overflow-hidden group relative rounded-md pl-3 pr-2">
+                <div className="flex items-center justify-between w-full overflow-hidden">
+                  <div className="flex items-center justify-center gap-3 overflow-hidden">
+                    <span className="font-medium text-xs md:text-sm truncate">
+                      {
+                        parseLanguageName(
+                          JUDGE0_LANGUAGES[
+                            language as keyof typeof JUDGE0_LANGUAGES
+                          ]
+                        ).name
+                      }
+                    </span>
+                    <span className="text-[10px] md:text-xs dark:text-[#8c8c8c] text-gray-500 truncate group-hover:dark:text-[#acacac] group-hover:text-gray-700">
+                      {
+                        parseLanguageName(
+                          JUDGE0_LANGUAGES[
+                            language as keyof typeof JUDGE0_LANGUAGES
+                          ]
+                        ).version
+                      }
+                    </span>
+                  </div>
+                  <ChevronDown className="h-3 w-3 ml-2 flex-shrink-0 opacity-60 transition-colors" />
+                </div>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent
+              align="start"
+              className="w-[600px] mt-3 mr-6 p-0 max-h-[400px] overflow-hidden flex flex-col dark:border-gray-800 border-gray-200 shadow-lg rounded-xl"
+            >
+              <div className="sticky top-0 z-30 dark:bg-[#292929] bg-gray-50 dark:border-b-gray-800 border-b-gray-200 border-b p-3">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 dark:text-gray-400 text-gray-500" />
+                  <Input
+                    placeholder="Search languages..."
+                    className="pl-10 py-1.5 dark:bg-[#1a1a1a] bg-white dark:border-gray-700 border-gray-300 rounded-lg text-sm dark:text-white text-gray-800"
+                    value={searchLanguage}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setSearchLanguage(e.target.value)
+                    }
+                  />
+                </div>
+              </div>
 
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  className="bg-transparent hover:bg-[#484848] rounded-[8px] p-2 transition-colors duration-300"
-                  onClick={() => setCode(preloadCode)}
-                >
-                  {isFormatting ? (
-                    <CgFormatLeft className="animate-pulse" />
-                  ) : formatSuccess ? (
-                    <Check className="h-3.5 w-3.5 text-green-500 dark:text-green-400" />
-                  ) : (
-                    <BsArrowRepeat />
+              <div className="overflow-y-auto flex-1 p-0 custom-scrollbar dark:bg-[#292929] bg-white">
+                <div className="grid grid-cols-3 dark:divide-x-[#393939] divide-x-gray-200 divide-x">
+                  {[0, 1, 2].map((colIndex) => (
+                    <div key={colIndex} className="py-2 space-y-1">
+                      {Object.entries(
+                        JUDGE0_LANGUAGES as Record<string, string>
+                      )
+                        .filter(
+                          ([id, name]) =>
+                            !searchLanguage ||
+                            name
+                              .toLowerCase()
+                              .includes(searchLanguage.toLowerCase())
+                        )
+                        .slice(
+                          Math.ceil(
+                            (Object.keys(JUDGE0_LANGUAGES).length / 3) *
+                              colIndex
+                          ),
+                          Math.ceil(
+                            (Object.keys(JUDGE0_LANGUAGES).length / 3) *
+                              (colIndex + 1)
+                          )
+                        )
+                        .map(([langId, langName]: [string, string]) => {
+                          const { name, version } = parseLanguageName(langName);
+                          const isSelected = language === langId;
+                          return (
+                            <div
+                              key={`lang-${langId}`}
+                              className={`group px-4 py-2.5 transition-all duration-150 cursor-pointer rounded-md mx-1 ${
+                                isSelected
+                                  ? "dark:bg-[#333333] bg-blue-50"
+                                  : "dark:hover:bg-[#2a2a2a] hover:bg-gray-100"
+                              }`}
+                              onClick={() => {
+                                handleLanguageChange(langId);
+                                setLanguageDropdownOpen(false);
+                              }}
+                            >
+                              <div className="flex items-center justify-between">
+                                <div className="flex flex-col">
+                                  <span
+                                    className={`font-medium text-sm ${
+                                      isSelected
+                                        ? "text-[#0779FF]"
+                                        : "dark:text-gray-300 text-gray-800"
+                                    }`}
+                                  >
+                                    {name}
+                                  </span>
+                                  {version && (
+                                    <span className="text-xs dark:text-gray-500 text-gray-500">
+                                      {version}
+                                    </span>
+                                  )}
+                                </div>
+                                {isSelected && (
+                                  <div className="text-[#0779FF]">
+                                    <Check className="h-3.5 w-3.5" />
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  ))}
+                </div>
+
+                {searchLanguage &&
+                  Object.entries(
+                    JUDGE0_LANGUAGES as Record<string, string>
+                  ).filter(([id, name]) =>
+                    name.toLowerCase().includes(searchLanguage.toLowerCase())
+                  ).length === 0 && (
+                    <div className="text-center py-8 px-4">
+                      <Search className="h-5 w-5 dark:text-gray-500 text-gray-400 mx-auto mb-2" />
+                      <p className="text-sm dark:text-gray-500 text-gray-500">
+                        No languages matching "{searchLanguage}"
+                      </p>
+                    </div>
                   )}
-                </button>
-              </TooltipTrigger>
-              <TooltipContent
-                side="top"
-                align="center"
-                className="w-fit p-2 px-3 rounded-sm bg-[#1f1f1f] text-xs border border-[#444444]"
-              >
-                Reset Code
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+              </div>
 
+              {searchLanguage && (
+                <div className="border-t dark:border-gray-800 border-gray-200 px-3 py-2 dark:bg-[#1a1a1a] bg-gray-50">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSearchLanguage("")}
+                    className="h-7 text-xs w-full dark:border-gray-700 border-gray-300 dark:bg-[#2a2a2a] bg-white dark:hover:bg-[#333333] hover:bg-gray-100 dark:text-gray-300 text-gray-700"
+                  >
+                    <X className="h-3 w-3 mr-1.5" />
+                    Clear Search
+                  </Button>
+                </div>
+              )}
+            </PopoverContent>
+          </Popover>
+        </div>
+      </div>
+      <div className="flex items-center justify-end p-1 border-b border-[#292929] bg-white dark:bg-[#1f1f1f]">
+        <div className="flex items-center gap-1">
           <Button
             variant="ghost"
             size="sm"
@@ -263,9 +381,9 @@ export default function CodeEditorSection({
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <PopoverTrigger asChild>
-                      <div className="bg-transparent hover:bg-[#484848] rounded-[8px] p-2 transition-colors duration-300">
+                      <div className="bg-transparent hover:bg-[#484848] rounded-[4px] p-1 transition-colors duration-300">
                         <span>
-                          <Settings className="h-4 w-4 cursor-pointer" />
+                          <Settings className="h-3 w-3 cursor-pointer" />
                         </span>
                       </div>
                     </PopoverTrigger>
@@ -448,162 +566,64 @@ export default function CodeEditorSection({
             </Popover>
           </Button>
 
-          <Popover
-            open={languageDropdownOpen}
-            onOpenChange={setLanguageDropdownOpen}
-          >
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-1 dark:bg-[#393939] dark:hover:bg-[#494949] bg-gray-100 hover:bg-gray-200 dark:text-white text-gray-800 min-w-[120px] h-8 md:h-9 px-3 overflow-hidden group relative"
-              >
-                <div className="flex items-center justify-between w-full overflow-hidden">
-                  <div className="flex items-center justify-center gap-3 overflow-hidden">
-                    <span className="font-medium text-xs md:text-sm truncate">
-                      {
-                        parseLanguageName(
-                          JUDGE0_LANGUAGES[
-                            language as keyof typeof JUDGE0_LANGUAGES
-                          ]
-                        ).name
-                      }
-                    </span>
-                    <span className="text-[10px] md:text-xs dark:text-[#8c8c8c] text-gray-500 truncate group-hover:dark:text-[#acacac] group-hover:text-gray-700">
-                      {
-                        parseLanguageName(
-                          JUDGE0_LANGUAGES[
-                            language as keyof typeof JUDGE0_LANGUAGES
-                          ]
-                        ).version
-                      }
-                    </span>
-                  </div>
-                  <ChevronDown className="h-3 w-3 ml-2 flex-shrink-0 opacity-60 transition-colors" />
-                </div>
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent
-              align="start"
-              className="w-[600px] mt-3 mr-6 p-0 max-h-[400px] overflow-hidden flex flex-col dark:border-gray-800 border-gray-200 shadow-lg rounded-xl"
-            >
-              <div className="sticky top-0 z-30 dark:bg-[#292929] bg-gray-50 dark:border-b-gray-800 border-b-gray-200 border-b p-3">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 dark:text-gray-400 text-gray-500" />
-                  <Input
-                    placeholder="Search languages..."
-                    className="pl-10 py-1.5 dark:bg-[#1a1a1a] bg-white dark:border-gray-700 border-gray-300 rounded-lg text-sm dark:text-white text-gray-800"
-                    value={searchLanguage}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setSearchLanguage(e.target.value)
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="overflow-y-auto flex-1 p-0 custom-scrollbar dark:bg-[#292929] bg-white">
-                <div className="grid grid-cols-3 dark:divide-x-[#393939] divide-x-gray-200 divide-x">
-                  {[0, 1, 2].map((colIndex) => (
-                    <div key={colIndex} className="py-2 space-y-1">
-                      {Object.entries(
-                        JUDGE0_LANGUAGES as Record<string, string>
-                      )
-                        .filter(
-                          ([id, name]) =>
-                            !searchLanguage ||
-                            name
-                              .toLowerCase()
-                              .includes(searchLanguage.toLowerCase())
-                        )
-                        .slice(
-                          Math.ceil(
-                            (Object.keys(JUDGE0_LANGUAGES).length / 3) *
-                              colIndex
-                          ),
-                          Math.ceil(
-                            (Object.keys(JUDGE0_LANGUAGES).length / 3) *
-                              (colIndex + 1)
-                          )
-                        )
-                        .map(([langId, langName]: [string, string]) => {
-                          const { name, version } = parseLanguageName(langName);
-                          const isSelected = language === langId;
-                          return (
-                            <div
-                              key={`lang-${langId}`}
-                              className={`group px-4 py-2.5 transition-all duration-150 cursor-pointer rounded-md mx-1 ${
-                                isSelected
-                                  ? "dark:bg-[#333333] bg-blue-50"
-                                  : "dark:hover:bg-[#2a2a2a] hover:bg-gray-100"
-                              }`}
-                              onClick={() => {
-                                handleLanguageChange(langId);
-                                setLanguageDropdownOpen(false);
-                              }}
-                            >
-                              <div className="flex items-center justify-between">
-                                <div className="flex flex-col">
-                                  <span
-                                    className={`font-medium text-sm ${
-                                      isSelected
-                                        ? "text-[#0779FF]"
-                                        : "dark:text-gray-300 text-gray-800"
-                                    }`}
-                                  >
-                                    {name}
-                                  </span>
-                                  {version && (
-                                    <span className="text-xs dark:text-gray-500 text-gray-500">
-                                      {version}
-                                    </span>
-                                  )}
-                                </div>
-                                {isSelected && (
-                                  <div className="text-[#0779FF]">
-                                    <Check className="h-3.5 w-3.5" />
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
-                    </div>
-                  ))}
-                </div>
-
-                {searchLanguage &&
-                  Object.entries(
-                    JUDGE0_LANGUAGES as Record<string, string>
-                  ).filter(([id, name]) =>
-                    name.toLowerCase().includes(searchLanguage.toLowerCase())
-                  ).length === 0 && (
-                    <div className="text-center py-8 px-4">
-                      <Search className="h-5 w-5 dark:text-gray-500 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm dark:text-gray-500 text-gray-500">
-                        No languages matching "{searchLanguage}"
-                      </p>
-                    </div>
+          <TooltipProvider delayDuration={0}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  className="bg-transparent hover:bg-[#484848] rounded-[4px] p-1 transition-colors duration-300"
+                  onClick={async () => {
+                    await formatCode();
+                    setFormatSuccess(true);
+                    setTimeout(() => setFormatSuccess(false), 1500);
+                  }}
+                  disabled={isFormatting}
+                >
+                  {isFormatting ? (
+                    <CgFormatLeft className="animate-pulse h-3 w-3" />
+                  ) : formatSuccess ? (
+                    <Check className="h-3.5 w-3.5 text-green-500 dark:text-green-400" />
+                  ) : (
+                    <CgFormatLeft className="h-3 w-3" />
                   )}
-              </div>
+                </button>
+              </TooltipTrigger>
+              <TooltipContent
+                side="top"
+                align="center"
+                className="w-fit p-2 px-3 rounded-sm bg-[#1f1f1f] text-xs border border-[#444444]"
+              >
+                Format
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
 
-              {searchLanguage && (
-                <div className="border-t dark:border-gray-800 border-gray-200 px-3 py-2 dark:bg-[#1a1a1a] bg-gray-50">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setSearchLanguage("")}
-                    className="h-7 text-xs w-full dark:border-gray-700 border-gray-300 dark:bg-[#2a2a2a] bg-white dark:hover:bg-[#333333] hover:bg-gray-100 dark:text-gray-300 text-gray-700"
-                  >
-                    <X className="h-3 w-3 mr-1.5" />
-                    Clear Search
-                  </Button>
-                </div>
-              )}
-            </PopoverContent>
-          </Popover>
+          <TooltipProvider delayDuration={0}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  className="bg-transparent hover:bg-[#484848] rounded-[4px] p-1 transition-colors duration-300"
+                  onClick={() => setCode(preloadCode)}
+                >
+                  {isFormatting ? (
+                    <CgFormatLeft className="animate-pulse h-3 w-3" />
+                  ) : formatSuccess ? (
+                    <Check className="h-3.5 w-3.5 text-green-500 dark:text-green-400" />
+                  ) : (
+                    <BsArrowRepeat className="h-3 w-3" />
+                  )}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent
+                side="top"
+                align="center"
+                className="w-fit p-2 px-3 rounded-sm bg-[#1f1f1f] text-xs border border-[#444444]"
+              >
+                Reset Code
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
-
       <div className="flex-1 overflow-auto" style={{ minHeight: 0 }}>
         <div className="h-full w-full relative bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900">
           {editorLoading || initialLoading ? (

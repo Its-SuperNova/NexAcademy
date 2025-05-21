@@ -1,6 +1,24 @@
 import React, { useState, useCallback } from "react";
-import CodeEditorSection from "./CodeEditorSection";
 import ResultsSection from "./ResultsSection";
+import { LuMaximize } from "react-icons/lu";
+import { LuMinimize } from "react-icons/lu";
+import { FaCode } from "react-icons/fa";
+import { GoChevronDown } from "react-icons/go";
+import { GoChevronUp } from "react-icons/go";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Check, Search, X } from "lucide-react";
+import { Popover, PopoverContent } from "@/components/ui/popover";
+import { VscOutput } from "react-icons/vsc";
+import { ChevronDown, Play, Send } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { PopoverTrigger } from "@/components/ui/popover";
 
 interface RightPanelProps {
   hasMounted: boolean;
@@ -123,11 +141,28 @@ export default function RightPanel({
 }: RightPanelProps) {
   const [isResizing, setIsResizing] = useState(false);
   const [editorHeightState, setEditorHeightState] = useState(editorHeight);
+  const [isEditorFolded, setIsEditorFolded] = useState(false);
+  const [isResultsFolded, setIsResultsFolded] = useState(false);
+  const [prevEditorHeight, setPrevEditorHeight] = useState(editorHeight);
+  const [prevResultsHeight, setPrevResultsHeight] = useState(
+    100 - editorHeight
+  );
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    setIsResizing(true);
-    e.preventDefault();
-  }, []);
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      if (isEditorFolded) {
+        setIsEditorFolded(false);
+        setEditorHeightState(prevEditorHeight);
+      }
+      if (isResultsFolded) {
+        setIsResultsFolded(false);
+      }
+
+      setIsResizing(true);
+      e.preventDefault();
+    },
+    [isEditorFolded, isResultsFolded, prevEditorHeight]
+  );
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
@@ -140,16 +175,89 @@ export default function RightPanel({
       const newHeight =
         ((e.clientY - containerRect.top) / containerRect.height) * 100;
 
-      // Limit the height between 20% and 80%
-      const clampedHeight = Math.min(Math.max(newHeight, 20), 80);
+      // Allow resizing to minimum height (header only) or maximum height
+      // Header height is approximately 44px which is roughly 5% of a typical container
+      const headerHeightPercent = 5;
+      const clampedHeight = Math.min(
+        Math.max(newHeight, headerHeightPercent),
+        100 - headerHeightPercent
+      );
+
+      // If we're not already in folded state and the height is changing significantly,
+      // store the current height as previous height for unfolding later
+      if (!isEditorFolded && Math.abs(editorHeightState - clampedHeight) > 5) {
+        // Only update prevEditorHeight if we're not resizing to minimum height
+        if (clampedHeight > headerHeightPercent + 2) {
+          setPrevEditorHeight(editorHeightState);
+        }
+      }
+
+      // Calculate the results height based on the new editor height
+      const newResultsHeight = 100 - clampedHeight - 1; // 1% for resizer
+
+      // If results section would be too small, save its current height and prepare to fold it
+      if (newResultsHeight < headerHeightPercent + 2 && !isResultsFolded) {
+        setPrevResultsHeight(100 - editorHeightState - 1);
+      }
+
       setEditorHeightState(clampedHeight);
     },
-    [isResizing]
+    [isResizing, isEditorFolded, isResultsFolded, editorHeightState]
   );
 
   const handleMouseUp = useCallback(() => {
     setIsResizing(false);
-  }, []);
+
+    // Check if editor has been resized to near minimum height (header only)
+    const headerHeightPercent = 7; // Slightly higher threshold than the 5% used in handleMouseMove
+    if (editorHeightState <= headerHeightPercent && !isEditorFolded) {
+      setIsEditorFolded(true);
+    } else if (editorHeightState > headerHeightPercent && isEditorFolded) {
+      setIsEditorFolded(false);
+    }
+
+    // Check if results section has been resized to near minimum height
+    const resultsHeight = 100 - editorHeightState - (isEditorFolded ? 0 : 1);
+    if (resultsHeight <= headerHeightPercent && !isResultsFolded) {
+      setIsResultsFolded(true);
+    } else if (resultsHeight > headerHeightPercent && isResultsFolded) {
+      setIsResultsFolded(false);
+    }
+  }, [editorHeightState, isEditorFolded, isResultsFolded]);
+
+  const toggleEditorFold = useCallback(() => {
+    if (!isEditorFolded) {
+      // Save current height before folding
+      if (editorHeightState > 7) {
+        // Only save if not already at minimum height
+        setPrevEditorHeight(editorHeightState);
+      }
+      setIsEditorFolded(true);
+    } else {
+      // Restore previous height when unfolding
+      setEditorHeightState(prevEditorHeight > 7 ? prevEditorHeight : 50);
+      setIsEditorFolded(false);
+    }
+  }, [isEditorFolded, editorHeightState, prevEditorHeight]);
+
+  const toggleResultsFold = useCallback(() => {
+    const currentResultsHeight =
+      100 - editorHeightState - (isEditorFolded ? 0 : 1);
+
+    if (!isResultsFolded) {
+      // Save current height before folding
+      setPrevResultsHeight(currentResultsHeight);
+      setIsResultsFolded(true);
+    } else {
+      // Restore previous height when unfolding
+      // If editor is not folded, adjust editor height to make room for results
+      if (!isEditorFolded) {
+        const newEditorHeight = 100 - prevResultsHeight - 1; // 1% for resizer
+        setEditorHeightState(Math.max(7, Math.min(newEditorHeight, 93))); // Ensure editor height stays within reasonable bounds
+      }
+      setIsResultsFolded(false);
+    }
+  }, [isResultsFolded, editorHeightState, isEditorFolded, prevResultsHeight]);
 
   React.useEffect(() => {
     if (isResizing) {
@@ -172,84 +280,325 @@ export default function RightPanel({
       }}
     >
       <div className="flex flex-col gap-1 h-[calc(100vh-8rem)]">
-        <CodeEditorSection
-          hasMounted={hasMounted}
-          isMobile={isMobile}
-          activePanel={activePanel}
-          editorHeight={editorHeightState}
-          language={language}
-          editorTheme={editorTheme}
-          fontSize={fontSize}
-          tabSize={tabSize}
-          code={code}
-          isRunning={isRunning}
-          isSubmitting={isSubmitting}
-          isFormatting={isFormatting}
-          formatSuccess={formatSuccess}
-          editorLoading={editorLoading}
-          initialLoading={initialLoading}
-          searchLanguage={searchLanguage}
-          languageDropdownOpen={languageDropdownOpen}
-          JUDGE0_LANGUAGES={JUDGE0_LANGUAGES}
-          setCode={setCode}
-          setFontSize={setFontSize}
-          setTabSize={setTabSize}
-          setEditorTheme={setEditorTheme}
-          setSearchLanguage={setSearchLanguage}
-          setLanguageDropdownOpen={setLanguageDropdownOpen}
-          setFormatSuccess={setFormatSuccess}
-          runCode={async () => await runCode()}
-          submitCode={async () => await submitCode()}
-          formatCode={async () => await formatCode()}
-          toggleFocusMode={toggleFocusMode}
-          handleLanguageChange={handleLanguageChange}
-          parseLanguageName={(fullName: string | null | undefined) =>
-            parseLanguageName(fullName || "")
-          }
-          focusMode={focusMode}
-          preloadCode={preloadCode}
-          editorRef={editorRef}
-          monacoRef={monacoRef}
-          handleEditorDidMount={handleEditorDidMount}
-        />
-
         <div
-          className={`h-2 cursor-row-resize active:bg-indigo-500/30 transition-colors flex justify-center items-center group`}
+          className={`flex flex-col w-full bg-[#1f1f1f] min-h-[44px] rounded-lg overflow-hidden`}
+          style={{
+            height: isEditorFolded
+              ? "44px" // Just the header when folded
+              : isResultsFolded
+              ? "calc(100% - 42px)" // When results are folded, editor takes all space minus results header and resizer
+              : `${editorHeightState}%`,
+          }}
+        >
+          <div className="flex items-center justify-between p-2 pl-3 bg-white dark:bg-[#292929]">
+            <div className="flex items-center gap-2">
+              <FaCode className="h-5 w-5 text-[#087bff]" />
+              <div className="flex text-[14px] items-center mr-3 md:mr-4">
+                NexEditor
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              {hasMounted && isMobile && (
+                <div className="flex items-center gap-1.5">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-8 px-2 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/50"
+                    onClick={runCode}
+                    disabled={isRunning}
+                  >
+                    {isRunning ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <Play className="h-3.5 w-3.5" />
+                    )}
+                    {!isRunning && <span className="text-xs ml-1">Run</span>}
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="h-8 px-2 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white"
+                    onClick={submitCode}
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <Send className="h-3.5 w-3.5" />
+                    )}
+                    {!isSubmitting && (
+                      <span className="text-xs ml-1">Submit</span>
+                    )}
+                  </Button>
+                </div>
+              )}
+
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={toggleFocusMode}
+                      className="bg-transparent hover:bg-[#484848] rounded-[8px] p-1.5 transition-colors duration-300"
+                    >
+                      {focusMode ? (
+                        <LuMinimize className="h-3.5 w-3.5" />
+                      ) : (
+                        <LuMaximize className="h-3.5 w-3.5" />
+                      )}
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="top"
+                    align="center"
+                    className="w-fit p-2 px-3 rounded-sm bg-[#1f1f1f] text-xs border border-[#444444]"
+                  >
+                    {focusMode ? "Exit Focus Mode" : "Focus Mode"}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={toggleEditorFold}
+                      className="bg-transparent hover:bg-[#484848] rounded-[6px] p-1 transition-colors duration-300"
+                    >
+                      {isEditorFolded ? (
+                        <GoChevronUp className="h-4 w-4" />
+                      ) : (
+                        <GoChevronDown className="h-4 w-4" />
+                      )}
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="top"
+                    align="center"
+                    className="w-fit p-2 px-3 rounded-sm bg-[#1f1f1f] text-xs border border-[#444444]"
+                  >
+                    {isEditorFolded ? "Unfold" : "Fold"}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <Popover
+                open={languageDropdownOpen}
+                onOpenChange={setLanguageDropdownOpen}
+              >
+                <PopoverTrigger asChild>
+                  <button className="flex items-center gap-1 dark:bg-[#393939] dark:hover:bg-[#494949] bg-gray-100 hover:bg-gray-200 dark:text-white text-gray-800 min-w-[120px]  h-7  overflow-hidden group relative rounded-md pl-3 pr-2">
+                    <div className="flex items-center justify-between w-full overflow-hidden">
+                      <div className="flex items-center justify-center gap-3 overflow-hidden">
+                        <span className="font-medium text-xs md:text-sm truncate">
+                          {
+                            parseLanguageName(
+                              JUDGE0_LANGUAGES[
+                                language as keyof typeof JUDGE0_LANGUAGES
+                              ]
+                            ).name
+                          }
+                        </span>
+                        <span className="text-[10px] md:text-xs dark:text-[#8c8c8c] text-gray-500 truncate group-hover:dark:text-[#acacac] group-hover:text-gray-700">
+                          {
+                            parseLanguageName(
+                              JUDGE0_LANGUAGES[
+                                language as keyof typeof JUDGE0_LANGUAGES
+                              ]
+                            ).version
+                          }
+                        </span>
+                      </div>
+                      <ChevronDown className="h-3 w-3 ml-2 flex-shrink-0 opacity-60 transition-colors" />
+                    </div>
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent
+                  align="start"
+                  className="w-[600px] mt-3 mr-6 p-0 max-h-[400px] overflow-hidden flex flex-col dark:border-gray-800 border-gray-200 shadow-lg rounded-xl"
+                >
+                  <div className="sticky top-0 z-30 dark:bg-[#292929] bg-gray-50 dark:border-b-gray-800 border-b-gray-200 border-b p-3">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 dark:text-gray-400 text-gray-500" />
+                      <Input
+                        placeholder="Search languages..."
+                        className="pl-10 py-1.5 dark:bg-[#1a1a1a] bg-white dark:border-gray-700 border-gray-300 rounded-lg text-sm dark:text-white text-gray-800"
+                        value={searchLanguage}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setSearchLanguage(e.target.value)
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  <div className="overflow-y-auto flex-1 p-0 custom-scrollbar dark:bg-[#292929] bg-white">
+                    <div className="grid grid-cols-3 dark:divide-x-[#393939] divide-x-gray-200 divide-x">
+                      {[0, 1, 2].map((colIndex) => (
+                        <div key={colIndex} className="py-2 space-y-1">
+                          {Object.entries(
+                            JUDGE0_LANGUAGES as Record<string, string>
+                          )
+                            .filter(
+                              ([id, name]) =>
+                                !searchLanguage ||
+                                name
+                                  .toLowerCase()
+                                  .includes(searchLanguage.toLowerCase())
+                            )
+                            .slice(
+                              Math.ceil(
+                                (Object.keys(JUDGE0_LANGUAGES).length / 3) *
+                                  colIndex
+                              ),
+                              Math.ceil(
+                                (Object.keys(JUDGE0_LANGUAGES).length / 3) *
+                                  (colIndex + 1)
+                              )
+                            )
+                            .map(([langId, langName]: [string, string]) => {
+                              const { name, version } =
+                                parseLanguageName(langName);
+                              const isSelected = language === langId;
+                              return (
+                                <div
+                                  key={`lang-${langId}`}
+                                  className={`group px-4 py-2.5 transition-all duration-150 cursor-pointer rounded-md mx-1 ${
+                                    isSelected
+                                      ? "dark:bg-[#333333] bg-blue-50"
+                                      : "dark:hover:bg-[#2a2a2a] hover:bg-gray-100"
+                                  }`}
+                                  onClick={() => {
+                                    handleLanguageChange(langId);
+                                    setLanguageDropdownOpen(false);
+                                  }}
+                                >
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex flex-col">
+                                      <span
+                                        className={`font-medium text-sm ${
+                                          isSelected
+                                            ? "text-[#0779FF]"
+                                            : "dark:text-gray-300 text-gray-800"
+                                        }`}
+                                      >
+                                        {name}
+                                      </span>
+                                      {version && (
+                                        <span className="text-xs dark:text-gray-500 text-gray-500">
+                                          {version}
+                                        </span>
+                                      )}
+                                    </div>
+                                    {isSelected && (
+                                      <div className="text-[#0779FF]">
+                                        <Check className="h-3.5 w-3.5" />
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                        </div>
+                      ))}
+                    </div>
+
+                    {searchLanguage &&
+                      Object.entries(
+                        JUDGE0_LANGUAGES as Record<string, string>
+                      ).filter(([id, name]) =>
+                        name
+                          .toLowerCase()
+                          .includes(searchLanguage.toLowerCase())
+                      ).length === 0 && (
+                        <div className="text-center py-8 px-4">
+                          <Search className="h-5 w-5 dark:text-gray-500 text-gray-400 mx-auto mb-2" />
+                          <p className="text-sm dark:text-gray-500 text-gray-500">
+                            No languages matching "{searchLanguage}"
+                          </p>
+                        </div>
+                      )}
+                  </div>
+
+                  {searchLanguage && (
+                    <div className="border-t dark:border-gray-800 border-gray-200 px-3 py-2 dark:bg-[#1a1a1a] bg-gray-50">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSearchLanguage("")}
+                        className="h-7 text-xs w-full dark:border-gray-700 border-gray-300 dark:bg-[#2a2a2a] bg-white dark:hover:bg-[#333333] hover:bg-gray-100 dark:text-gray-300 text-gray-700"
+                      >
+                        <X className="h-3 w-3 mr-1.5" />
+                        Clear Search
+                      </Button>
+                    </div>
+                  )}
+                </PopoverContent>
+              </Popover>
+            </div>
+          </div>
+          {!isEditorFolded && (
+            <div className="flex-1 overflow-hidden bg-[#1f1f1f] p-4">
+              <div className="w-full h-full flex items-center justify-center text-gray-400">
+                Code Editor will be added here
+              </div>
+            </div>
+          )}
+        </div>
+        <div
+          className={`h-2 cursor-row-resize active:bg-indigo-500/30 transition-colors flex justify-center items-center group ${
+            isEditorFolded ? "mt-[-2px]" : ""
+          }`}
           onMouseDown={handleMouseDown}
         >
-          <div
-            className={`h-2 bg-[#1f1f1f] group-hover:bg-white w-[60px] rounded-full transition-colors group-active:bg-[#0779FF]`}
-          ></div>
+          <div className="h-2 bg-[#1f1f1f] group-hover:bg-white w-[60px] rounded-full transition-colors group-active:bg-[#0779FF]"></div>
         </div>
-
-        <ResultsSection
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          showEvaluatingSkeletons={showEvaluatingSkeletons}
-          skeletonTab={skeletonTab}
-          sampleTestResults={sampleTestResults}
-          sampleExecutionStatus={sampleExecutionStatus}
-          formatTestCase={formatTestCase}
-          examples={examples}
-          copiedInput={copiedInput}
-          copiedOutput={copiedOutput}
-          setCopiedInput={setCopiedInput}
-          setCopiedOutput={setCopiedOutput}
-          executingHiddenTestcases={executingHiddenTestcases}
-          hiddenTestResults={hiddenTestResults}
-          totalHiddenTestcases={totalHiddenTestcases}
-          completedHiddenTestcases={completedHiddenTestcases}
-          passedHiddenTestcases={passedHiddenTestcases}
-          skippedHiddenTestcases={skippedHiddenTestcases}
-          hiddenExecutionStatus={hiddenExecutionStatus}
-          isRunning={isRunning}
-          isSubmitting={isSubmitting}
-          submitCode={submitCode}
-          showCelebration={showCelebration}
-          hasMounted={hasMounted}
-          isMobile={isMobile}
-          editorHeight={editorHeightState}
-        />
+        <div
+          className="flex flex-col w-full min-h-[44px] bg-[#1f1f1f] rounded-lg overflow-hidden"
+          style={{
+            height: isResultsFolded
+              ? "44px" // When folded, just show the header
+              : isEditorFolded
+              ? "calc(100% - 44px)" // When editor is folded, results take all space minus editor header
+              : `${100 - editorHeightState - (isEditorFolded ? 0 : 1)}%`, // Normal case with resizer (1% for resizer)
+          }}
+        >
+          <div className="flex items-center justify-between p-2 pl-3 bg-white dark:bg-[#292929]">
+            <div className="flex items-center gap-2">
+              <VscOutput className="h-5 w-5 text-[#087bff]" />
+              <div className="flex text-[14px] items-center mr-3 md:mr-4">
+                Results
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={toggleResultsFold}
+                      className="bg-transparent hover:bg-[#484848] rounded-[6px] p-1 transition-colors duration-300"
+                    >
+                      {isResultsFolded ? (
+                        <GoChevronUp className="h-4 w-4" />
+                      ) : (
+                        <GoChevronDown className="h-4 w-4" />
+                      )}
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="top"
+                    align="center"
+                    className="w-fit p-2 px-3 rounded-sm bg-[#1f1f1f] text-xs border border-[#444444]"
+                  >
+                    {isResultsFolded ? "Unfold" : "Fold"}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          </div>
+          {!isResultsFolded && (
+            <div className="flex-1 overflow-hidden bg-[#1f1f1f] p-4">
+              <div className="w-full h-full flex items-center justify-center text-gray-400">
+                Results Section will be added here
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
