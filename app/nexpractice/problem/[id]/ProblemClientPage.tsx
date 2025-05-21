@@ -147,6 +147,7 @@ import { Switch } from "@/components/ui/switch";
 import LeftPanel from "./components/LeftPanel";
 import CodeEditorSection from "./components/CodeEditorSection";
 import SampleTestcaseTab from "./components/SampleTestcaseTab";
+import ResultsSection from "./components/ResultsSection";
 
 // Judge0 API language mapping
 const JUDGE0_LANGUAGES = {
@@ -3410,106 +3411,34 @@ export default function ProblemClientPage({
                 handleEditorDidMount={handleEditorDidMount}
               />
               {/* Results panel */}
-              <div
-                className={`flex flex-col overflow-hidden rounded-lg ${
-                  hasMounted && isMobile
-                    ? activePanel === "results"
-                      ? "block"
-                      : "hidden"
-                    : ""
-                } ${hasMounted && isMobile ? "pb-24" : ""}`}
-                style={{
-                  flexBasis:
-                    hasMounted && isMobile ? "100%" : `${100 - editorHeight}%`,
-                  flexGrow: 0,
-                  flexShrink: 0,
-                  minHeight: 0,
-                  maxHeight:
-                    hasMounted && isMobile ? "100%" : `${100 - editorHeight}%`,
-                  height: hasMounted && isMobile ? "100%" : undefined,
-                  transition: "all 0.3s ease-in-out", // Add smooth transition
-                }}
-              >
-                {/* Results Content */}
-                <div className="flex-1 bg-white dark:bg-[#1f1f1f] pb-20">
-                  {/* Tabs for Results Panel */}
-                  <Tabs
-                    value={activeTab}
-                    onValueChange={setActiveTab}
-                    className="w-full  relative z-10"
-                  >
-                    <TabsList className="flex justify-start gap-2 px-3 border-none p-2 rounded-none shrink-0 bg-white dark:bg-[#292929] ">
-                      <TabsTrigger
-                        value="sample"
-                        className="px-3 py-2 text-sm border-r bg-transparent data-[state=active]:font-semibold   data-[state=active]:opacity-100 opacity-50 hover:opacity-90  hover:bg-[#3f3f3f] transition-colors duration-300 "
-                      >
-                        <FileText className="h-4 w-4 mr-1.5 text-indigo-500/70 dark:text-indigo-400/70 group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400" />
-                        Sample Testcases
-                      </TabsTrigger>
-                      <TabsTrigger
-                        value="hidden"
-                        className="px-3 py-2 text-sm font-medium border-r bg-transparent data-[state=active]:font-semibold   data-[state=active]:opacity-100 opacity-50 hover:opacity-90  hover:bg-[#3f3f3f] transition-colors duration-300 "
-                      >
-                        <BarChart2 className="h-4 w-4 mr-1.5 text-indigo-500/70 dark:text-indigo-400/70 group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400" />
-                        Hidden Testcases
-                      </TabsTrigger>
-                      <TabsTrigger
-                        value="custom"
-                        className="px-3 py-2 text-sm border-r bg-transparent data-[state=active]:font-semibold   data-[state=active]:opacity-100 opacity-50 hover:opacity-90  hover:bg-[#3f3f3f] transition-colors duration-300 "
-                      >
-                        <Sparkles className="h-4 w-4 mr-1.5 text-indigo-500/70 dark:text-indigo-400/70 group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400" />
-                        Custom Testcase
-                      </TabsTrigger>
-                    </TabsList>
-
-                    {/* Sample Testcases Tab */}
-                    <TabsContent
-                      value="sample"
-                      className="focus-visible:outline-none focus-visible:ring-0 p-4"
-                    >
-                      <SampleTestcaseTab
-                        showEvaluatingSkeletons={showEvaluatingSkeletons}
-                        skeletonTab={skeletonTab}
-                        sampleTestResults={sampleTestResults}
-                        activeTab={activeTab}
-                        sampleExecutionStatus={sampleExecutionStatus}
-                        formatTestCase={formatTestCase}
-                        examples={examples}
-                        copiedInput={copiedInput}
-                        copiedOutput={copiedOutput}
-                        setCopiedInput={setCopiedInput}
-                        setCopiedOutput={setCopiedOutput}
-                      />
-                    </TabsContent>
-
-                    {/* Hidden Testcases Tab */}
-                    <TabsContent
-                      value="hidden"
-                      className="focus-visible:outline-none focus-visible:ring-0"
-                    >
-                      <HiddenTestcasesTab
-                        executingHiddenTestcases={executingHiddenTestcases}
-                        hiddenTestResults={hiddenTestResults}
-                        totalHiddenTestcases={totalHiddenTestcases}
-                        completedHiddenTestcases={completedHiddenTestcases}
-                        passedHiddenTestcases={passedHiddenTestcases}
-                        skippedHiddenTestcases={skippedHiddenTestcases}
-                        hiddenExecutionStatus={hiddenExecutionStatus}
-                        isRunning={isRunning}
-                        isSubmitting={isSubmitting}
-                        submitCode={submitCode}
-                      />
-                    </TabsContent>
-
-                    {/* Confetti celebration overlay */}
-                    {showCelebration && (
-                      <div className="fixed inset-0 pointer-events-none z-50">
-                        {/* This div is just a container for the confetti effect */}
-                      </div>
-                    )}
-                  </Tabs>
-                </div>
-              </div>
+              <ResultsSection
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                showEvaluatingSkeletons={showEvaluatingSkeletons}
+                skeletonTab={skeletonTab}
+                sampleTestResults={sampleTestResults}
+                sampleExecutionStatus={sampleExecutionStatus}
+                formatTestCase={formatTestCase}
+                examples={examples}
+                copiedInput={copiedInput}
+                copiedOutput={copiedOutput}
+                setCopiedInput={setCopiedInput}
+                setCopiedOutput={setCopiedOutput}
+                executingHiddenTestcases={executingHiddenTestcases}
+                hiddenTestResults={hiddenTestResults}
+                totalHiddenTestcases={totalHiddenTestcases}
+                completedHiddenTestcases={completedHiddenTestcases}
+                passedHiddenTestcases={passedHiddenTestcases}
+                skippedHiddenTestcases={skippedHiddenTestcases}
+                hiddenExecutionStatus={hiddenExecutionStatus}
+                isRunning={isRunning}
+                isSubmitting={isSubmitting}
+                submitCode={submitCode}
+                showCelebration={showCelebration}
+                hasMounted={hasMounted}
+                isMobile={isMobile}
+                editorHeight={editorHeight}
+              />
             </div>
           </div>
         </div>
