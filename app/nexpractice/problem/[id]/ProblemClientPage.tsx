@@ -3310,12 +3310,10 @@ export default function ProblemClientPage({
         }
       } catch (error) {
         console.error("Error running custom testcase:", error);
-        toast.error("Failed to run custom testcase");
-
-        setCustomTestResult({
-          input,
-          output: "Error: Failed to execute code",
-          isCorrect: false,
+        toast({
+          title: "Error",
+          description: "Failed to run custom testcase",
+          
         });
       } finally {
         setIsRunning(false);
