@@ -88,6 +88,8 @@ import { CgFormatLeft } from "react-icons/cg";
 import { LuMaximize } from "react-icons/lu";
 import { LuMinimize } from "react-icons/lu";
 import { NexEditor as CodeEditor } from "@/components/NexEditor";
+import { LuCopy } from "react-icons/lu";
+
 import { useIsMobile } from "@/components/ui/use-mobile";
 import { useTheme } from "next-themes";
 import { FaCode } from "react-icons/fa6";
@@ -1128,7 +1130,8 @@ export default function ProblemClientPage({
   const [selectedCategory, setSelectedCategory] = useState<string | null>(
     "Popular"
   );
-
+  const [copiedInput, setCopiedInput] = useState(false);
+  const [copiedOutput, setCopiedOutput] = useState(false);
   const [isFormatting, setIsFormatting] = useState(false);
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<Monaco | null>(null);
@@ -3312,37 +3315,37 @@ export default function ProblemClientPage({
             width: hasMounted && isMobile ? "100%" : `${leftPanelWidth}%`,
           }}
         >
-          <div className="m-4 mr-[2px] rounded-lg overflow-hidden bg-[#1f1f1f] flex flex-col h-[calc(100vh-5rem)]">
+          <div className="m-3 mr-[2px] rounded-lg overflow-hidden bg-[#1f1f1f] flex flex-col h-[calc(100vh-5rem)]">
             <Tabs
               defaultValue="description"
-              className="mt-2 flex flex-col h-full"
+              className="flex flex-col h-full"
               onValueChange={handleTabChange}
             >
-              <TabsList className="flex justify-start px-3 border-none p-2 rounded-none shrink-0">
+              <TabsList className="flex justify-start gap-2 px-3 border-none p-2 rounded-none shrink-0 bg-white dark:bg-[#292929]">
                 <TabsTrigger
                   value="description"
-                  className="px-4 py-2 text-sm bg-transparent data-[state=active]:font-bold data-[state=active]:opacity-100 opacity-70 hover:opacity-90"
+                  className="px-3 py-2 text-sm border-r bg-transparent data-[state=active]:font-semibold   data-[state=active]:opacity-100 opacity-50 hover:opacity-90  hover:bg-[#3f3f3f] transition-colors duration-300 "
                 >
                   <FileText className="h-4 w-4 mr-1.5 text-[#a040ff]" />
                   <span>Description</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="solution"
-                  className="px-4 py-2 text-sm bg-transparent data-[state=active]:font-bold data-[state=active]:opacity-100 opacity-70 hover:opacity-90"
+                  className="px-4 py-2 text-sm bg-transparent data-[state=active]:font-semibold data-[state=active]:opacity-100 opacity-50 hover:opacity-90 hover:bg-[#3f3f3f] transition-colors duration-300"
                 >
                   <BookOpenCheck className="h-4 w-4 mr-1.5 text-[#ffcf40]" />
                   <span>Solution</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="submissions"
-                  className="px-4 py-2 text-sm bg-transparent data-[state=active]:font-bold data-[state=active]:opacity-100 opacity-70 hover:opacity-90"
+                  className="px-3 py-2 text-sm bg-transparent data-[state=active]:font-semibold data-[state=active]:opacity-100 opacity-50 hover:opacity-90 hover:bg-[#3f3f3f] transition-colors duration-300"
                 >
                   <BarChart2 className="h-4 w-4 mr-1.5 text-[#18ff65]" />
                   <span>Submissions</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="discussion"
-                  className="px-4 py-2 text-sm bg-transparent data-[state=active]:font-bold data-[state=active]:opacity-100 opacity-70 hover:opacity-90"
+                  className="px-3 py-2 text-sm bg-transparent data-[state=active]:font-semibold data-[state=active]:opacity-100 opacity-50 hover:opacity-90 hover:bg-[#3f3f3f] transition-colors duration-300"
                 >
                   <MessageSquare className="h-4 w-4 mr-1.5 text-[#1871ff]" />
                   <span>Discussion</span>
@@ -4163,8 +4166,6 @@ export default function ProblemClientPage({
                 transition: "all 0.3s ease-in-out", // Add smooth transition
               }}
             >
-
-
               {/* Results Content */}
               <div className="flex-1 bg-white dark:bg-[#1f1f1f] pb-20">
                 {/* Tabs for Results Panel */}
@@ -4173,35 +4174,26 @@ export default function ProblemClientPage({
                   onValueChange={setActiveTab}
                   className="w-full  relative z-10"
                 >
-                  <TabsList className="flex flex-nowrap justify-start ">
+                  <TabsList className="flex justify-start gap-2 px-3 border-none p-2 rounded-none shrink-0 bg-white dark:bg-[#292929] ">
                     <TabsTrigger
                       value="sample"
-                      className="flex-shrink-0 min-w-[140px] px-3 rounded-md py-1.5 data-[state=active]:bg-white data-[state=active]:dark:bg-black/95 data-[state=active]:text-indigo-700 data-[state=active]:dark:text-indigo-30 data-[state=active]:shadow-sm relative overflow-hidden group"
+                      className="px-3 py-2 text-sm border-r bg-transparent data-[state=active]:font-semibold   data-[state=active]:opacity-100 opacity-50 hover:opacity-90  hover:bg-[#3f3f3f] transition-colors duration-300 "
                     >
-                      <div className="absolute inset-0 opacity-0 group-data-[state=active]:opacity-100 transition-opacity">
-                        <div className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
-                      </div>
-                      <FileText className="h-3.5 w-3.5 mr-1.5 text-indigo-500/70 dark:text-indigo-400/70 group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400" />
+                      <FileText className="h-4 w-4 mr-1.5 text-indigo-500/70 dark:text-indigo-400/70 group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400" />
                       Sample Testcases
                     </TabsTrigger>
                     <TabsTrigger
                       value="hidden"
-                      className="flex-shrink-0 min-w-[140px] px-3 rounded-md py-1.5 data-[state=active]:bg-white data-[state=active]:dark:bg-black/95 data-[state=active]:text-indigo-700 data-[state=active]:dark:text-indigo-30 data-[state=active]:shadow-sm relative overflow-hidden group"
+                      className="px-3 py-2 text-sm font-medium border-r bg-transparent data-[state=active]:font-semibold   data-[state=active]:opacity-100 opacity-50 hover:opacity-90  hover:bg-[#3f3f3f] transition-colors duration-300 "
                     >
-                      <div className="absolute inset-0 opacity-0 group-data-[state=active]:opacity-100 transition-opacity">
-                        <div className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
-                      </div>
-                      <BarChart2 className="h-3.5 w-3.5 mr-1.5 text-indigo-500/70 dark:text-indigo-400/70 group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400" />
+                      <BarChart2 className="h-4 w-4 mr-1.5 text-indigo-500/70 dark:text-indigo-400/70 group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400" />
                       Hidden Testcases
                     </TabsTrigger>
                     <TabsTrigger
                       value="custom"
-                      className="flex-shrink-0 min-w-[140px] px-3 rounded-md py-1.5 data-[state=active]:bg-white data-[state=active]:dark:bg-black/95 data-[state=active]:text-indigo-700 data-[state=active]:dark:text-indigo-30 data-[state=active]:shadow-sm relative overflow-hidden group"
+                      className="px-3 py-2 text-sm border-r bg-transparent data-[state=active]:font-semibold   data-[state=active]:opacity-100 opacity-50 hover:opacity-90  hover:bg-[#3f3f3f] transition-colors duration-300 "
                     >
-                      <div className="absolute inset-0 opacity-0 group-data-[state=active]:opacity-100 transition-opacity">
-                        <div className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
-                      </div>
-                      <Sparkles className="h-3.5 w-3.5 mr-1.5 text-indigo-500/70 dark:text-indigo-400/70 group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400" />
+                      <Sparkles className="h-4 w-4 mr-1.5 text-indigo-500/70 dark:text-indigo-400/70 group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400" />
                       Custom Testcase
                     </TabsTrigger>
                   </TabsList>
@@ -4289,7 +4281,7 @@ export default function ProblemClientPage({
                       <div className="space-y-4 animate-in fade-in-50 slide-in-from-bottom-3 duration-500">
                         {/* Summary badge */}
                         <div className="flex items-center justify-between mb-2">
-                          <div className="text-sm text-slate-700 dark:text-slate-300">
+                          <div className="text-sm text-gray-300">
                             <span className="font-medium">
                               {sampleTestResults.length}
                             </span>{" "}
@@ -4298,13 +4290,13 @@ export default function ProblemClientPage({
                           {sampleExecutionStatus && (
                             <div
                               className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium shadow-sm
-                ${
-                  sampleExecutionStatus === "success"
-                    ? "bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200/70 dark:border-green-900/30 text-green-700 dark:text-green-400"
-                    : sampleExecutionStatus === "warning"
-                    ? "bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border border-amber-200/70 dark:border-amber-900/30 text-amber-700 dark:text-amber-400"
-                    : "bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 border border-red-200/70 dark:border-red-900/30 text-red-700 dark:text-red-400"
-                }`}
+          ${
+            sampleExecutionStatus === "success"
+              ? "bg-[#1e3a2f] border border-[#2d5a48] text-green-400"
+              : sampleExecutionStatus === "warning"
+              ? "bg-[#3a3020] border border-[#5a4a30] text-amber-400"
+              : "bg-[#3a2020] border border-[#5a3030] text-red-400"
+          }`}
                             >
                               {sampleExecutionStatus === "success" ? (
                                 <>
@@ -4331,25 +4323,20 @@ export default function ProblemClientPage({
                           defaultValue={`sample-testcase-0`}
                           className="w-full"
                         >
-                          <TabsList className="flex flex-nowrap overflow-x-auto px-3 scrollbar-thin scrollbar-thumb-indigo-200 dark:scrollbar-thumb-indigo-900/40 bg-gradient-to-r from-slate-100/90 to-indigo-50/80 dark:from-slate-800/70 dark:to-indigo-900/30 rounded-lg backdrop-blur-sm border border-slate-200/80 dark:border-slate-700/30 shadow-sm mb-3 gap-1.5 p-2">
+                          <TabsList className="flex flex-nowrap overflow-x-auto px-3 scrollbar-thin scrollbar-thumb-[#444444] bg-[#1a1a1a] rounded-lg border border-[#333333] shadow-sm mb-3 gap-1.5 p-2">
                             {sampleTestResults.map((result, idx) => (
                               <TabsTrigger
                                 key={`sample-trigger-${result.id || idx}`}
                                 value={`sample-testcase-${idx}`}
-                                className="flex-shrink-0 min-w-[85px] rounded-md py-2 data-[state=active]:bg-white data-[state=active]:dark:bg-black/95 data-[state=active]:text-indigo-700 data-[state=active]:dark:text-indigo-30 data-[state=active]:shadow-sm relative overflow-hidden group transition-all duration-150"
+                                className="flex-shrink-0 min-w-[85px] rounded-md py-2 data-[state=active]:bg-[#2a2a2a] data-[state=active]:text-white text-gray-400 relative overflow-hidden group transition-all duration-150"
                               >
                                 <div className="absolute inset-0 opacity-0 group-data-[state=active]:opacity-100 transition-opacity duration-300">
-                                  <div className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
-                                  <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-purple-50/30 dark:from-indigo-900/30 dark:to-purple-900/20 opacity-0 group-data-[state=active]:opacity-100 transition-opacity"></div>
+                                  <div className="absolute inset-x-0 -bottom-1 h-0.5 bg-[#0779FF]"></div>
                                 </div>
                                 <div className="flex items-center justify-center gap-1.5">
                                   <div
                                     className={`w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-medium
-                      ${
-                        result.isCorrect
-                          ? "bg-gradient-to-br from-green-500 to-emerald-600"
-                          : "bg-gradient-to-br from-red-500 to-rose-600"
-                      }`}
+                ${result.isCorrect ? "bg-[#10b981]" : "bg-[#ef4444]"}`}
                                   >
                                     {result.isCorrect ? (
                                       <Check className="h-3 w-3" />
@@ -4357,11 +4344,11 @@ export default function ProblemClientPage({
                                       <X className="h-3 w-3" />
                                     )}
                                   </div>
-                                  <span className="font-medium text-sm group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400">
+                                  <span className="font-medium text-sm group-data-[state=active]:text-white">
                                     Test {idx + 1}
                                   </span>
                                 </div>
-                                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent opacity-0 group-hover:opacity-100 group-data-[state=active]:opacity-0 transition-opacity"></div>
+                                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#333333] opacity-0 group-hover:opacity-100 group-data-[state=active]:opacity-0 transition-opacity"></div>
                               </TabsTrigger>
                             ))}
                           </TabsList>
@@ -4372,43 +4359,41 @@ export default function ProblemClientPage({
                               value={`sample-testcase-${idx}`}
                               className="focus-visible:outline-none focus-visible:ring-0"
                             >
-                              <div className="bg-white dark:bg-black rounded-lg shadow-sm overflow-hidden border border-slate-200 dark:border-slate-700/50">
+                              <div className="bg-[#1a1a1a] rounded-lg shadow-sm overflow-hidden border border-[#333333]">
                                 <div
-                                  className={`px-4 py-2 border-b border-slate-200 dark:border-slate-700/50 flex items-center justify-between
-                    ${
-                      result.isCorrect
-                        ? "bg-gradient-to-r from-green-50 to-green-100/50 dark:from-green-900/20 dark:to-green-900/10"
-                        : result.verdict === "Time Limit Exceeded" ||
-                          (result.status && result.status.id === 5) ||
-                          result.verdict?.toLowerCase()?.includes("time limit")
-                        ? "bg-gradient-to-r from-amber-50 to-amber-100/50 dark:from-amber-900/20 dark:to-amber-900/10"
-                        : result.verdict === "Compilation Error" ||
-                          result.compileOutput
-                        ? "bg-gradient-to-r from-amber-50 to-amber-100/50 dark:from-amber-900/20 dark:to-amber-900/10"
-                        : "bg-gradient-to-r from-red-50 to-red-100/50 dark:from-red-900/20 dark:to-red-900/10"
-                    }`}
+                                  className={`px-4 py-2 border-b border-[#333333] flex items-center justify-between
+              ${
+                result.isCorrect
+                  ? "bg-[#1e3a2f]"
+                  : result.verdict === "Time Limit Exceeded" ||
+                    (result.status && result.status.id === 5) ||
+                    result.verdict?.toLowerCase()?.includes("time limit")
+                  ? "bg-[#3a3020]"
+                  : result.verdict === "Compilation Error" ||
+                    result.compileOutput
+                  ? "bg-[#3a3020]"
+                  : "bg-[#3a2020]"
+              }`}
                                 >
                                   <div className="flex items-center gap-2">
                                     <div
                                       className={`w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-medium
-                        ${
-                          result.isCorrect
-                            ? "bg-green-500"
-                            : result.verdict === "Time Limit Exceeded" ||
-                              (result.status && result.status.id === 5) ||
-                              result.verdict
-                                ?.toLowerCase()
-                                ?.includes("time limit")
-                            ? "bg-amber-500"
-                            : result.verdict === "Compilation Error" ||
-                              result.compileOutput
-                            ? "bg-amber-500"
-                            : "bg-red-500"
-                        }`}
+                  ${
+                    result.isCorrect
+                      ? "bg-[#10b981]"
+                      : result.verdict === "Time Limit Exceeded" ||
+                        (result.status && result.status.id === 5) ||
+                        result.verdict?.toLowerCase()?.includes("time limit")
+                      ? "bg-[#f59e0b]"
+                      : result.verdict === "Compilation Error" ||
+                        result.compileOutput
+                      ? "bg-[#f59e0b]"
+                      : "bg-[#ef4444]"
+                  }`}
                                     >
                                       {idx + 1}
                                     </div>
-                                    <span className="font-medium text-slate-700 dark:text-slate-300">
+                                    <span className="font-medium text-gray-300">
                                       {result.isCorrect
                                         ? "Passed"
                                         : result.verdict ===
@@ -4430,20 +4415,18 @@ export default function ProblemClientPage({
                                   <div className="flex items-center">
                                     <span
                                       className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium
-                        ${
-                          result.isCorrect
-                            ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                            : result.verdict === "Time Limit Exceeded" ||
-                              (result.status && result.status.id === 5) ||
-                              result.verdict
-                                ?.toLowerCase()
-                                ?.includes("time limit")
-                            ? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400"
-                            : result.verdict === "Compilation Error" ||
-                              result.compileOutput
-                            ? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400"
-                            : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
-                        }`}
+                  ${
+                    result.isCorrect
+                      ? "bg-[#132e25] text-green-400"
+                      : result.verdict === "Time Limit Exceeded" ||
+                        (result.status && result.status.id === 5) ||
+                        result.verdict?.toLowerCase()?.includes("time limit")
+                      ? "bg-[#2e2512] text-amber-400"
+                      : result.verdict === "Compilation Error" ||
+                        result.compileOutput
+                      ? "bg-[#2e2512] text-amber-400"
+                      : "bg-[#2e1212] text-red-400"
+                  }`}
                                     >
                                       {result.isCorrect ? (
                                         <>
@@ -4479,20 +4462,20 @@ export default function ProblemClientPage({
                                 </div>
 
                                 <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                                  <div className="rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700/50">
-                                    <div className="bg-slate-50 dark:bg-slate-800/60 px-3 py-1.5 border-b border-slate-200 dark:border-slate-700/50 text-xs font-medium text-slate-700 dark:text-slate-300">
+                                  <div className="rounded-lg overflow-hidden border border-[#333333]">
+                                    <div className="bg-[#232323] px-3 py-1.5 border-b border-[#333333] text-xs font-medium text-gray-300">
                                       Input
                                     </div>
-                                    <div className="p-3 font-mono text-sm bg-white dark:bg-slate-800/30 text-slate-700 dark:text-slate-300">
+                                    <div className="p-3 font-mono text-sm bg-[#1a1a1a] text-gray-300">
                                       {formatTestCase(result.input)}
                                     </div>
                                   </div>
 
-                                  <div className="rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700/50">
-                                    <div className="bg-slate-50 dark:bg-slate-800/60 px-3 py-1.5 border-b border-slate-200 dark:border-slate-700/50 text-xs font-medium text-slate-700 dark:text-slate-300">
+                                  <div className="rounded-lg overflow-hidden border border-[#333333]">
+                                    <div className="bg-[#232323] px-3 py-1.5 border-b border-[#333333] text-xs font-medium text-gray-300">
                                       Expected Output
                                     </div>
-                                    <div className="p-3 font-mono text-sm bg-white dark:bg-slate-800/30 text-slate-700 dark:text-slate-300">
+                                    <div className="p-3 font-mono text-sm bg-[#1a1a1a] text-gray-300">
                                       {formatTestCase(result.expectedOutput)}
                                     </div>
                                   </div>
@@ -4510,19 +4493,19 @@ export default function ProblemClientPage({
                                   ) && (
                                     <div
                                       className={`rounded-lg overflow-hidden md:col-span-2 
-                        ${
-                          result.isCorrect
-                            ? "border border-green-200 dark:border-green-900/30"
-                            : "border border-red-200 dark:border-red-900/30"
-                        }`}
+                  ${
+                    result.isCorrect
+                      ? "border border-[#2d5a48]"
+                      : "border border-[#5a3030]"
+                  }`}
                                     >
                                       <div
                                         className={`px-3 py-1.5 border-b flex items-center
-                          ${
-                            result.isCorrect
-                              ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-900/30 text-green-800 dark:text-green-400"
-                              : "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-900/30 text-red-800 dark:text-red-400"
-                          }`}
+                    ${
+                      result.isCorrect
+                        ? "bg-[#1e3a2f] border-[#2d5a48] text-green-400"
+                        : "bg-[#3a2020] border-[#5a3030] text-red-400"
+                    }`}
                                       >
                                         {result.isCorrect ? (
                                           <Check className="h-3 w-3 mr-1.5" />
@@ -4531,7 +4514,7 @@ export default function ProblemClientPage({
                                         )}
                                         Your Output
                                       </div>
-                                      <div className="p-3 font-mono text-sm bg-white dark:bg-slate-800/30 text-slate-700 dark:text-slate-30">
+                                      <div className="p-3 font-mono text-sm bg-[#1a1a1a] text-gray-300">
                                         {formatTestCase(result.actualOutput)}
                                       </div>
                                     </div>
@@ -4543,13 +4526,13 @@ export default function ProblemClientPage({
                                     result.verdict
                                       ?.toLowerCase()
                                       ?.includes("time limit")) && (
-                                    <div className="rounded-lg overflow-hidden border border-amber-200 dark:border-amber-900/30 md:col-span-2">
-                                      <div className="bg-amber-50 dark:bg-amber-900/20 px-3 py-1.5 border-b border-amber-200 dark:border-amber-900/30 text-xs font-medium text-amber-800 dark:text-amber-400 flex items-center">
+                                    <div className="rounded-lg overflow-hidden border border-[#5a4a30] md:col-span-2">
+                                      <div className="bg-[#3a3020] px-3 py-1.5 border-b border-[#5a4a30] text-xs font-medium text-amber-400 flex items-center">
                                         <Clock className="h-3 w-3 mr-1.5" />
                                         Time Limit Exceeded
                                       </div>
-                                      <div className="p-3 bg-white dark:bg-slate-800/30">
-                                        <p className="text-sm text-amber-700 dark:text-amber-400">
+                                      <div className="p-3 bg-[#1a1a1a]">
+                                        <p className="text-sm text-amber-400">
                                           Your solution took too long to
                                           execute. Try optimizing your algorithm
                                           to run within the time limit.
@@ -4561,13 +4544,13 @@ export default function ProblemClientPage({
                                   {/* Show Compilation Error message */}
                                   {(result.verdict === "Compilation Error" ||
                                     result.compileOutput) && (
-                                    <div className="rounded-lg overflow-hidden border border-amber-200 dark:border-amber-900/30 md:col-span-2">
-                                      <div className="bg-amber-50 dark:bg-amber-900/20 px-3 py-1.5 border-b border-amber-200 dark:border-amber-900/30 text-xs font-medium text-amber-800 dark:text-amber-400 flex items-center">
+                                    <div className="rounded-lg overflow-hidden border border-[#5a4a30] md:col-span-2">
+                                      <div className="bg-[#3a3020] px-3 py-1.5 border-b border-[#5a4a30] text-xs font-medium text-amber-400 flex items-center">
                                         <AlertTriangle className="h-3 w-3 mr-1.5" />
                                         Compilation Error
                                       </div>
-                                      <div className="p-3 bg-white dark:bg-slate-800/30">
-                                        <div className="text-sm text-amber-700 dark:text-amber-400 font-mono whitespace-pre-wrap">
+                                      <div className="p-3 bg-[#1a1a1a]">
+                                        <div className="text-sm text-amber-400 font-mono whitespace-pre-wrap">
                                           {result.compileOutput ||
                                             "Your code has syntax errors and could not be compiled."}
                                         </div>
@@ -4581,13 +4564,13 @@ export default function ProblemClientPage({
                                       result.verdict === "Compilation Error" ||
                                       result.compileOutput
                                     ) && (
-                                      <div className="rounded-lg overflow-hidden border border-red-200 dark:border-red-900/30 md:col-span-2">
-                                        <div className="bg-red-50 dark:bg-red-900/20 px-3 py-1.5 border-b border-red-200 dark:border-red-900/30 text-xs font-medium text-red-800 dark:text-red-400 flex items-center">
+                                      <div className="rounded-lg overflow-hidden border border-[#5a3030] md:col-span-2">
+                                        <div className="bg-[#3a2020] px-3 py-1.5 border-b border-[#5a3030] text-xs font-medium text-red-400 flex items-center">
                                           <AlertCircle className="h-3 w-3 mr-1.5" />
                                           Runtime Error
                                         </div>
-                                        <div className="p-3 bg-white dark:bg-slate-800/30">
-                                          <div className="text-sm text-red-700 dark:text-red-400 font-mono whitespace-pre-wrap">
+                                        <div className="p-3 bg-[#1a1a1a]">
+                                          <div className="text-sm text-red-400 font-mono whitespace-pre-wrap">
                                             {result.stderr}
                                           </div>
                                         </div>
@@ -4595,17 +4578,17 @@ export default function ProblemClientPage({
                                     )}
                                 </div>
 
-                                <div className="bg-slate-50 dark:bg-slate-800/50 px-4 py-2 border-t border-slate-200 dark:border-slate-700/50 flex justify-between items-center">
+                                <div className="bg-[#232323] px-4 py-2 border-t border-[#333333] flex justify-between items-center">
                                   <div className="flex items-center">
-                                    <Clock className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500 mr-1.5" />
-                                    <span className="text-xs text-slate-500 dark:text-slate-400">
+                                    <Clock className="h-3.5 w-3.5 text-gray-500 mr-1.5" />
+                                    <span className="text-xs text-gray-400">
                                       Execution Time:{" "}
                                       {result.executionTime || "N/A"}
                                     </span>
                                   </div>
                                   <div className="flex items-center">
-                                    <Cpu className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500 mr-1.5" />
-                                    <span className="text-xs text-slate-500 dark:text-slate-400">
+                                    <Cpu className="h-3.5 w-3.5 text-gray-500 mr-1.5" />
+                                    <span className="text-xs text-gray-400">
                                       Memory Used: {result.memoryUsed || "N/A"}
                                     </span>
                                   </div>
@@ -4616,25 +4599,24 @@ export default function ProblemClientPage({
                         </Tabs>
                       </div>
                     ) : (
-                      // Display sample test cases when no code has been run
                       <div className="space-y-4">
                         {/* Summary banner for sample test cases */}
                         <div className="flex items-center justify-between mb-2">
-                          <div className="text-sm text-slate-700 dark:text-slate-300">
-                            <span className="font-medium">
+                          <div className="text-sm text-gray-300 inline-flex items-center px-3 py-1.5 rounded-md  font-medium bg-[#333333] border border-[#444444] gap-2 shadow-sm hover:bg-[#3a3a3a] transition-colors">
+                            <span className="font-medium text-[#0779FF]">
                               {examples.length}
                             </span>{" "}
-                            sample test cases available
+                            Test Cases
                           </div>
-                          <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200/70 dark:border-indigo-800/50 text-indigo-700 dark:text-indigo-300 shadow-sm">
-                            <Play className="h-3 w-3 mr-1.5" />
+                          <div className="inline-flex items-center px-3 py-2 rounded-md text-xs font-medium bg-[#333333] border border-[#444444] text-gray-300 shadow-sm hover:bg-[#3a3a3a] transition-colors">
+                            <Play className="h-3 w-3 mr-1.5 text-[#0779FF]" />
                             Run Code to Test
                           </div>
                         </div>
 
                         {/* Tabs for each sample testcase */}
                         <Tabs defaultValue={`example-0`} className="w-full">
-                          <TabsList className="bg-gradient-to-r from-slate-100/90 to-indigo-50/80 dark:from-slate-800/70 dark:to-indigo-900/30 p-1 rounded-lg overflow-hidden backdrop-blur-sm border border-slate-200/80 dark:border-slate-700/30 shadow-sm mb-3 w-full flex flex-wrap">
+                          <TabsList className="bg-[#1a1a1a] p-1.5 rounded-lg overflow-hidden border border-[#333333] shadow-md mb-3 w-full flex flex-wrap">
                             {examples.map(
                               (
                                 example: {
@@ -4648,21 +4630,20 @@ export default function ProblemClientPage({
                                 <TabsTrigger
                                   key={`example-trigger-${example.id || idx}`}
                                   value={`example-${idx}`}
-                                  className="flex-1 min-w-[100px] rounded-md py-2 data-[state=active]:bg-white data-[state=active]:dark:bg-black/95 data-[state=active]:text-indigo-700 data-[state=active]:dark:text-indigo-30 data-[state=active]:shadow-sm relative overflow-hidden group transition-all duration-150"
+                                  className="flex-1 min-w-[100px] rounded-md py-2 data-[state=active]:bg-[#2a2a2a] data-[state=active]:text-white text-gray-400 relative overflow-hidden group transition-all duration-150"
                                 >
                                   <div className="absolute inset-0 opacity-0 group-data-[state=active]:opacity-100 transition-opacity duration-300">
-                                    <div className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
-                                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-purple-50/30 dark:from-indigo-900/30 dark:to-purple-900/20 opacity-0 group-data-[state=active]:opacity-100 transition-opacity"></div>
+                                    <div className="absolute inset-x-0 -bottom-1 h-0.5 bg-[#0779FF]"></div>
                                   </div>
                                   <div className="flex items-center justify-center gap-1.5">
-                                    <div className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-medium bg-gradient-to-br from-indigo-500 to-purple-600">
+                                    <div className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-medium bg-[#0779FF] group-data-[state=active]:bg-[#0779FF] group-hover:bg-[#0779FF] transition-colors">
                                       {idx + 1}
                                     </div>
-                                    <span className="hidden sm:inline font-medium text-sm group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400">
+                                    <span className="hidden sm:inline font-medium text-sm group-data-[state=active]:text-white group-hover:text-gray-300 transition-colors">
                                       Test {idx + 1}
                                     </span>
                                   </div>
-                                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent opacity-0 group-hover:opacity-100 group-data-[state=active]:opacity-0 transition-opacity"></div>
+                                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#333333] opacity-0 group-hover:opacity-100 group-data-[state=active]:opacity-0 transition-opacity"></div>
                                 </TabsTrigger>
                               )
                             )}
@@ -4683,55 +4664,62 @@ export default function ProblemClientPage({
                                 value={`example-${idx}`}
                                 className="focus-visible:outline-none focus-visible:ring-0"
                               >
-                                <div className="bg-white dark:bg-black rounded-lg shadow-sm overflow-hidden border border-slate-200 dark:border-slate-700/50">
-                                  <div className="px-4 py-2 border-b border-slate-200 dark:border-slate-700/50 flex items-center justify-between bg-gradient-to-r from-indigo-50 to-indigo-100/50 dark:from-indigo-900/20 dark:to-indigo-900/10">
-                                    <div className="flex items-center gap-2">
-                                      <div className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-medium bg-indigo-500">
-                                        {idx + 1}
-                                      </div>
-                                      <span className="font-medium text-slate-700 dark:text-slate-300">
-                                        Sample Test Case
-                                      </span>
+                                <div className="flex flex-col md:flex-row gap-4 w-full">
+                                  <div className="flex-1 rounded-md overflow-hidden border border-[#333333] bg-[#121212]">
+                                    <div className="bg-[#1a1a1a] px-4 py-3 border-b border-[#333333] text-sm font-medium text-white flex items-center justify-between">
+                                      <span>Input</span>
+                                      <button
+                                        className="text-gray-400 hover:text-white transition-colors"
+                                        aria-label="Copy input"
+                                        onClick={() => {
+                                          navigator.clipboard.writeText(
+                                            example.input
+                                          );
+                                          setCopiedInput(true);
+                                          setTimeout(
+                                            () => setCopiedInput(false),
+                                            2000
+                                          );
+                                        }}
+                                      >
+                                        {copiedInput ? (
+                                          <CheckCircle className="h-4 w-4 text-green-500" />
+                                        ) : (
+                                          <LuCopy className="h-4 w-4" />
+                                        )}
+                                      </button>
+                                    </div>
+                                    <div className="p-4 font-mono text-sm bg-[#121212] text-gray-300 min-h-[100px]">
+                                      {formatTestCase(example.input)}
                                     </div>
                                   </div>
 
-                                  <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700/50">
-                                      <div className="bg-slate-50 dark:bg-slate-800/60 px-3 py-1.5 border-b border-slate-200 dark:border-slate-700/50 text-xs font-medium text-slate-700 dark:text-slate-300">
-                                        Input
-                                      </div>
-                                      <div className="p-3 font-mono text-sm bg-white dark:bg-slate-800/30 text-slate-700 dark:text-slate-300">
-                                        {formatTestCase(example.input)}
-                                      </div>
+                                  <div className="flex-1 rounded-md overflow-hidden border border-[#333333] bg-[#121212]">
+                                    <div className="bg-[#1a1a1a] px-4 py-3 border-b border-[#333333] text-sm font-medium text-white flex items-center justify-between">
+                                      <span>Output</span>
+                                      <button
+                                        className="text-gray-400 hover:text-white transition-colors"
+                                        aria-label="Copy output"
+                                        onClick={() => {
+                                          navigator.clipboard.writeText(
+                                            example.output
+                                          );
+                                          setCopiedOutput(true);
+                                          setTimeout(
+                                            () => setCopiedOutput(false),
+                                            2000
+                                          );
+                                        }}
+                                      >
+                                        {copiedOutput ? (
+                                          <CheckCircle className="h-4 w-4 text-green-500" />
+                                        ) : (
+                                          <LuCopy className="h-4 w-4" />
+                                        )}
+                                      </button>
                                     </div>
-
-                                    <div className="rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700/50">
-                                      <div className="bg-slate-50 dark:bg-slate-800/60 px-3 py-1.5 border-b border-slate-200 dark:border-slate-700/50 text-xs font-medium text-slate-700 dark:text-slate-300">
-                                        Expected Output
-                                      </div>
-                                      <div className="p-3 font-mono text-sm bg-white dark:bg-slate-800/30 text-slate-700 dark:text-slate-300">
-                                        {formatTestCase(example.output)}
-                                      </div>
-                                    </div>
-
-                                    {/* Explanation if available */}
-                                    {example.explanation && (
-                                      <div className="rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700/50 md:col-span-2">
-                                        <div className="bg-slate-50 dark:bg-slate-800/60 px-3 py-1.5 border-b border-slate-200 dark:border-slate-700/50 text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center">
-                                          <Info className="h-3 w-3 mr-1.5 text-indigo-500 dark:text-indigo-400" />
-                                          Explanation
-                                        </div>
-                                        <div className="p-3 font-mono text-sm bg-white dark:bg-slate-800/30 text-slate-700 dark:text-slate-300">
-                                          {formatTestCase(example.explanation)}
-                                        </div>
-                                      </div>
-                                    )}
-                                  </div>
-
-                                  <div className="bg-slate-50 dark:bg-slate-800/50 px-4 py-2 border-t border-slate-200 dark:border-slate-700/50 flex justify-between items-center">
-                                    <div className="text-xs text-slate-500 dark:text-slate-400">
-                                      Run code to test your solution against
-                                      this example
+                                    <div className="p-4 font-mono text-sm bg-[#121212] text-gray-300 min-h-[100px]">
+                                      {formatTestCase(example.output)}
                                     </div>
                                   </div>
                                 </div>
