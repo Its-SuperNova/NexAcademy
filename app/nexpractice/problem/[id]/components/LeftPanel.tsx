@@ -96,7 +96,7 @@ export default function LeftPanel({
 }: LeftPanelProps) {
   return (
     <div
-      className={`h-full flex-1 overflow-hidden bg-white dark:bg-black ${
+      className={`h-full flex-1 overflow-hidden bg-[#f2f3f5] dark:bg-black ${
         hasMounted && isMobile
           ? activePanel === "problem"
             ? "block w-full"
@@ -107,37 +107,37 @@ export default function LeftPanel({
         width: hasMounted && isMobile ? "100%" : `${leftPanelWidth}%`,
       }}
     >
-      <div className="m-4 mb-0 mr-[2px] rounded-lg overflow-hidden bg-[#1f1f1f] flex flex-col h-[calc(100vh-8rem)]">
+      <div className="m-4 mb-0 mr-[2px] border border-[#e4e6eb] dark:border-none rounded-lg overflow-hidden bg-[white] dark:bg-[#1f1f1f] flex flex-col h-[calc(100vh-8rem)]">
         <Tabs
           defaultValue="description"
           className="flex flex-col h-full"
           onValueChange={handleTabChange}
         >
-          <TabsList className="flex justify-start gap-2 px-3 border-none p-2 rounded-none shrink-0 bg-white dark:bg-[#292929]">
+          <TabsList className="flex justify-start gap-2 px-3 p-1 rounded-none shrink-0 bg-[#ffffff] dark:bg-[#292929] border-b border-[#e4e6eb] dark:border-none">
             <TabsTrigger
               value="description"
-              className="px-3 py-2 text-sm border-r bg-transparent data-[state=active]:font-semibold   data-[state=active]:opacity-100 opacity-50 hover:opacity-90  hover:bg-[#3f3f3f] transition-colors duration-300 "
+              className="px-3 py-2 text-[black] dark:text-[white] text-sm bg-transparent data-[state=active]:font-semibold   data-[state=active]:opacity-100 opacity-50 hover:opacity-90 hover:bg-[#f2f3f5] dark:hover:bg-[#3f3f3f] transition-colors duration-300 "
             >
               <FileText className="h-4 w-4 mr-1.5 text-[#a040ff]" />
               <span>Description</span>
             </TabsTrigger>
             <TabsTrigger
               value="solution"
-              className="px-4 py-2 text-sm bg-transparent data-[state=active]:font-semibold data-[state=active]:opacity-100 opacity-50 hover:opacity-90 hover:bg-[#3f3f3f] transition-colors duration-300"
+              className="px-4 text-[black] dark:text-[white] py-2 text-sm bg-transparent data-[state=active]:font-semibold data-[state=active]:opacity-100 opacity-50 hover:opacity-90  hover:bg-[#f2f3f5] dark:hover:bg-[#3f3f3f] transition-colors duration-300"
             >
               <BookOpenCheck className="h-4 w-4 mr-1.5 text-[#ffcf40]" />
               <span>Solution</span>
             </TabsTrigger>
             <TabsTrigger
               value="submissions"
-              className="px-3 py-2 text-sm bg-transparent data-[state=active]:font-semibold data-[state=active]:opacity-100 opacity-50 hover:opacity-90 hover:bg-[#3f3f3f] transition-colors duration-300"
+              className="px-3 py-2 text-[black] dark:text-[white] text-sm bg-transparent data-[state=active]:font-semibold data-[state=active]:opacity-100 opacity-50 hover:opacity-90 hover:bg-[#f2f3f5] dark:hover:bg-[#3f3f3f] transition-colors duration-300"
             >
               <BarChart2 className="h-4 w-4 mr-1.5 text-[#18ff65]" />
               <span>Submissions</span>
             </TabsTrigger>
             <TabsTrigger
               value="discussion"
-              className="px-3 py-2 text-sm bg-transparent data-[state=active]:font-semibold data-[state=active]:opacity-100 opacity-50 hover:opacity-90 hover:bg-[#3f3f3f] transition-colors duration-300"
+              className="px-3 py-2 text-[black] dark:text-[white] text-sm bg-transparent data-[state=active]:font-semibold data-[state=active]:opacity-100 opacity-50 hover:opacity-90 hover:bg-[#f2f3f5] dark:hover:bg-[#3f3f3f] transition-colors duration-300"
             >
               <MessageSquare className="h-4 w-4 mr-1.5 text-[#1871ff]" />
               <span>Discussion</span>

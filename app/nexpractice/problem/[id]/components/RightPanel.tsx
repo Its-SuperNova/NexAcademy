@@ -405,7 +405,7 @@ export default function RightPanel({
       <div className="flex flex-col gap-1 h-[calc(100vh-8rem)]">
         {/* Editor Section */}
         <div
-          className={`flex flex-col w-full bg-[#1f1f1f] min-h-[44px] rounded-lg overflow-hidden`}
+          className={`flex flex-col w-full  min-h-[44px] rounded-lg overflow-hidden border border-[#e4e6eb] dark:border-none`}
           style={{
             height: isEditorFolded
               ? "44px" // Just the header when folded
@@ -414,7 +414,7 @@ export default function RightPanel({
               : `${editorHeightState}%`,
           }}
         >
-          <div className="flex items-center justify-between p-2 pl-3 bg-white dark:bg-[#292929]">
+          <div className="flex items-center justify-between border border-[#e4e6eb] dark:border-none p-2 pl-3 bg-white dark:bg-[#292929]">
             <div className="flex items-center gap-2">
               <FaCode className="h-5 w-5 text-[#087bff]" />
               <div className="flex text-[14px] items-center mr-3 md:mr-4">
@@ -461,7 +461,7 @@ export default function RightPanel({
                   <TooltipTrigger asChild>
                     <button
                       onClick={toggleFocusMode}
-                      className="bg-transparent hover:bg-[#484848] rounded-[8px] p-1.5 transition-colors duration-300"
+                      className="bg-transparent hover:bg-[#f2f3f5] dark:hover:bg-[#484848] rounded-[8px] p-1.5 transition-colors duration-300"
                     >
                       {focusMode ? (
                         <LuMinimize className="h-3.5 w-3.5" />
@@ -473,7 +473,7 @@ export default function RightPanel({
                   <TooltipContent
                     side="top"
                     align="center"
-                    className="w-fit p-2 px-3 rounded-sm bg-[#1f1f1f] text-xs border border-[#444444]"
+                    className="w-fit p-2 px-3 rounded-sm bg-white dark:bg-[#1f1f1f] text-xs border dark:border-[#444444]"
                   >
                     {focusMode ? "Exit Focus Mode" : "Focus Mode"}
                   </TooltipContent>
@@ -484,7 +484,7 @@ export default function RightPanel({
                   <TooltipTrigger asChild>
                     <button
                       onClick={toggleEditorFold}
-                      className="bg-transparent hover:bg-[#484848] rounded-[6px] p-1 transition-colors duration-300"
+                      className="bg-transparent hover:bg-[#f2f3f5] dark:hover:bg-[#484848] rounded-[6px] p-1 transition-colors duration-300"
                     >
                       {isEditorFolded ? (
                         <GoChevronUp className="h-4 w-4" />
@@ -496,7 +496,7 @@ export default function RightPanel({
                   <TooltipContent
                     side="top"
                     align="center"
-                    className="w-fit p-2 px-3 rounded-sm bg-[#1f1f1f] text-xs border border-[#444444]"
+                    className="w-fit p-2 px-3 rounded-sm bg-white dark:bg-[#1f1f1f] text-xs border dark:border-[#444444]"
                   >
                     {isEditorFolded ? "Unfold" : "Fold"}
                   </TooltipContent>
@@ -658,7 +658,7 @@ export default function RightPanel({
           </div>
           {!isEditorFolded && (
             <>
-              <div className="flex items-center justify-end p-1 border-b border-[#292929] bg-white dark:bg-[#1f1f1f]">
+              <div className="flex items-center justify-end p-1 border-none dark:border-b dark:border-[#292929] bg-white dark:bg-[#1f1f1f]">
                 <div className="flex items-center gap-1">
                   <Button
                     variant="ghost"
@@ -671,7 +671,7 @@ export default function RightPanel({
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <PopoverTrigger asChild>
-                              <div className="bg-transparent hover:bg-[#484848] rounded-[4px] p-1 transition-colors duration-300">
+                              <div className="bg-transparent hover:bg-[#f2f3f5] dark:hover:bg-[#484848] rounded-[4px] p-1 transition-colors duration-300">
                                 <span>
                                   <Settings className="h-3 w-3 cursor-pointer" />
                                 </span>
@@ -681,7 +681,7 @@ export default function RightPanel({
                           <TooltipContent
                             side="top"
                             align="center"
-                            className="w-fit p-2 px-3 rounded-sm bg-[#1f1f1f] text-xs border border-[#444444]"
+                            className="w-fit p-2 px-3 rounded-sm bg-white dark:bg-[#1f1f1f] text-xs border dark:border-[#444444]"
                           >
                             Editor Settings
                           </TooltipContent>
@@ -872,7 +872,7 @@ export default function RightPanel({
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <button
-                          className="bg-transparent hover:bg-[#484848] rounded-[4px] p-1 transition-colors duration-300"
+                          className="bg-transparent hover:bg-[#f2f3f5] dark:hover:bg-[#484848] rounded-[4px] p-1 transition-colors duration-300"
                           onClick={async () => {
                             await formatCode();
                             setFormatSuccess(true);
@@ -892,7 +892,7 @@ export default function RightPanel({
                       <TooltipContent
                         side="top"
                         align="center"
-                        className="w-fit p-2 px-3 rounded-sm bg-[#1f1f1f] text-xs border border-[#444444]"
+                        className="w-fit p-2 px-3 rounded-sm bg-white dark:bg-[#1f1f1f] text-xs border dark:border-[#444444]"
                       >
                         Format
                       </TooltipContent>
@@ -903,7 +903,7 @@ export default function RightPanel({
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <button
-                          className="bg-transparent hover:bg-[#484848] rounded-[4px] p-1 transition-colors duration-300"
+                          className="bg-transparent hover:bg-[#f2f3f5] dark:hover:bg-[#484848] rounded-[4px] p-1 transition-colors duration-300"
                           onClick={() => setCode(preloadCode)}
                         >
                           {isFormatting ? (
@@ -918,7 +918,7 @@ export default function RightPanel({
                       <TooltipContent
                         side="top"
                         align="center"
-                        className="w-fit p-2 px-3 rounded-sm bg-[#1f1f1f] text-xs border border-[#444444]"
+                        className="w-fit p-2 px-3 rounded-sm bg-white dark:bg-[#1f1f1f] text-xs border dark:border-[#444444]"
                       >
                         Reset Code
                       </TooltipContent>
@@ -946,16 +946,16 @@ export default function RightPanel({
         </div>
         {/* Vertical Resizer */}
         <div
-          className={`h-2 cursor-row-resize active:bg-indigo-500/30 transition-colors flex justify-center items-center group ${
+          className={`h-2 cursor-row-resize rounded-full mx-[20px] active:bg-indigo-500/30 transition-colors flex justify-center items-center group ${
             isEditorFolded ? "mt-[-2px]" : ""
           }`}
           onMouseDown={handleMouseDown}
         >
-          <div className="h-2 bg-[#1f1f1f] group-hover:bg-white w-[60px] rounded-full transition-colors group-active:bg-[#0779FF]"></div>
+          <div className="h-2 bg-[#a8abb0] dark:bg-[#1f1f1f] group-hover:bg-[#0779FF] dark:group-hover:bg-white w-[60px] rounded-full transition-colors group-active:bg-[#0779FF]"></div>
         </div>
         {/* Results Section */}
         <div
-          className="flex flex-col w-full min-h-[44px] bg-[#1f1f1f] rounded-lg overflow-hidden"
+          className="flex flex-col w-full min-h-[44px] bg-[#1f1f1f] rounded-lg overflow-hidden border border-[#e4e6eb] dark:border-none"
           style={{
             height: isResultsFolded
               ? "44px" // When folded, just show the header
@@ -964,31 +964,31 @@ export default function RightPanel({
               : `${100 - editorHeightState - (isEditorFolded ? 0 : 1)}%`, // Normal case with resizer (1% for resizer)
           }}
         >
-          <div className="flex items-center justify-between p-2 pl-3 bg-white dark:bg-[#292929]">
-            <div className="flex items-center gap-2 flex-1">
+          <div className="flex items-center justify-between p-1 pl-3 bg-white dark:bg-[#292929] border-b border-[#e4e6eb] dark:border-none">
+            <div className="flex items-center gap-2 flex-1 ">
               <Tabs
                 value={activeTab}
                 onValueChange={setActiveTab}
-                className="w-full relative z-10"
+                className="w-full relative z-10 "
               >
                 <TabsList className="flex justify-start gap-2 border-none p-0 rounded-none shrink-0 bg-transparent">
                   <TabsTrigger
                     value="sample"
-                    className="px-3 py-1.5 text-sm border-r bg-transparent data-[state=active]:font-semibold data-[state=active]:opacity-100 opacity-50 hover:opacity-90 hover:bg-[#3f3f3f] transition-colors duration-300"
+                    className="px-3 py-1.5 text-[black] dark:text-[white] text-sm  bg-transparent data-[state=active]:font-semibold data-[state=active]:opacity-100 opacity-50 hover:opacity-90 hover:bg-[#f2f3f5] dark:hover:bg-[#3f3f3f] transition-colors duration-300"
                   >
                     <FileText className="h-4 w-4 mr-1.5 text-indigo-500/70 dark:text-indigo-400/70 group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400" />
                     Sample Testcases
                   </TabsTrigger>
                   <TabsTrigger
                     value="hidden"
-                    className="px-3 py-1.5 text-sm font-medium border-r bg-transparent data-[state=active]:font-semibold data-[state=active]:opacity-100 opacity-50 hover:opacity-90 hover:bg-[#3f3f3f] transition-colors duration-300"
+                    className="px-3 py-1.5 text-[black] dark:text-[white] text-sm font-medium  bg-transparent data-[state=active]:font-semibold data-[state=active]:opacity-100 opacity-50 hover:opacity-90 hover:bg-[#f2f3f5] dark:hover:bg-[#3f3f3f] transition-colors duration-300"
                   >
                     <BarChart2 className="h-4 w-4 mr-1.5 text-indigo-500/70 dark:text-indigo-400/70 group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400" />
                     Hidden Testcases
                   </TabsTrigger>
                   <TabsTrigger
                     value="custom"
-                    className="px-3 py-1.5 text-sm border-r bg-transparent data-[state=active]:font-semibold data-[state=active]:opacity-100 opacity-50 hover:opacity-90 hover:bg-[#3f3f3f] transition-colors duration-300"
+                    className="px-3 py-1.5 text-[black] dark:text-[white] text-sm  bg-transparent data-[state=active]:font-semibold data-[state=active]:opacity-100 opacity-50 hover:opacity-90 hover:bg-[#f2f3f5] dark:hover:bg-[#3f3f3f] transition-colors duration-300"
                   >
                     <Sparkles className="h-4 w-4 mr-1.5 text-indigo-500/70 dark:text-indigo-400/70 group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400" />
                     Custom Testcase
@@ -1002,7 +1002,7 @@ export default function RightPanel({
                   <TooltipTrigger asChild>
                     <button
                       onClick={toggleResultsFold}
-                      className="bg-transparent hover:bg-[#484848] rounded-[6px] p-1 transition-colors duration-300"
+                      className="bg-transparent hover:bg-[#f2f3f5] dark:hover:bg-[#484848] rounded-[6px] p-1 transition-colors duration-300"
                     >
                       {isResultsFolded ? (
                         <GoChevronUp className="h-4 w-4" />
@@ -1014,7 +1014,7 @@ export default function RightPanel({
                   <TooltipContent
                     side="top"
                     align="center"
-                    className="w-fit p-2 px-3 rounded-sm bg-[#1f1f1f] text-xs border border-[#444444]"
+                    className="w-fit p-2 px-3 rounded-sm bg-white dark:bg-[#1f1f1f] text-xs border dark:border-[#444444]"
                   >
                     {isResultsFolded ? "Unfold" : "Fold"}
                   </TooltipContent>
@@ -1027,7 +1027,7 @@ export default function RightPanel({
               <Tabs value={activeTab} className="w-full">
                 <TabsContent
                   value="sample"
-                  className="focus-visible:outline-none focus-visible:ring-0 p-4"
+                  className="focus-visible:outline-none focus-visible:ring-0"
                 >
                   <SampleTestcaseTab
                     showEvaluatingSkeletons={showEvaluatingSkeletons}

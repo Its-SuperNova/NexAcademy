@@ -428,23 +428,9 @@ export default function SampleTestcaseTab({
         </div>
       ) : (
         <div className="space-y-4">
-          {/* Summary banner for sample test cases */}
-          <div className="flex items-center justify-between mb-2">
-            <div className="text-sm text-gray-300 inline-flex items-center px-3 py-1.5 rounded-md  font-medium bg-[#333333] border border-[#444444] gap-2 shadow-sm hover:bg-[#3a3a3a] transition-colors">
-              <span className="font-medium text-[#0779FF]">
-                {examples.length}
-              </span>{" "}
-              Test Cases
-            </div>
-            <div className="inline-flex items-center px-3 py-2 rounded-md text-xs font-medium bg-[#333333] border border-[#444444] text-gray-300 shadow-sm hover:bg-[#3a3a3a] transition-colors">
-              <Play className="h-3 w-3 mr-1.5 text-[#0779FF]" />
-              Run Code to Test
-            </div>
-          </div>
-
           {/* Tabs for each sample testcase */}
           <Tabs defaultValue={`example-0`} className="w-full">
-            <TabsList className="bg-[#1a1a1a] p-1.5 rounded-lg overflow-hidden border border-[#333333] shadow-md mb-3 w-full flex flex-wrap">
+            <TabsList className="bg-[#f2f3f5] dark:bg-[#1a1a1a] p-1.5 rounded-lg overflow-hidden border border-[#d3d5d8] dark:border-[#333333] mb-3 w-full flex flex-wrap gap-2">
               {examples.map(
                 (
                   example: {
@@ -458,20 +444,19 @@ export default function SampleTestcaseTab({
                   <TabsTrigger
                     key={`example-trigger-${example.id || idx}`}
                     value={`example-${idx}`}
-                    className="flex-1 min-w-[100px] rounded-md py-2 data-[state=active]:bg-[#2a2a2a] data-[state=active]:text-white text-gray-400 relative overflow-hidden group transition-all duration-150"
+                    className="flex-1 min-w-[100px] rounded-md py-2 data-[state=active]:bg-[#0779FF] dark:data-[state=active]:bg-[#2a2a2a] data-[state=active]:text-white text-gray-400 relative overflow-hidden group transition-all duration-150 hover:bg-[#dcedff] dark:hover:bg-[#2a2a2a] hover:text-[black] dark:hover:text-white"
                   >
                     <div className="absolute inset-0 opacity-0 group-data-[state=active]:opacity-100 transition-opacity duration-300">
                       <div className="absolute inset-x-0 -bottom-1 h-0.5 bg-[#0779FF]"></div>
                     </div>
                     <div className="flex items-center justify-center gap-1.5">
-                      <div className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-medium bg-[#0779FF] group-data-[state=active]:bg-[#0779FF] group-hover:bg-[#0779FF] transition-colors">
+                      <div className="w-5 h-5 rounded-full flex items-center justify-center  dark:text-white text-xs font-medium bg-[white] dark:bg-[#0779FF] group-data-[state=active]:bg-[white] dark:group-data-[state=active]:bg-[#0779FF] dark:group-data-[state=active]:text-[white] group-data-[state=active]:text-[#0779FF]  transition-colors">
                         {idx + 1}
                       </div>
-                      <span className="hidden sm:inline font-medium text-sm group-data-[state=active]:text-white group-hover:text-gray-300 transition-colors">
+                      <span className="hidden sm:inline font-medium text-sm group-data-[state=active]:text-white transition-colors">
                         Test {idx + 1}
                       </span>
                     </div>
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#333333] opacity-0 group-hover:opacity-100 group-data-[state=active]:opacity-0 transition-opacity"></div>
                   </TabsTrigger>
                 )
               )}
@@ -493,8 +478,8 @@ export default function SampleTestcaseTab({
                   className="focus-visible:outline-none focus-visible:ring-0"
                 >
                   <div className="flex flex-col md:flex-row gap-4 w-full">
-                    <div className="flex-1 rounded-md overflow-hidden border border-[#333333] bg-[#121212]">
-                      <div className="bg-[#1a1a1a] px-4 py-3 border-b border-[#333333] text-sm font-medium text-white flex items-center justify-between">
+                    <div className="flex-1 rounded-md overflow-hidden border   border-gray-200 dark:border-[#1a1a1a]">
+                      <div className="bg-gray-100 dark:bg-[#1a1a1a]  px-4 py-3 border-none dark:border-b dark:border-[#333333] text-sm font-medium  text-[black] dark:text-white flex items-center justify-between">
                         <span>Input</span>
                         <button
                           className="text-gray-400 hover:text-white transition-colors"
@@ -512,13 +497,13 @@ export default function SampleTestcaseTab({
                           )}
                         </button>
                       </div>
-                      <div className="p-4 font-mono text-sm bg-[#121212] text-gray-300 min-h-[100px]">
+                      <div className="p-4 font-mono text-sm bg-[white] dark:bg-[#121212] text-[#262626] dark:text-gray-300 min-h-[100px]">
                         {formatTestCase(example.input)}
                       </div>
                     </div>
 
-                    <div className="flex-1 rounded-md overflow-hidden border border-[#333333] bg-[#121212]">
-                      <div className="bg-[#1a1a1a] px-4 py-3 border-b border-[#333333] text-sm font-medium text-white flex items-center justify-between">
+                    <div className="flex-1 rounded-md overflow-hidden border  border-gray-200 dark:border-[#1a1a1a]">
+                      <div className="bg-gray-100 dark:bg-[#1a1a1a]  px-4 py-3 border-none dark:border-b dark:border-[#333333] text-sm font-medium text-[black] dark:text-white flex items-center justify-between">
                         <span>Output</span>
                         <button
                           className="text-gray-400 hover:text-white transition-colors"
@@ -536,7 +521,7 @@ export default function SampleTestcaseTab({
                           )}
                         </button>
                       </div>
-                      <div className="p-4 font-mono text-sm bg-[#121212] text-gray-300 min-h-[100px]">
+                      <div className="p-4 font-mono text-sm bg-[white] dark:bg-[#121212] text-[#262626] dark:text-gray-300  min-h-[100px]">
                         {formatTestCase(example.output)}
                       </div>
                     </div>

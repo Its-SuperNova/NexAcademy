@@ -3365,7 +3365,7 @@ export default function ProblemClientPage({
       {/* Main content with resizable panels */}
       <div
         ref={containerRef}
-        className="flex flex-1 overflow-hidden bg-black flex-col"
+        className="flex flex-1 overflow-hidden bg-[#f2f3f5] dark:bg-black flex-col"
       >
         <div className="flex flex-1 w-full">
           <LeftPanel
@@ -3480,10 +3480,10 @@ export default function ProblemClientPage({
             runCustomTestcase={runCustomTestcase}
           />
         </div>
-        <div className="m-3">
-          <div className="h-[50px] rounded-lg w-full bg-[#1f1f1f] flex items-center justify-center gap-4 px-4">
+        <div className="p-3 bg-[#f2f3f5] dark:bg-[black]">
+          <div className="h-[50px] rounded-lg w-full bg-[white] dark:bg-[#1f1f1f] flex items-center justify-center gap-4 px-4">
             <button
-              className="bg-[#2C2C2C] hover:bg-[#333333] text-[#087bff] hover:text-[#087bff]/80 px-4 rounded-md flex items-center gap-2 transition-all duration-200 justify-center border border-[#3C3C3C] h-[34px] min-w-[100px]"
+              className="bg-[#f2f3f5] dark:bg-[#2C2C2C] hover:bg-[#087bff] dark:hover:bg-[#333333] text-[#087bff] hover:text-[white] dark:hover:text-[#087bff]/80 px-4 rounded-md flex items-center gap-2 transition-all duration-200 justify-center border border-[#e4e6eb] dark:border-[#3C3C3C] h-[34px] min-w-[100px]"
               onClick={runCode}
               disabled={isRunning}
             >
@@ -3501,7 +3501,7 @@ export default function ProblemClientPage({
             </button>
 
             <button
-              className="bg-[#2C2C2C] hover:bg-[#333333] text-[#27B940] hover:text-[#27B940]/80 px-4 rounded-md flex items-center gap-2 transition-all duration-200 justify-center border border-[#3C3C3C] h-[34px] min-w-[120px]"
+              className="bg-[#f2f3f5] dark:bg-[#2C2C2C] hover:bg-[#1cd04c] dark:hover:bg-[#333333] text-[#27B940] hover:text-[white] dark:hover:text-[#27B940]/80 px-4 rounded-md flex items-center gap-2 transition-all duration-200 justify-center border border-[#e4e6eb] dark:border-[#3C3C3C] h-[34px] min-w-[120px]"
               onClick={submitCode}
               disabled={isSubmitting}
             >

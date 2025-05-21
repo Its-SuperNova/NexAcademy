@@ -60,37 +60,58 @@ const Header: React.FC<HeaderProps> = ({
   loadingPhrase,
 }) => {
   return (
-    <header className="flex items-center justify-between px-4 pt-2 bg-white dark:bg-black  overflow-hidden  min-h-[44px]">
+    <header className="flex items-center justify-between px-4 pt-2 bg-[#f2f3f5] dark:bg-black  overflow-hidden  min-h-[44px]">
       {/* Left section: Logo, Explore Nex, and sidebar toggle */}
       <div className="flex items-center gap-2 min-w-0 relative z-10">
-        <a href="/nexpractice">
-          <button
-            className="bg-[#1f1f1f] p-2 rounded-[8px]"
-            onClick={() => setSidebarOpen(true)}
-            aria-label="Open questions sidebar"
-          >
-            <IoChevronBackOutline />
-          </button>
-        </a>
-        <button
-          className="bg-[#1f1f1f] p-2 rounded-[8px]"
-          onClick={() => setSidebarOpen(true)}
-          aria-label="Open questions sidebar"
-        >
-          <HiMenuAlt1 className="" />
-        </button>
+        <TooltipProvider delayDuration={0}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link href="/nexpractice">
+                <button
+                  className="bg-[white] border border-[#e4e6eb] dark:border-none dark:bg-[#1f1f1f] p-2 rounded-[8px]"
+                  onClick={() => setSidebarOpen(true)}
+                  aria-label="Open questions sidebar"
+                >
+                  <IoChevronBackOutline />
+                </button>
+              </Link>
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p className="text-xs">Back</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <TooltipProvider delayDuration={0}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                className="bg-[white] border border-[#e4e6eb] dark:border-none dark:bg-[#1f1f1f] p-2 rounded-[8px]"
+                onClick={() => setSidebarOpen(true)}
+                aria-label="Open questions sidebar"
+              >
+                <HiMenuAlt1 className="" />
+              </button>
+            </TooltipTrigger>
+
+            <TooltipContent>
+              <p className="text-xs">Problem Pannel</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
         <div className="flex items-center gap-1 min-w-0">
           <div className="group min-w-0">
             <h1 className="font-extrabold">NexPractice</h1>
           </div>
         </div>
         {/* Random Challenge button with tooltip and animations */}
-        <TooltipProvider>
+        <TooltipProvider delayDuration={0}>
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
                 href="/nexpractice/problem/random"
-                className="bg-[#1f1f1f] p-2 rounded-[8px]"
+                className="bg-[white] border border-[#e4e6eb] dark:border-none dark:bg-[#1f1f1f] p-2 rounded-[8px]"
                 onClick={(e) => {
                   e.preventDefault();
                   const icon = e.currentTarget;
@@ -121,11 +142,6 @@ const Header: React.FC<HeaderProps> = ({
         </TooltipProvider>
       </div>
 
-      {/* Center section: Run/Submit and Mobile Navigation Tabs */}
-      <div className="hidden md:flex flex-1 items-center justify-center gap-3 mx-4 px-4  border-indigo-100 dark:border-indigo-900/40 min-w-0">
-        {/* Run/Submit buttons removed */}
-      </div>
-
       {/* Empty space for layout balance in mobile */}
       <div className="md:hidden w-16"></div>
 
@@ -140,13 +156,28 @@ const Header: React.FC<HeaderProps> = ({
             <Compass className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400 mr-1" />
             Explore Nex
           </a>
-          <button
-            className="bg-[#1f1f1f] p-2 rounded-[8px]"
-            onClick={handleFullscreenToggle}
-            aria-label={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
-          >
-            {isFullscreen ? <LuMinimize /> : <LuMaximize />}
-          </button>
+          <TooltipProvider delayDuration={0}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  className="bg-[white] border border-[#e4e6eb] dark:border-none dark:bg-[#1f1f1f] p-2 rounded-[8px]"
+                  onClick={handleFullscreenToggle}
+                  aria-label={
+                    isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"
+                  }
+                >
+                  {isFullscreen ? <LuMinimize /> : <LuMaximize />}
+                </button>
+              </TooltipTrigger>
+
+              <TooltipContent>
+                <p className="text-xs">
+                  {isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
           {/* Theme Switcher */}
           <ModeToggle />
         </div>

@@ -28,7 +28,7 @@ export function ModeToggle() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className="bg-[#1f1f1f] p-2 rounded-[8px]"
+          className="bg-[white] border border-[#e4e6eb] dark:border-none dark:bg-[#1f1f1f] p-2 rounded-[8px]"
         >
           {resolvedTheme === "dark" ? (
             <Sun className="h-4 w-4 text-[#ff7c25]" />
