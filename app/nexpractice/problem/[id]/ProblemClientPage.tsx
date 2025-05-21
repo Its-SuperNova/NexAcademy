@@ -92,7 +92,7 @@ import { LuCopy } from "react-icons/lu";
 
 import { useIsMobile } from "@/components/ui/use-mobile";
 import { useTheme } from "next-themes";
-import { FaCode, FaPlay} from "react-icons/fa6";
+import { FaCode, FaPlay } from "react-icons/fa6";
 import { FiUploadCloud } from "react-icons/fi";
 import { BsArrowRepeat } from "react-icons/bs";
 import {
@@ -3266,6 +3266,64 @@ export default function ProblemClientPage({
     }
   }, [isMobile]);
 
+  // Add customTestResult state
+  const [customTestResult, setCustomTestResult] = useState<{
+    input: string;
+    output: string;
+    isCorrect: boolean;
+    executionTime?: string;
+    memoryUsed?: string;
+    status?: string;
+  } | null>(null);
+
+  // Add runCustomTestcase function
+  const runCustomTestcase = useCallback(
+    async (input: string) => {
+      if (isRunning) return;
+
+      setIsRunning(true);
+
+      try {
+        // Similar to runCode function but for custom input
+        const languageId = getLanguageId(language);
+
+        const { data } = await runCodeMutation({
+          variables: {
+            code,
+            languageId,
+            input,
+            isCustomInput: true,
+          },
+        });
+
+        if (data?.runCode) {
+          const result = data.runCode;
+
+          setCustomTestResult({
+            input,
+            output: result.output || "No output",
+            isCorrect: result.status?.id === 3, // Status 3 is typically "Accepted"
+            executionTime: result.time,
+            memoryUsed: result.memory,
+            status: result.status?.description,
+          });
+        }
+      } catch (error) {
+        console.error("Error running custom testcase:", error);
+        toast.error("Failed to run custom testcase");
+
+        setCustomTestResult({
+          input,
+          output: "Error: Failed to execute code",
+          isCorrect: false,
+        });
+      } finally {
+        setIsRunning(false);
+      }
+    },
+    [code, language, isRunning, runCodeMutation]
+  );
+
   if (!hasMounted) return null;
 
   return (
@@ -3420,6 +3478,8 @@ export default function ProblemClientPage({
             skippedHiddenTestcases={skippedHiddenTestcases}
             hiddenExecutionStatus={hiddenExecutionStatus}
             showCelebration={showCelebration}
+            customTestResult={customTestResult}
+            runCustomTestcase={runCustomTestcase}
           />
         </div>
         <div className="m-3">

@@ -11,7 +11,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Check, Search, X } from "lucide-react";
+import {
+  Check,
+  Indent,
+  Moon,
+  Search,
+  Settings,
+  Sun,
+  Type,
+  X,
+} from "lucide-react";
 import { Popover, PopoverContent } from "@/components/ui/popover";
 import { VscOutput } from "react-icons/vsc";
 import { ChevronDown, Play, Send } from "lucide-react";
@@ -19,6 +28,14 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { PopoverTrigger } from "@/components/ui/popover";
+import { BsArrowRepeat } from "react-icons/bs";
+import { CgFormatLeft } from "react-icons/cg";
+import { NexEditor as CodeEditor } from "@/components/NexEditor";
+import CustomTestcaseTab from "./CustomTestcaseTab";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { FileText, BarChart2, Sparkles } from "lucide-react";
+import SampleTestcaseTab from "./SampleTestcaseTab";
+import { HiddenTestcasesTab } from "./HiddenTestcasesTab";
 
 interface RightPanelProps {
   hasMounted: boolean;
@@ -78,6 +95,15 @@ interface RightPanelProps {
   skippedHiddenTestcases: number;
   hiddenExecutionStatus: "success" | "error" | "warning" | "info" | null;
   showCelebration: boolean;
+  customTestResult?: {
+    input: string;
+    output: string;
+    isCorrect: boolean;
+    executionTime?: string;
+    memoryUsed?: string;
+    status?: string;
+  } | null;
+  runCustomTestcase?: (input: string) => void;
 }
 
 export default function RightPanel({
@@ -138,6 +164,8 @@ export default function RightPanel({
   skippedHiddenTestcases,
   hiddenExecutionStatus,
   showCelebration,
+  customTestResult,
+  runCustomTestcase,
 }: RightPanelProps) {
   const [isResizing, setIsResizing] = useState(false);
   const [editorHeightState, setEditorHeightState] = useState(editorHeight);
@@ -280,6 +308,7 @@ export default function RightPanel({
       }}
     >
       <div className="flex flex-col gap-1 h-[calc(100vh-8rem)]">
+        {/* Editor Section */}
         <div
           className={`flex flex-col w-full bg-[#1f1f1f] min-h-[44px] rounded-lg overflow-hidden`}
           style={{
@@ -533,13 +562,294 @@ export default function RightPanel({
             </div>
           </div>
           {!isEditorFolded && (
-            <div className="flex-1 overflow-hidden bg-[#1f1f1f] p-4">
-              <div className="w-full h-full flex items-center justify-center text-gray-400">
-                Code Editor will be added here
+            <>
+              <div className="flex items-center justify-end p-1 border-b border-[#292929] bg-white dark:bg-[#1f1f1f]">
+                <div className="flex items-center gap-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-700 dark:hover:text-indigo-30"
+                    asChild
+                  >
+                    <Popover>
+                      <TooltipProvider delayDuration={0}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <PopoverTrigger asChild>
+                              <div className="bg-transparent hover:bg-[#484848] rounded-[4px] p-1 transition-colors duration-300">
+                                <span>
+                                  <Settings className="h-3 w-3 cursor-pointer" />
+                                </span>
+                              </div>
+                            </PopoverTrigger>
+                          </TooltipTrigger>
+                          <TooltipContent
+                            side="top"
+                            align="center"
+                            className="w-fit p-2 px-3 rounded-sm bg-[#1f1f1f] text-xs border border-[#444444]"
+                          >
+                            Editor Settings
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      <PopoverContent
+                        align="end"
+                        className="w-80 p-0 border border-gray-200 dark:border-[#4c4c4c] shadow-xl rounded-xl overflow-hidden mt-4"
+                      >
+                        <div className="p-5 bg-white dark:bg-[#2e2e2e] border-t border-gray-100 dark:border-gray-800">
+                          <div className="mb-5">
+                            <div className="flex gap-2 mt-1.5">
+                              <button
+                                onClick={() => setEditorTheme("vs-dark")}
+                                className={`px-3 py-2 rounded-md text-xs font-medium transition-all duration-200 flex-1 ${
+                                  editorTheme === "vs-dark"
+                                    ? "bg-[#0779FF] text-white shadow-md"
+                                    : "bg-gray-100 dark:bg-[#2a2a2a] text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#333]"
+                                }`}
+                              >
+                                <span className="flex items-center justify-center">
+                                  <Moon className={`h-3.5 w-3.5 mr-1.5`} />
+                                  Dark
+                                </span>
+                              </button>
+                              <button
+                                onClick={() => setEditorTheme("light")}
+                                className={`px-3 py-2 rounded-md text-xs font-medium transition-all duration-200 flex-1 ${
+                                  editorTheme === "light"
+                                    ? "bg-[#0779FF] text-white shadow-md"
+                                    : "bg-gray-100 dark:bg-[#2a2a2a] text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#333]"
+                                }`}
+                              >
+                                <span className="flex items-center justify-center">
+                                  <Sun className={`h-3.5 w-3.5 mr-1.5`} />
+                                  Light
+                                </span>
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="mb-5">
+                            <label className="text-xs font-medium mb-2.5 text-gray-700 dark:text-gray-300 flex items-center justify-between">
+                              <span className="flex items-center">
+                                <Type className="h-3.5 w-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
+                                Font Size
+                              </span>
+                              <div className="flex items-center">
+                                <button
+                                  onClick={() =>
+                                    setFontSize(Math.max(12, fontSize - 1))
+                                  }
+                                  className="h-5 w-5 flex items-center justify-center bg-gray-100 dark:bg-[#1a1a1a] rounded-l-md border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
+                                >
+                                  <span className="text-xs">-</span>
+                                </button>
+                                <span className="text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-[#2a2a2a] px-2 py-0.5 border-t border-b border-gray-200 dark:border-gray-700/50 min-w-[40px] text-center">
+                                  {fontSize}px
+                                </span>
+                                <button
+                                  onClick={() =>
+                                    setFontSize(Math.min(24, fontSize + 1))
+                                  }
+                                  className="h-5 w-5 flex items-center justify-center bg-gray-100 dark:bg-[#1a1a1a] rounded-r-md border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
+                                >
+                                  <span className="text-xs">+</span>
+                                </button>
+                              </div>
+                            </label>
+                            <div className="relative mt-3 px-1">
+                              <div className="h-1 bg-gray-200 dark:bg-[#333] rounded-full w-full overflow-hidden">
+                                <div
+                                  className="h-full bg-[#0779FF]"
+                                  style={{
+                                    width: `${((fontSize - 12) / 12) * 100}%`,
+                                  }}
+                                ></div>
+                              </div>
+                              <div
+                                className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-[#0779FF] shadow-md border border-[#0779FF]"
+                                style={{
+                                  left: `calc(${
+                                    ((fontSize - 12) / 12) * 100
+                                  }% - 6px)`,
+                                }}
+                              ></div>
+                              <input
+                                type="range"
+                                min="12"
+                                max="24"
+                                value={fontSize}
+                                onChange={(e) =>
+                                  setFontSize(Number(e.target.value))
+                                }
+                                className="absolute inset-0 w-full h-6 opacity-0 cursor-pointer"
+                                style={{ marginTop: "-10px" }}
+                              />
+                            </div>
+                            <div className="flex justify-between mt-2 px-1">
+                              <span className="text-[10px] text-gray-400 dark:text-gray-500">
+                                12px
+                              </span>
+                              <span className="text-[10px] text-gray-400 dark:text-gray-500">
+                                24px
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="mb-5">
+                            <label className="text-xs font-medium mb-2.5 text-gray-700 dark:text-gray-300 flex items-center justify-between">
+                              <span className="flex items-center">
+                                <Indent className="h-3.5 w-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
+                                Tab Size
+                              </span>
+                              <div className="flex items-center">
+                                <button
+                                  onClick={() =>
+                                    setTabSize(Math.max(2, tabSize - 2))
+                                  }
+                                  className="h-5 w-5 flex items-center justify-center bg-gray-100 dark:bg-[#1a1a1a] rounded-l-md border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
+                                >
+                                  <span className="text-xs">-</span>
+                                </button>
+                                <span className="text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-[#2a2a2a] px-2 py-0.5 border-t border-b border-gray-200 dark:border-gray-700/50 min-w-[70px] text-center">
+                                  {tabSize} spaces
+                                </span>
+                                <button
+                                  onClick={() =>
+                                    setTabSize(Math.min(8, tabSize + 2))
+                                  }
+                                  className="h-5 w-5 flex items-center justify-center bg-gray-100 dark:bg-[#1a1a1a] rounded-r-md border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
+                                >
+                                  <span className="text-xs">+</span>
+                                </button>
+                              </div>
+                            </label>
+                            <div className="relative mt-3 px-1">
+                              <div className="h-1 bg-gray-200 dark:bg-[#333] rounded-full w-full overflow-hidden">
+                                <div
+                                  className="h-full bg-[#0779FF]"
+                                  style={{
+                                    width: `${((tabSize - 2) / 6) * 100}%`,
+                                  }}
+                                ></div>
+                              </div>
+                              <div
+                                className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-[#0779FF] shadow-md border border-[#0779FF]"
+                                style={{
+                                  left: `calc(${
+                                    ((tabSize - 2) / 6) * 100
+                                  }% - 6px)`,
+                                }}
+                              ></div>
+                              <input
+                                type="range"
+                                min="2"
+                                max="8"
+                                step="2"
+                                value={tabSize}
+                                onChange={(e) =>
+                                  setTabSize(Number(e.target.value))
+                                }
+                                className="absolute inset-0 w-full h-6 opacity-0 cursor-pointer"
+                                style={{ marginTop: "-10px" }}
+                              />
+                            </div>
+                            <div className="flex justify-between mt-2 px-1">
+                              <span className="text-[10px] text-gray-400 dark:text-gray-500">
+                                2
+                              </span>
+                              <span className="text-[10px] text-gray-400 dark:text-gray-500">
+                                4
+                              </span>
+                              <span className="text-[10px] text-gray-400 dark:text-gray-500">
+                                6
+                              </span>
+                              <span className="text-[10px] text-gray-400 dark:text-gray-500">
+                                8
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                  </Button>
+
+                  <TooltipProvider delayDuration={0}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          className="bg-transparent hover:bg-[#484848] rounded-[4px] p-1 transition-colors duration-300"
+                          onClick={async () => {
+                            await formatCode();
+                            setFormatSuccess(true);
+                            setTimeout(() => setFormatSuccess(false), 1500);
+                          }}
+                          disabled={isFormatting}
+                        >
+                          {isFormatting ? (
+                            <CgFormatLeft className="animate-pulse h-3 w-3" />
+                          ) : formatSuccess ? (
+                            <Check className="h-3.5 w-3.5 text-green-500 dark:text-green-400" />
+                          ) : (
+                            <CgFormatLeft className="h-3 w-3" />
+                          )}
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side="top"
+                        align="center"
+                        className="w-fit p-2 px-3 rounded-sm bg-[#1f1f1f] text-xs border border-[#444444]"
+                      >
+                        Format
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+
+                  <TooltipProvider delayDuration={0}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          className="bg-transparent hover:bg-[#484848] rounded-[4px] p-1 transition-colors duration-300"
+                          onClick={() => setCode(preloadCode)}
+                        >
+                          {isFormatting ? (
+                            <CgFormatLeft className="animate-pulse h-3 w-3" />
+                          ) : formatSuccess ? (
+                            <Check className="h-3.5 w-3.5 text-green-500 dark:text-green-400" />
+                          ) : (
+                            <BsArrowRepeat className="h-3 w-3" />
+                          )}
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side="top"
+                        align="center"
+                        className="w-fit p-2 px-3 rounded-sm bg-[#1f1f1f] text-xs border border-[#444444]"
+                      >
+                        Reset Code
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
               </div>
-            </div>
+              <div className="flex-1 overflow-hidden bg-[#1f1f1f]">
+                <CodeEditor
+                  code={code}
+                  onChange={setCode}
+                  language={language}
+                  theme={editorTheme === "vs-dark" ? "vs-dark" : "light"}
+                  fontSize={fontSize}
+                  tabSize={tabSize}
+                  onEditorMount={(editor, monaco) => {
+                    editorRef.current = editor;
+                    monacoRef.current = monaco;
+                    handleEditorDidMount(editor, monaco);
+                  }}
+                />
+              </div>
+            </>
           )}
         </div>
+        {/* Vertical Resizer */}
         <div
           className={`h-2 cursor-row-resize active:bg-indigo-500/30 transition-colors flex justify-center items-center group ${
             isEditorFolded ? "mt-[-2px]" : ""
@@ -548,6 +858,7 @@ export default function RightPanel({
         >
           <div className="h-2 bg-[#1f1f1f] group-hover:bg-white w-[60px] rounded-full transition-colors group-active:bg-[#0779FF]"></div>
         </div>
+        {/* Results Section */}
         <div
           className="flex flex-col w-full min-h-[44px] bg-[#1f1f1f] rounded-lg overflow-hidden"
           style={{
@@ -559,11 +870,36 @@ export default function RightPanel({
           }}
         >
           <div className="flex items-center justify-between p-2 pl-3 bg-white dark:bg-[#292929]">
-            <div className="flex items-center gap-2">
-              <VscOutput className="h-5 w-5 text-[#087bff]" />
-              <div className="flex text-[14px] items-center mr-3 md:mr-4">
-                Results
-              </div>
+            <div className="flex items-center gap-2 flex-1">
+              <Tabs
+                value={activeTab}
+                onValueChange={setActiveTab}
+                className="w-full relative z-10"
+              >
+                <TabsList className="flex justify-start gap-2 border-none p-0 rounded-none shrink-0 bg-transparent">
+                  <TabsTrigger
+                    value="sample"
+                    className="px-3 py-1.5 text-sm border-r bg-transparent data-[state=active]:font-semibold data-[state=active]:opacity-100 opacity-50 hover:opacity-90 hover:bg-[#3f3f3f] transition-colors duration-300"
+                  >
+                    <FileText className="h-4 w-4 mr-1.5 text-indigo-500/70 dark:text-indigo-400/70 group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400" />
+                    Sample Testcases
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="hidden"
+                    className="px-3 py-1.5 text-sm font-medium border-r bg-transparent data-[state=active]:font-semibold data-[state=active]:opacity-100 opacity-50 hover:opacity-90 hover:bg-[#3f3f3f] transition-colors duration-300"
+                  >
+                    <BarChart2 className="h-4 w-4 mr-1.5 text-indigo-500/70 dark:text-indigo-400/70 group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400" />
+                    Hidden Testcases
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="custom"
+                    className="px-3 py-1.5 text-sm border-r bg-transparent data-[state=active]:font-semibold data-[state=active]:opacity-100 opacity-50 hover:opacity-90 hover:bg-[#3f3f3f] transition-colors duration-300"
+                  >
+                    <Sparkles className="h-4 w-4 mr-1.5 text-indigo-500/70 dark:text-indigo-400/70 group-data-[state=active]:text-indigo-600 dark:group-data-[state=active]:text-indigo-400" />
+                    Custom Testcase
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
             </div>
             <div className="flex items-center gap-2">
               <TooltipProvider delayDuration={0}>
@@ -592,10 +928,62 @@ export default function RightPanel({
             </div>
           </div>
           {!isResultsFolded && (
-            <div className="flex-1 overflow-hidden bg-[#1f1f1f] p-4">
-              <div className="w-full h-full flex items-center justify-center text-gray-400">
-                Results Section will be added here
-              </div>
+            <div className="flex-1 bg-white dark:bg-[#1f1f1f] pb-20 overflow-auto">
+              <Tabs value={activeTab} className="w-full">
+                <TabsContent
+                  value="sample"
+                  className="focus-visible:outline-none focus-visible:ring-0 p-4"
+                >
+                  <SampleTestcaseTab
+                    showEvaluatingSkeletons={showEvaluatingSkeletons}
+                    skeletonTab={skeletonTab}
+                    sampleTestResults={sampleTestResults}
+                    activeTab={activeTab}
+                    sampleExecutionStatus={sampleExecutionStatus}
+                    formatTestCase={formatTestCase}
+                    examples={examples}
+                    copiedInput={copiedInput}
+                    copiedOutput={copiedOutput}
+                    setCopiedInput={setCopiedInput}
+                    setCopiedOutput={setCopiedOutput}
+                  />
+                </TabsContent>
+
+                <TabsContent
+                  value="hidden"
+                  className="focus-visible:outline-none focus-visible:ring-0"
+                >
+                  <HiddenTestcasesTab
+                    executingHiddenTestcases={executingHiddenTestcases}
+                    hiddenTestResults={hiddenTestResults}
+                    totalHiddenTestcases={totalHiddenTestcases}
+                    completedHiddenTestcases={completedHiddenTestcases}
+                    passedHiddenTestcases={passedHiddenTestcases}
+                    skippedHiddenTestcases={skippedHiddenTestcases}
+                    hiddenExecutionStatus={hiddenExecutionStatus}
+                    isRunning={isRunning}
+                    isSubmitting={isSubmitting}
+                    submitCode={submitCode}
+                  />
+                </TabsContent>
+
+                <TabsContent
+                  value="custom"
+                  className="focus-visible:outline-none focus-visible:ring-0"
+                >
+                  <CustomTestcaseTab
+                    isRunning={isRunning}
+                    runCustomTestcase={runCustomTestcase}
+                    customTestResult={customTestResult}
+                  />
+                </TabsContent>
+              </Tabs>
+
+              {showCelebration && (
+                <div className="fixed inset-0 pointer-events-none z-50">
+                  {/* This div is just a container for the confetti effect */}
+                </div>
+              )}
             </div>
           )}
         </div>

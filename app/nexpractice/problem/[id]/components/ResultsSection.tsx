@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileText, BarChart2, Sparkles } from "lucide-react";
 import SampleTestcaseTab from "./SampleTestcaseTab";
 import { HiddenTestcasesTab } from "./HiddenTestcasesTab";
+import CustomTestcaseTab from "./CustomTestcaseTab";
 
 interface ResultsSectionProps {
   activeTab: string;
@@ -32,6 +33,15 @@ interface ResultsSectionProps {
   isMobile: boolean;
   editorHeight: number;
   style?: React.CSSProperties;
+  runCustomTestcase?: (input: string) => void;
+  customTestResult?: {
+    input: string;
+    output: string;
+    isCorrect: boolean;
+    executionTime?: string;
+    memoryUsed?: string;
+    status?: string;
+  } | null;
 }
 
 export default function ResultsSection({
@@ -62,6 +72,8 @@ export default function ResultsSection({
   isMobile,
   editorHeight,
   style,
+  runCustomTestcase,
+  customTestResult,
 }: ResultsSectionProps) {
   return (
     <div
@@ -147,6 +159,17 @@ export default function ResultsSection({
               isRunning={isRunning}
               isSubmitting={isSubmitting}
               submitCode={submitCode}
+            />
+          </TabsContent>
+
+          <TabsContent
+            value="custom"
+            className="focus-visible:outline-none focus-visible:ring-0"
+          >
+            <CustomTestcaseTab
+              isRunning={isRunning}
+              runCustomTestcase={runCustomTestcase}
+              customTestResult={customTestResult}
             />
           </TabsContent>
 
