@@ -73,6 +73,7 @@ interface CodeEditorSectionProps {
   editorRef: React.RefObject<any>;
   monacoRef: React.RefObject<any>;
   handleEditorDidMount: (editor: any, monaco: any) => void;
+  style?: React.CSSProperties;
 }
 
 export default function CodeEditorSection({
@@ -112,6 +113,7 @@ export default function CodeEditorSection({
   editorRef,
   monacoRef,
   handleEditorDidMount,
+  style,
 }: CodeEditorSectionProps) {
   return (
     <div
@@ -130,6 +132,7 @@ export default function CodeEditorSection({
         maxHeight: hasMounted && isMobile ? "100%" : `${editorHeight}%`,
         height: hasMounted && isMobile ? "100%" : undefined,
         transition: "all 0.3s ease-in-out",
+        ...style,
       }}
     >
       <div className="flex items-center justify-between p-2 pl-3 bg-white dark:bg-[#292929]">

@@ -148,6 +148,7 @@ import LeftPanel from "./components/LeftPanel";
 import CodeEditorSection from "./components/CodeEditorSection";
 import SampleTestcaseTab from "./components/SampleTestcaseTab";
 import ResultsSection from "./components/ResultsSection";
+import RightPanel from "./components/RightPanel";
 
 // Judge0 API language mapping
 const JUDGE0_LANGUAGES = {
@@ -3360,87 +3361,65 @@ export default function ProblemClientPage({
             </div>
           )}
           {/* Right panel container */}
-          <div
-            className={`flex flex-col h-full m-4 mb-0 ml-1 ${
-              hasMounted && isMobile && activePanel === "problem"
-                ? "hidden"
-                : ""
-            }`}
-            style={{
-              width:
-                hasMounted && isMobile ? "100%" : `${100 - leftPanelWidth}%`,
-            }}
-          >
-            <div className="flex flex-col gap-2 h-[calc(100vh-8rem)]">
-              <CodeEditorSection
-                hasMounted={hasMounted}
-                isMobile={isMobile}
-                activePanel={activePanel}
-                editorHeight={editorHeight}
-                language={language}
-                editorTheme={editorTheme}
-                fontSize={fontSize}
-                tabSize={tabSize}
-                code={code}
-                isRunning={isRunning}
-                isSubmitting={isSubmitting}
-                isFormatting={isFormatting}
-                formatSuccess={formatSuccess}
-                editorLoading={editorLoading}
-                initialLoading={initialLoading}
-                searchLanguage={searchLanguage}
-                languageDropdownOpen={languageDropdownOpen}
-                JUDGE0_LANGUAGES={JUDGE0_LANGUAGES}
-                setCode={setCode}
-                setFontSize={setFontSize}
-                setTabSize={setTabSize}
-                setEditorTheme={setEditorTheme}
-                setSearchLanguage={setSearchLanguage}
-                setLanguageDropdownOpen={setLanguageDropdownOpen}
-                setFormatSuccess={setFormatSuccess}
-                runCode={runCode}
-                submitCode={submitCode}
-                formatCode={formatCode}
-                toggleFocusMode={toggleFocusMode}
-                handleLanguageChange={handleLanguageChange}
-                parseLanguageName={parseLanguageName}
-                focusMode={focusMode}
-                preloadCode={preloadCode}
-                editorRef={editorRef}
-                monacoRef={monacoRef}
-                handleEditorDidMount={handleEditorDidMount}
-              />
-              {/* Results panel */}
-              <ResultsSection
-                activeTab={activeTab}
-                setActiveTab={setActiveTab}
-                showEvaluatingSkeletons={showEvaluatingSkeletons}
-                skeletonTab={skeletonTab}
-                sampleTestResults={sampleTestResults}
-                sampleExecutionStatus={sampleExecutionStatus}
-                formatTestCase={formatTestCase}
-                examples={examples}
-                copiedInput={copiedInput}
-                copiedOutput={copiedOutput}
-                setCopiedInput={setCopiedInput}
-                setCopiedOutput={setCopiedOutput}
-                executingHiddenTestcases={executingHiddenTestcases}
-                hiddenTestResults={hiddenTestResults}
-                totalHiddenTestcases={totalHiddenTestcases}
-                completedHiddenTestcases={completedHiddenTestcases}
-                passedHiddenTestcases={passedHiddenTestcases}
-                skippedHiddenTestcases={skippedHiddenTestcases}
-                hiddenExecutionStatus={hiddenExecutionStatus}
-                isRunning={isRunning}
-                isSubmitting={isSubmitting}
-                submitCode={submitCode}
-                showCelebration={showCelebration}
-                hasMounted={hasMounted}
-                isMobile={isMobile}
-                editorHeight={editorHeight}
-              />
-            </div>
-          </div>
+          <RightPanel
+            hasMounted={hasMounted}
+            isMobile={isMobile}
+            activePanel={activePanel}
+            leftPanelWidth={leftPanelWidth}
+            editorHeight={editorHeight}
+            language={language}
+            editorTheme={editorTheme}
+            fontSize={fontSize}
+            tabSize={tabSize}
+            code={code}
+            isRunning={isRunning}
+            isSubmitting={isSubmitting}
+            isFormatting={isFormatting}
+            formatSuccess={formatSuccess}
+            editorLoading={editorLoading}
+            initialLoading={initialLoading}
+            searchLanguage={searchLanguage}
+            languageDropdownOpen={languageDropdownOpen}
+            JUDGE0_LANGUAGES={JUDGE0_LANGUAGES}
+            setCode={setCode}
+            setFontSize={setFontSize}
+            setTabSize={setTabSize}
+            setEditorTheme={setEditorTheme}
+            setSearchLanguage={setSearchLanguage}
+            setLanguageDropdownOpen={setLanguageDropdownOpen}
+            setFormatSuccess={setFormatSuccess}
+            runCode={runCode}
+            submitCode={submitCode}
+            formatCode={formatCode}
+            toggleFocusMode={toggleFocusMode}
+            handleLanguageChange={handleLanguageChange}
+            parseLanguageName={parseLanguageName}
+            focusMode={focusMode}
+            preloadCode={preloadCode}
+            editorRef={editorRef}
+            monacoRef={monacoRef}
+            handleEditorDidMount={handleEditorDidMount}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            showEvaluatingSkeletons={showEvaluatingSkeletons}
+            skeletonTab={skeletonTab}
+            sampleTestResults={sampleTestResults}
+            sampleExecutionStatus={sampleExecutionStatus}
+            formatTestCase={formatTestCase}
+            examples={examples}
+            copiedInput={copiedInput}
+            copiedOutput={copiedOutput}
+            setCopiedInput={setCopiedInput}
+            setCopiedOutput={setCopiedOutput}
+            executingHiddenTestcases={executingHiddenTestcases}
+            hiddenTestResults={hiddenTestResults}
+            totalHiddenTestcases={totalHiddenTestcases}
+            completedHiddenTestcases={completedHiddenTestcases}
+            passedHiddenTestcases={passedHiddenTestcases}
+            skippedHiddenTestcases={skippedHiddenTestcases}
+            hiddenExecutionStatus={hiddenExecutionStatus}
+            showCelebration={showCelebration}
+          />
         </div>
         <div className="m-3">
           <div className="h-[50px] rounded-lg w-full bg-[#1f1f1f]"></div>

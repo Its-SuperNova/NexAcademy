@@ -31,6 +31,7 @@ interface ResultsSectionProps {
   hasMounted: boolean;
   isMobile: boolean;
   editorHeight: number;
+  style?: React.CSSProperties;
 }
 
 export default function ResultsSection({
@@ -60,6 +61,7 @@ export default function ResultsSection({
   hasMounted,
   isMobile,
   editorHeight,
+  style,
 }: ResultsSectionProps) {
   return (
     <div
@@ -78,6 +80,7 @@ export default function ResultsSection({
         maxHeight: hasMounted && isMobile ? "100%" : `${100 - editorHeight}%`,
         height: hasMounted && isMobile ? "100%" : undefined,
         transition: "all 0.3s ease-in-out",
+        ...style,
       }}
     >
       <div className="flex-1 bg-white dark:bg-[#1f1f1f] pb-20">
