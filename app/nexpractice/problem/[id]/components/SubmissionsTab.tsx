@@ -29,27 +29,30 @@ import { Editor } from "@monaco-editor/react";
 interface SubmissionsTabProps {
   submissions: any[];
   submissionsLoading: boolean;
-  submissionsError: string | null;
+  submissionsError: any;
   currentPage: number;
   totalPages: number;
   selectedSubmission: any;
-  fetchSubmissions: (page: number) => void;
+  fetchSubmissions: () => void;
   viewSubmissionDetails: (submission: any, e?: React.MouseEvent) => void;
   closeSubmissionDetails: () => void;
   loadSubmissionCode: (submission: any, e?: React.MouseEvent) => void;
-  renderSubmissionStatus: (submission: any) => React.ReactNode;
+  renderSubmissionStatus: (submission: any) => React.ReactElement;
   formatSubmissionDate: (
     date: string | Date | number | null | undefined
   ) => string;
   getLanguageColor: (language: string) => string;
-  parseLanguageName: (fullName: string) => { name: string; version: string };
-  JUDGE0_LANGUAGES: Record<string, string>;
+  parseLanguageName: (fullName: string | undefined | null) => {
+    name: string;
+    version: string;
+  };
+  JUDGE0_LANGUAGES: any;
   getMonacoLanguage: (languageName: string) => string;
   fontSize: number;
   tabSize: number;
   appTheme: string;
-  setActivePanel: (panel: string) => void;
-  toast: (args: any) => void;
+  setActivePanel: (panel: "code" | "results" | "problem") => void;
+  toast: any;
 }
 
 const SubmissionsTab: React.FC<SubmissionsTabProps> = ({
@@ -110,7 +113,7 @@ const SubmissionsTab: React.FC<SubmissionsTabProps> = ({
           <Button
             size="sm"
             className="h-8 text-xs bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800"
-            onClick={() => fetchSubmissions(currentPage)}
+            onClick={() => fetchSubmissions()}
             disabled={submissionsLoading}
             aria-label="Refresh submissions"
           >
@@ -176,7 +179,7 @@ const SubmissionsTab: React.FC<SubmissionsTabProps> = ({
                     variant="outline"
                     size="sm"
                     className="text-xs h-8 bg-white dark:bg-slate-800 border-indigo-200 dark:border-indigo-800/50 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all duration-200"
-                    onClick={() => loadSubmissionCode(selectedSubmission)}
+                    onClick={(e) => loadSubmissionCode(selectedSubmission, e)}
                   >
                     <Copy className="h-3.5 w-3.5 mr-1.5" />
                     Load Code
@@ -392,7 +395,7 @@ const SubmissionsTab: React.FC<SubmissionsTabProps> = ({
                           variant="ghost"
                           size="sm"
                           className="h-7 w-7 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700"
-                          onClick={() => {
+                          onClick={(e) => {
                             if (selectedSubmission?.code) {
                               navigator.clipboard.writeText(
                                 selectedSubmission.code
@@ -622,7 +625,7 @@ const SubmissionsTab: React.FC<SubmissionsTabProps> = ({
                     variant="outline"
                     size="sm"
                     className="h-8 w-8 p-0"
-                    onClick={() => fetchSubmissions(1)}
+                    onClick={() => fetchSubmissions()}
                     disabled={currentPage === 1 || submissionsLoading}
                   >
                     <ChevronLeft className="h-4 w-4" />
@@ -632,7 +635,7 @@ const SubmissionsTab: React.FC<SubmissionsTabProps> = ({
                     variant="outline"
                     size="sm"
                     className="h-8 w-8 p-0"
-                    onClick={() => fetchSubmissions(currentPage - 1)}
+                    onClick={() => fetchSubmissions()}
                     disabled={currentPage === 1 || submissionsLoading}
                   >
                     <ChevronLeft className="h-4 w-4" />
@@ -644,7 +647,7 @@ const SubmissionsTab: React.FC<SubmissionsTabProps> = ({
                     variant="outline"
                     size="sm"
                     className="h-8 w-8 p-0"
-                    onClick={() => fetchSubmissions(currentPage + 1)}
+                    onClick={() => fetchSubmissions()}
                     disabled={currentPage === totalPages || submissionsLoading}
                   >
                     <ChevronRight className="h-4 w-4" />
@@ -653,7 +656,7 @@ const SubmissionsTab: React.FC<SubmissionsTabProps> = ({
                     variant="outline"
                     size="sm"
                     className="h-8 w-8 p-0"
-                    onClick={() => fetchSubmissions(totalPages)}
+                    onClick={() => fetchSubmissions()}
                     disabled={currentPage === totalPages || submissionsLoading}
                   >
                     <ChevronRight className="h-4 w-4" />
