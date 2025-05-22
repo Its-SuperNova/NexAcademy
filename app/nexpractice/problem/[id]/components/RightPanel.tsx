@@ -955,16 +955,16 @@ export default function RightPanel({
         </div>
         {/* Results Section */}
         <div
-          className="flex flex-col w-full min-h-[44px] bg-[#1f1f1f] rounded-lg overflow-hidden border border-[#e4e6eb] dark:border-none"
+          className="flex flex-col w-full min-h-[40px] bg-[#1f1f1f] rounded-lg overflow-hidden border border-[#e4e6eb] dark:border-none"
           style={{
             height: isResultsFolded
-              ? "44px" // When folded, just show the header
+              ? "40px" // When folded, just show the header
               : isEditorFolded
-              ? "calc(100% - 44px)" // When editor is folded, results take all space minus editor header
+              ? "calc(100% - 40px)" // When editor is folded, results take all space minus editor header
               : `${100 - editorHeightState - (isEditorFolded ? 0 : 1)}%`, // Normal case with resizer (1% for resizer)
           }}
         >
-          <div className="flex items-center justify-between p-1 pl-3 bg-white dark:bg-[#292929] border-b border-[#e4e6eb] dark:border-none">
+          <div className="flex items-center justify-between p-1 pl-3 bg-white dark:bg-[#292929]  border-none">
             <div className="flex items-center gap-2 flex-1 ">
               <Tabs
                 value={activeTab}
