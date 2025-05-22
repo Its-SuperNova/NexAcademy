@@ -55,7 +55,7 @@ const TestCaseResultCard = ({
 
   return (
     <div
-      className={`bg-white dark:bg-gray-800 rounded-lg border transition-all duration-200 hover:shadow-md ${
+      className={`bg-white dark:bg-[#1a1a1a] rounded-lg border transition-all duration-200 hover:shadow-md ${
         result.isSkipped
           ? "border-gray-200 dark:border-gray-700"
           : result.isCorrect
@@ -152,7 +152,7 @@ const TestCaseResultCard = ({
                 <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Input:
                 </label>
-                <div className="p-3 bg-gray-50 dark:bg-gray-900 rounded-md border border-gray-200 dark:border-gray-700 text-sm font-mono overflow-auto max-h-32">
+                <div className="p-3 bg-gray-50 dark:bg-[black] rounded-md border border-gray-200 dark:border-[#4c4c4c] text-sm font-mono overflow-auto max-h-32">
                   <pre className="whitespace-pre-wrap text-gray-800 dark:text-gray-200">
                     {formatText(result.input)}
                   </pre>
@@ -162,7 +162,7 @@ const TestCaseResultCard = ({
                 <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Your Output:
                 </label>
-                <div className="p-3 bg-gray-50 dark:bg-gray-900 rounded-md border border-gray-200 dark:border-gray-700 text-sm font-mono overflow-auto max-h-32">
+                <div className="p-3 bg-gray-50 dark:bg-[black] rounded-md border border-gray-200 dark:border-[#4c4c4c] text-sm font-mono overflow-auto max-h-32">
                   <pre className="whitespace-pre-wrap text-gray-800 dark:text-gray-200">
                     {result.actualOutput ===
                     "Hidden (Multiple failures detected)" ? (
@@ -540,8 +540,8 @@ export function HiddenTestcasesTab({
             const idx = hiddenTestResults.indexOf(firstFailure);
 
             return (
-              <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
-                <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="bg-white dark:bg-[#1a1a1a] rounded-xl border border-gray-200 dark:border-[#4c4c4c] overflow-hidden shadow-sm">
+                <div className="px-6 py-4 border-b border-gray-200 dark:border-[#4c4c4c]">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                     First Failure Analysis
                   </h3>
